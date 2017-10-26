@@ -106,4 +106,4 @@ if __name__ == "__main__":
     net.regression(learning_rate=3, cost="quadratic")
     net.fit(train_data, train_labels, epochs=30, mini_batch_size=10)
     net.accuracy(test_data, test_labels)
-    # best accuracy: 0.964
+    # best accuracy: 0.963
