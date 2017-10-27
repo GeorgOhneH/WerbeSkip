@@ -35,6 +35,7 @@ class Network(object):
         self.init_weights()
 
     def init_weights(self):
+        # Uses 
         for layer, layer_before in zip(self.layers[1:], self.layers[:-1]):
             layer.init_weights(layer_before.neurons)
 
@@ -44,6 +45,7 @@ class Network(object):
         return a
 
     def fit(self, training_data_x, training_data_y, epochs, mini_batch_size):
+        # trains the neural network with  gradient descent and backpropagation
         for j in range(epochs):
             training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
             mini_batches = [(training_data_x[:, k:mini_batch_size + k], training_data_y[:, k:mini_batch_size + k])
@@ -52,6 +54,7 @@ class Network(object):
                 self.update_weights(mini_batch, mini_batch_size)
                 print("\rEpoch %d loss: " % (j + 1), np.sum(self.loss) / mini_batch_size / (index + 1), sep='', end='',
                       flush=True)
+            # reset loss
             self.loss = np.array([])
             print()
             print("Epoch %d out of %d is complete" % (j + 1, epochs))
@@ -62,6 +65,7 @@ class Network(object):
         for index in range(mini_batch_size):
             x, y = mini_batch
             self.backprop(x[:, index], y[:, index])
+        # Uses the error and adjusts the weights for each layer
         for layer in self.layers[1:]:
             layer.weights -= np.multiply(self.learning_rate / mini_batch_size, layer.nabla_w)
             layer.biases -= np.multiply(self.learning_rate / mini_batch_size, layer.nabla_b)
@@ -72,10 +76,12 @@ class Network(object):
             activation = layer.forward_backpropagation(activation)
         # backward pass: doesnt supports multidimensional matrices
         # https://sudeepraja.github.io/Neural/
-        delta, loss = self.layers[-1].make_first_delta(self.cost, y)
+        loss = self.layers[-1].calculate_loss(self.cost, y)
         self.loss = np.append(self.loss, [loss])
-        last_weights = self.layers[-1].weights
 
+        # calculates delta and saves it in each layer
+        delta = self.layers[-1].make_first_delta(self.cost, y)
+        last_weights = self.layers[-1].weights
         for layer in reversed(self.layers[1:-1]):
             delta = layer.make_next_delta(delta, last_weights)
             last_weights = layer.weights
