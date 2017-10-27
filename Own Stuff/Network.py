@@ -35,11 +35,12 @@ class Network(object):
         self.init_weights()
 
     def init_weights(self):
-        # Uses 
+        # Uses Gaussian random variables with a mean of 0 and a standard deviation of 1
         for layer, layer_before in zip(self.layers[1:], self.layers[:-1]):
             layer.init_weights(layer_before.neurons)
 
     def feedforward(self, a):
+        # Input is in Matrixform. Each row represents one Inputlayer
         for layer in self.layers[1:]:
             a = layer.forward(a)
         return a
@@ -110,6 +111,6 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(50, activation="sigmoid")
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=3, cost="quadratic")
-    net.fit(train_data, train_labels, epochs=30, mini_batch_size=10)
+    net.fit(train_data, train_labels, epochs=50, mini_batch_size=10)
     net.accuracy(test_data, test_labels)
     # best accuracy: 0.963

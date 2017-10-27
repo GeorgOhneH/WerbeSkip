@@ -15,7 +15,7 @@ class FullyConnectedLayer(object):
 
     def init_weights(self, neurons_before):
         self.biases = np.random.randn(self.neurons, 1)
-        self.weights = np.random.randn(self.neurons, neurons_before)
+        self.weights = np.random.randn(self.neurons, neurons_before) / np.sqrt(neurons_before)
 
     def reset_nabla(self):
         self.nabla_b = np.zeros(self.biases.shape)
