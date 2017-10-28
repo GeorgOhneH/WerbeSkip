@@ -63,9 +63,8 @@ class Network(object):
     def update_weights(self, mini_batch, mini_batch_size):
         for layer in self.layers[1:]:
             layer.reset_nabla()
-        for index in range(mini_batch_size):
-            x, y = mini_batch
-            self.backprop(x[:, index], y[:, index])
+        x, y = mini_batch
+        self.backprop(x, y)
         # Uses the error and adjusts the weights for each layer
         for layer in self.layers[1:]:
             layer.weights -= np.multiply(self.learning_rate / mini_batch_size, layer.nabla_w)
@@ -101,7 +100,9 @@ class Network(object):
     def shuffle(self, x, y):
         # shuffles data in unison with helping from indexing
         indexes = np.random.permutation(x.shape[1])
-        return x[:, indexes], y[:, indexes]
+        x = x[:, indexes]
+        y = y[:, indexes]
+        return x, y
 
 
 if __name__ == "__main__":
@@ -111,6 +112,6 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(50, activation="sigmoid")
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=3, cost="quadratic")
-    net.fit(train_data, train_labels, epochs=15, mini_batch_size=10)
+    net.fit(train_data, train_labels, epochs=15, mini_batch_size=3)
     net.accuracy(test_data, test_labels)
     # best accuracy: 0.963

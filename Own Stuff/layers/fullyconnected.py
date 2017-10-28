@@ -50,6 +50,5 @@ class FullyConnectedLayer(object):
         return delta
 
     def update_nabla(self, delta):
-        delta = np.sum(delta, axis=1)
-        self.nabla_b += delta
+        self.nabla_b += np.sum(delta, axis=1)
         self.nabla_w += np.dot(delta, self.before_a.transpose())
