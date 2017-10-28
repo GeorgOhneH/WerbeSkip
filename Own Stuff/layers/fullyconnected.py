@@ -36,7 +36,7 @@ class FullyConnectedLayer(object):
         return a
 
     def calculate_loss(self, cost, y):
-        loss = cost.fuction(self.a, y)
+        loss = cost.function(self.a, y)
         return loss
 
     def make_first_delta(self, cost, y):
@@ -50,5 +50,6 @@ class FullyConnectedLayer(object):
         return delta
 
     def update_nabla(self, delta):
+        delta = np.sum(delta, axis=1)
         self.nabla_b += delta
         self.nabla_w += np.dot(delta, self.before_a.transpose())

@@ -111,6 +111,6 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(50, activation="sigmoid")
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=3, cost="quadratic")
-    net.fit(train_data, train_labels, epochs=50, mini_batch_size=10)
+    net.fit(train_data, train_labels, epochs=15, mini_batch_size=10)
     net.accuracy(test_data, test_labels)
     # best accuracy: 0.963
