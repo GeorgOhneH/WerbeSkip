@@ -21,3 +21,15 @@ class Softmax(object):
     @staticmethod
     def derivative(z):
         return np.multiply(Softmax.function(z), (1 - Softmax.function(z)))
+
+
+class ReLU(object):
+    @staticmethod
+    def function(z):
+        return np.maximum(z, 0.0)
+
+    @staticmethod
+    def derivative(z):
+        z[z <= 0] = 0
+        z[z > 0] = 1
+        return z

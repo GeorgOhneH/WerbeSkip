@@ -1,7 +1,7 @@
 from mnist_loader import load_mnist
 from layers.fullyconnected import FullyConnectedLayer
 from layers.input import InputLayer
-from functions.activations import Sigmoid
+from functions.activations import Sigmoid, ReLU
 from functions.costs import QuadraticCost
 
 import numpy as np
@@ -18,6 +18,7 @@ class Network(object):
         self.all_loss = []
         self.activations = {
             "sigmoid": Sigmoid,
+            "relu": ReLU,
         }
         self.costs = {
             "quadratic": QuadraticCost,
@@ -107,9 +108,9 @@ if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
     net.addInputLayer(28 * 28)
-    net.addFullyConnectedLayer(50, activation="sigmoid")
+    net.addFullyConnectedLayer(500, activation="relu")
     net.addFullyConnectedLayer(10, activation="sigmoid")
-    net.regression(learning_rate=3, cost="quadratic")
-    net.fit(train_data, train_labels, epochs=15, mini_batch_size=3)
+    net.regression(learning_rate=0.1, cost="quadratic")
+    net.fit(train_data, train_labels, epochs=30, mini_batch_size=10)
     net.accuracy(test_data, test_labels)
-    # best accuracy: 0.963
+    # best accuracy: 0.9822
