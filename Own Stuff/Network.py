@@ -56,8 +56,7 @@ class Network(object):
             for mini_batch in mini_batches:
                 self.update_weights(mini_batch, mini_batch_size)
                 print("\rEpoch %d loss: " % (j + 1), self.loss[-1], sep='', end='', flush=True)
-            print()
-            print("Epoch %d out of %d is complete" % (j + 1, epochs))
+            print("\nEpoch %d out of %d is complete" % (j + 1, epochs))
         if plot:
             self.plot_loss(epochs)
 
@@ -94,8 +93,13 @@ class Network(object):
         print("accuracy: ", correct / n_data)
 
     def plot_loss(self, epochs):
-        x_axis = np.arange(0, epochs, epochs / len(self.loss))
-        y_axis = self.loss
+        # decreases the size of the loss_array to a much smaller array. So that it isnt that noisy on the plot
+        n_elements = 30 * epochs
+        y_axis = self.loss.reshape((int(len(self.loss) / n_elements), n_elements))
+        y_axis = np.sum(y_axis, axis=1) / n_elements
+
+        x_axis = np.arange(0, epochs, epochs / len(y_axis))
+
         plt.plot(x_axis, y_axis)
         plt.grid(True)
         plt.show()
@@ -111,10 +115,9 @@ if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
     net.addInputLayer(28 * 28)
-    net.addFullyConnectedLayer(70, activation="relu", dropout=0.8)
-    net.addFullyConnectedLayer(70, activation="relu")
+    net.addFullyConnectedLayer(70, activation="relu", dropout=0.5)
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=0.1, cost="quadratic")
-    net.fit(train_data, train_labels, epochs=50, mini_batch_size=20, plot=True)
+    net.fit(train_data, train_labels, epochs=10, mini_batch_size=20, plot=True)
     net.accuracy(test_data, test_labels)
     # best accuracy: 0.9822
