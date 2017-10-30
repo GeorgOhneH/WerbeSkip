@@ -93,13 +93,18 @@ class Network(object):
         print("accuracy: ", correct / n_data)
 
     def plot_loss(self, epochs):
-        n_squeezing = 50 * epochs  # so bigger the number so smaller the noise
-        y_axis = [np.sum(self.loss[index:index + n_squeezing]) / n_squeezing
-                  for index in range(0, len(self.loss), n_squeezing)]
-        x_axis = np.arange(0, epochs, epochs / len(y_axis))
+        noisy_y_axis = self.loss[:]
+        noisy_x_axis = np.arange(0, epochs, epochs / len(noisy_y_axis))
 
-        plt.plot(x_axis, y_axis)
-        plt.grid(True)
+        n_squeezing = 50 * epochs  # so bigger the number so smaller the noise
+        # removes noise
+        smooth_y_axis = [np.sum(self.loss[index:index + n_squeezing]) / n_squeezing
+                         for index in range(0, len(self.loss), n_squeezing)]
+        smooth_x_axis = np.arange(0, epochs, epochs / len(smooth_y_axis))
+
+        plt.plot(noisy_x_axis, noisy_y_axis)
+        plt.plot(smooth_x_axis, smooth_y_axis, color="red")
+        plt.axis([-0.2, epochs + 0.2, -0.005, np.max(smooth_y_axis) + 0.1])
         plt.show()
 
     # Input x = Matrix, y = Matrix
@@ -113,7 +118,7 @@ if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
     net.addInputLayer(28 * 28)
-    net.addFullyConnectedLayer(70, activation="relu", dropout=0.8)
+    net.addFullyConnectedLayer(100, activation="relu")
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=0.1, cost="quadratic")
     net.fit(train_data, train_labels, epochs=10, mini_batch_size=20, plot=True)
