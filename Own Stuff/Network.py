@@ -5,6 +5,7 @@ from functions.activations import Sigmoid, ReLU
 from functions.costs import QuadraticCost
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class Network(object):
@@ -46,7 +47,7 @@ class Network(object):
             a = layer.forward(a)
         return a
 
-    def fit(self, training_data_x, training_data_y, epochs, mini_batch_size):
+    def fit(self, training_data_x, training_data_y, epochs, mini_batch_size, plot=False):
         # trains the neural network with  gradient descent and backpropagation
         for j in range(epochs):
             training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
@@ -55,9 +56,10 @@ class Network(object):
             for mini_batch in mini_batches:
                 self.update_weights(mini_batch, mini_batch_size)
                 print("\rEpoch %d loss: " % (j + 1), self.loss[-1], sep='', end='', flush=True)
-            print("\rEpoch %d loss: " % (j + 1), np.sum(self.loss) / len(self.loss), sep='', end='\n', flush=True)
+            print()
             print("Epoch %d out of %d is complete" % (j + 1, epochs))
-            self.loss = np.array([])
+        if plot:
+            self.plot_loss(epochs)
 
     def update_weights(self, mini_batch, mini_batch_size):
         x, y = mini_batch
@@ -91,6 +93,13 @@ class Network(object):
                 correct += 1
         print("accuracy: ", correct / n_data)
 
+    def plot_loss(self, epochs):
+        x_axis = np.arange(0, epochs, epochs / len(self.loss))
+        y_axis = self.loss
+        plt.plot(x_axis, y_axis)
+        plt.grid(True)
+        plt.show()
+
     # Input x = Matrix, y = Matrix
     def shuffle(self, x, y):
         # shuffles data in unison with helping from indexing
@@ -102,9 +111,10 @@ if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
     net.addInputLayer(28 * 28)
-    net.addFullyConnectedLayer(100, activation="relu", dropout=0.75)
+    net.addFullyConnectedLayer(70, activation="relu", dropout=0.8)
+    net.addFullyConnectedLayer(70, activation="relu")
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=0.1, cost="quadratic")
-    net.fit(train_data, train_labels, epochs=30, mini_batch_size=15)
+    net.fit(train_data, train_labels, epochs=50, mini_batch_size=20, plot=True)
     net.accuracy(test_data, test_labels)
     # best accuracy: 0.9822
