@@ -6,9 +6,6 @@ from functions.costs import QuadraticCost
 
 import numpy as np
 import matplotlib.pyplot as plt
-# SciPy Libarry
-from scipy import signal
-import pandas as pd
 
 
 class Network(object):
