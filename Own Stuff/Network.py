@@ -52,14 +52,12 @@ class Network(object):
             training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
             mini_batches = [(training_data_x[:, k:mini_batch_size + k], training_data_y[:, k:mini_batch_size + k])
                             for k in range(0, training_data_y.shape[1], mini_batch_size)]
-            for index, mini_batch in enumerate(mini_batches):
+            for mini_batch in mini_batches:
                 self.update_weights(mini_batch, mini_batch_size)
-                print("\rEpoch %d loss: " % (j + 1), np.sum(self.loss) / mini_batch_size / (index + 1), sep='', end='',
-                      flush=True)
-            # reset loss
-            self.loss = np.array([])
-            print()
+                print("\rEpoch %d loss: " % (j + 1), self.loss[-1], sep='', end='', flush=True)
+            print("\rEpoch %d loss: " % (j + 1), np.sum(self.loss) / len(self.loss), sep='', end='\n', flush=True)
             print("Epoch %d out of %d is complete" % (j + 1, epochs))
+            self.loss = np.array([])
 
     def update_weights(self, mini_batch, mini_batch_size):
         x, y = mini_batch
@@ -70,13 +68,11 @@ class Network(object):
             layer.biases -= np.multiply(self.learning_rate / mini_batch_size, layer.nabla_b)
 
     def backprop(self, activation, y):
-        # feedforward: supports multidimensional matrices
         for layer in self.layers[1:]:
             activation = layer.forward_backpropagation(activation)
-        # backward pass: doesnt supports multidimensional matrices
         # https://sudeepraja.github.io/Neural/
         loss = self.layers[-1].calculate_loss(self.cost, y)
-        self.loss = np.append(self.loss, [loss])
+        self.loss = np.append(self.loss, loss)
 
         # calculates delta and saves it in each layer
         delta = self.layers[-1].make_first_delta(self.cost, y)
@@ -106,9 +102,9 @@ if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
     net.addInputLayer(28 * 28)
-    net.addFullyConnectedLayer(100, activation="relu", dropout=0.5)
+    net.addFullyConnectedLayer(100, activation="relu", dropout=0.75)
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=0.1, cost="quadratic")
-    net.fit(train_data, train_labels, epochs=10, mini_batch_size=15)
+    net.fit(train_data, train_labels, epochs=30, mini_batch_size=15)
     net.accuracy(test_data, test_labels)
     # best accuracy: 0.9822
