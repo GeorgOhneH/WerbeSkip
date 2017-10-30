@@ -27,18 +27,18 @@ class Network(object):
     def addInputLayer(self, neurons):
         self.layers.append(InputLayer(neurons))
 
-    def addFullyConnectedLayer(self, neurons, activation="sigmoid"):
-        self.layers.append(FullyConnectedLayer(neurons, self.activations[activation]))
+    def addFullyConnectedLayer(self, neurons, activation="sigmoid", dropout=None):
+        self.layers.append(FullyConnectedLayer(neurons, self.activations[activation], dropout))
 
     def regression(self, learning_rate=0.01, cost="quadratic"):
         self.learning_rate = learning_rate
         self.cost = self.costs[cost]
-        self.init_weights()
+        self.init()
 
-    def init_weights(self):
+    def init(self):
         # Uses Gaussian random variables with a mean of 0 and a standard deviation of 1
         for layer, layer_before in zip(self.layers[1:], self.layers[:-1]):
-            layer.init_weights(layer_before.neurons)
+            layer.init(layer_before.neurons)
 
     def feedforward(self, a):
         # Input is in Matrixform. Each row represents one Inputlayer
@@ -62,8 +62,6 @@ class Network(object):
             print("Epoch %d out of %d is complete" % (j + 1, epochs))
 
     def update_weights(self, mini_batch, mini_batch_size):
-        for layer in self.layers[1:]:
-            layer.reset_nabla()
         x, y = mini_batch
         self.backprop(x, y)
         # Uses the error and adjusts the weights for each layer
@@ -108,9 +106,9 @@ if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
     net.addInputLayer(28 * 28)
-    net.addFullyConnectedLayer(500, activation="relu")
+    net.addFullyConnectedLayer(100, activation="relu", dropout=0.5)
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=0.1, cost="quadratic")
-    net.fit(train_data, train_labels, epochs=30, mini_batch_size=10)
+    net.fit(train_data, train_labels, epochs=10, mini_batch_size=15)
     net.accuracy(test_data, test_labels)
     # best accuracy: 0.9822
