@@ -6,6 +6,9 @@ from functions.costs import QuadraticCost
 
 import numpy as np
 import matplotlib.pyplot as plt
+# SciPy Libarry
+from scipy import signal
+import pandas as pd
 
 
 class Network(object):
@@ -93,11 +96,9 @@ class Network(object):
         print("accuracy: ", correct / n_data)
 
     def plot_loss(self, epochs):
-        # decreases the size of the loss_array to a much smaller array. So that it isnt that noisy on the plot
-        n_elements = 30 * epochs
-        y_axis = self.loss.reshape((int(len(self.loss) / n_elements), n_elements))
-        y_axis = np.sum(y_axis, axis=1) / n_elements
-
+        n_squeezing = 50 * epochs  # so bigger the number so smaller the noise
+        y_axis = [np.sum(self.loss[index:index + n_squeezing]) / n_squeezing
+                  for index in range(0, len(self.loss), n_squeezing)]
         x_axis = np.arange(0, epochs, epochs / len(y_axis))
 
         plt.plot(x_axis, y_axis)
@@ -115,7 +116,7 @@ if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
     net.addInputLayer(28 * 28)
-    net.addFullyConnectedLayer(70, activation="relu", dropout=0.5)
+    net.addFullyConnectedLayer(70, activation="relu", dropout=0.8)
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=0.1, cost="quadratic")
     net.fit(train_data, train_labels, epochs=10, mini_batch_size=20, plot=True)
