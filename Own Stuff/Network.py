@@ -6,6 +6,7 @@ from functions.costs import QuadraticCost
 
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.signal import savgol_filter
 
 
 class Network(object):
@@ -93,18 +94,28 @@ class Network(object):
         print("accuracy: ", correct / n_data)
 
     def plot_loss(self, epochs):
+        plt.style.use('ggplot')
         noisy_y_axis = self.loss[:]
         noisy_x_axis = np.arange(0, epochs, epochs / len(noisy_y_axis))
 
-        n_squeezing = 50 * epochs  # so bigger the number so smaller the noise
-        # removes noise
-        smooth_y_axis = [np.sum(self.loss[index:index + n_squeezing]) / n_squeezing
-                         for index in range(0, len(self.loss), n_squeezing)]
+        n_squeezing = 30 * epochs  # the larger the number so smaller the noise
+        # removes noise by taking the mean of data_pieces
+        smooth_y_axis = [np.sum(noisy_y_axis[index:index + n_squeezing]) / n_squeezing
+                         for index in range(0, len(noisy_y_axis), n_squeezing)]
         smooth_x_axis = np.arange(0, epochs, epochs / len(smooth_y_axis))
 
-        plt.plot(noisy_x_axis, noisy_y_axis)
+        window = 151 * epochs
+        if window % 2 != 1:
+            window += 1
+        test_y_axis = savgol_filter(noisy_y_axis, window, 1)
+        test_x_axis = np.arange(0, epochs, epochs / len(test_y_axis))
+
+        plt.plot(noisy_x_axis, noisy_y_axis, color="lightblue", linewidth=0.1)
         plt.plot(smooth_x_axis, smooth_y_axis, color="red")
+        plt.plot(test_x_axis, test_y_axis, color="blue")
         plt.axis([-0.2, epochs + 0.2, -0.005, np.max(smooth_y_axis) + 0.1])
+        plt.xlabel("epochs")
+        plt.ylabel("loss")
         plt.show()
 
     # Input x = Matrix, y = Matrix
@@ -118,9 +129,9 @@ if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
     net.addInputLayer(28 * 28)
-    net.addFullyConnectedLayer(100, activation="relu")
+    net.addFullyConnectedLayer(100, activation="relu", dropout=0.8)
     net.addFullyConnectedLayer(10, activation="sigmoid")
-    net.regression(learning_rate=0.1, cost="quadratic")
-    net.fit(train_data, train_labels, epochs=10, mini_batch_size=20, plot=True)
+    net.regression(learning_rate=1, cost="quadratic")
+    net.fit(train_data, train_labels, epochs=10, mini_batch_size=10, plot=True)
     net.accuracy(test_data, test_labels)
     # best accuracy: 0.9822
