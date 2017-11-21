@@ -3,12 +3,17 @@ from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.estimator import regression
 import tflearn.datasets.mnist as mnist
+from prosieben.datacreation.image_loader import load_imgs
 
-X, Y, test_x, test_y = mnist.load_data(one_hot=True)
-X = X.reshape([-1, 28, 28, 1])
-test_x = test_x.reshape([-1, 28, 28, 1])
+X, Y, test_x, test_y = load_imgs()
+X = X.T.A
+Y = Y.T.A
+test_x = test_x.T.A
+test_y = test_y.T.A
+X = X.reshape([-1, 50, 50, 1])
+test_x = test_x.reshape([-1, 50, 50, 1])
 
-convnet = input_data(shape=[None, 28, 28, 1], name='input')
+convnet = input_data(shape=[None, 50, 50, 1], name='input')
 
 convnet = conv_2d(convnet, 32, 2, activation='relu')
 convnet = max_pool_2d(convnet, 2)
@@ -19,7 +24,7 @@ convnet = max_pool_2d(convnet, 2)
 convnet = fully_connected(convnet, 1024, activation='relu')
 convnet = dropout(convnet, 0.8)
 
-convnet = fully_connected(convnet, 10, activation='softmax')
+convnet = fully_connected(convnet, 2, activation='softmax')
 convnet = regression(convnet, optimizer='adam', learning_rate=0.01, loss='categorical_crossentropy', name='targets')
 
 model = tflearn.DNN(convnet)
