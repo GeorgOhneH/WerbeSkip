@@ -6,14 +6,14 @@ def plane_background(width_logo=True):
     padding = 9
     borders = [
         (padding, padding, padding, padding),
-        (padding - 1, padding, padding + 1, padding),
-        (padding + 1, padding, padding - 1, padding),
-        (padding, padding + 1, padding, padding - 1),
-        (padding, padding - 1, padding, padding + 1),
-        (padding + 1, padding + 1, padding - 1, padding - 1),
-        (padding - 1, padding - 1, padding + 1, padding + 1),
-        (padding - 1, padding + 1, padding + 1, padding - 1),
-        (padding + 1, padding - 1, padding - 1, padding + 1),
+        # (padding - 1, padding, padding + 1, padding),
+        # (padding + 1, padding, padding - 1, padding),
+        # (padding, padding + 1, padding, padding - 1),
+        # (padding, padding - 1, padding, padding + 1),
+        # (padding + 1, padding + 1, padding - 1, padding - 1),
+        # (padding - 1, padding - 1, padding + 1, padding + 1),
+        # (padding - 1, padding + 1, padding + 1, padding - 1),
+        # (padding + 1, padding - 1, padding - 1, padding + 1),
     ]
     filters = [
         ImageFilter.DETAIL,

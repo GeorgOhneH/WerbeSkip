@@ -91,7 +91,7 @@ class Network(object):
             a = x[:, index]
             if np.argmax(a) == np.argmax(y[:, index]):
                 correct += 1
-        print("accuracy: ", correct / n_data)
+        print("accuracy:", correct / n_data, "correct", correct," of ", n_data)
 
     def plot_loss(self, epochs):
         plt.style.use('ggplot')
