@@ -39,12 +39,17 @@ class Window(object):
                 self.images[index]["class_path"] = self.classes_paths[2]
                 lock_next = True
                 index += 1
+            elif pressed_keys[K_4] and not lock_next:
+                self.images[index]["class_path"] = self.classes_paths[3]
+                lock_next = True
+                index += 1
             elif pressed_keys[K_LEFT] and not lock_next:
                 lock_next = True
                 index -= 1
             elif pressed_keys[K_RIGHT] and not lock_next:
                 lock_next = True
                 index += 1
+            index %= len(self.images)
             image = pygame.image.load(self.images[index]["path"])
             self.screen.blit(image, (0, 0))
             font = pygame.font.SysFont("arial", 50)
@@ -61,7 +66,8 @@ class Window(object):
 if __name__ == "__main__":
     path_to_images = "prosieben/images/unclassified"
     paths_to_classes = [
-        "prosieben/images/classified/logo",
+        "prosieben/images/classified/logo_black_boarder",
+        "prosieben/images/classified/logo_no_black_boarder",
         "prosieben/images/classified/no_logo",
         "prosieben/images/classified/special",
     ]
