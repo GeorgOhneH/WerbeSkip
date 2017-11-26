@@ -7,6 +7,18 @@ from PIL import Image
 
 
 class Window(object):
+    """
+    Makes a Pygamewindow where all images from a directory will be displayed
+    and will be moved to the correct directorys as soon the window is closed.
+    It has 2 inputs:
+    1. The path to one directory were all the images are located
+    2. A list with all paths to the directorys were the image should be moved to.
+
+    You can switch between images with the arrowkeys left and right
+    To move an image to a other directory press the correct nummber where
+    1 equals to the first item in the list were the paths to classes are
+    2 equals to the second one and so on
+    """
     def __init__(self, path_to_images, paths_to_classes):
         pygame.init()
         self.classes_paths = paths_to_classes
