@@ -22,10 +22,10 @@ class Window(object):
             for event in pygame.event.get():
                 if event.type == KEYUP:
                     lock_next = False
-                if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        self.move_imgs()
-                        exit()
+                if event.type == KEYDOWN and event.key == K_ESCAPE or event.type == QUIT:
+                    self.move_imgs()
+                    pygame.quit()
+                    exit()
             pressed_keys = pygame.key.get_pressed()
             if pressed_keys[K_1] and not lock_next:
                 self.images[index]["class_path"] = self.classes_paths[0]

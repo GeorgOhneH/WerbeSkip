@@ -14,7 +14,7 @@ def save_img(url, path, name):
 if __name__ == "__main__":
     x = 0
     while True:
-        save_img("https://thumb.zattic.com/prosieben/1024x576.jpg", "prosieben/images/unclassified", "F" + str(x) + ".jpg")
+        save_img("https://thumb.zattic.com/prosieben/1024x576.jpg", "prosieben/images/unclassified", "G" + str(x) + ".jpg")
         print("image saved: %s" % x)
         x += 1
         sleep(15)
