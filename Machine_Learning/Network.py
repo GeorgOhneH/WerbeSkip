@@ -10,6 +10,13 @@ from scipy.signal import savgol_filter
 
 
 class Network(object):
+    """
+    Is a deep neural network which uses stochastic gradient descent
+    and backpropagation to train the network
+    It can use dynamically different activation-function and different cost-functions
+    It supports only a FullyConnectedLayer
+    The inputform is a numpymatrix, where the rows of the matrix the single dataelements represent
+    """
     def __init__(self):
         self.layers = []
         self.biases = None
@@ -43,13 +50,12 @@ class Network(object):
             layer.init(layer_before.neurons)
 
     def feedforward(self, a):
-        # Input is in Matrixform. Each row represents one Inputlayer
+        # Input is in Matrixform. Each row represents one datapoint
         for layer in self.layers[1:]:
             a = layer.forward(a)
         return a
 
     def fit(self, training_data_x, training_data_y, epochs, mini_batch_size, plot=False):
-        # trains the neural network with  gradient descent and backpropagation
         for j in range(epochs):
             training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
             mini_batches = [(training_data_x[:, k:mini_batch_size + k], training_data_y[:, k:mini_batch_size + k])
