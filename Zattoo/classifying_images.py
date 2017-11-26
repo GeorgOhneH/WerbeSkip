@@ -43,6 +43,10 @@ class Window(object):
                 self.images[index]["class_path"] = self.classes_paths[3]
                 lock_next = True
                 index += 1
+            elif pressed_keys[K_5] and not lock_next:
+                self.images[index]["class_path"] = self.classes_paths[4]
+                lock_next = True
+                index += 1
             elif pressed_keys[K_LEFT] and not lock_next:
                 lock_next = True
                 index -= 1
@@ -54,7 +58,9 @@ class Window(object):
             self.screen.blit(image, (0, 0))
             font = pygame.font.SysFont("arial", 50)
             text = font.render(str(self.images[index]["class_path"]), True, (200, 200, 0))
+            name = font.render(self.images[index]["path"].split("d")[-1], True, (200, 200, 0))
             self.screen.blit(text, (0, 0))
+            self.screen.blit(name, (0, self.height - 50))
             pygame.display.update()
 
     def move_imgs(self):
@@ -66,8 +72,9 @@ class Window(object):
 if __name__ == "__main__":
     path_to_images = "prosieben/images/unclassified"
     paths_to_classes = [
-        "prosieben/images/classified/logo_black_boarder",
-        "prosieben/images/classified/logo_no_black_boarder",
+        "prosieben/images/classified/logo_boarder_left_right",
+        "prosieben/images/classified/logo_boarder_up_down",
+        "prosieben/images/classified/logo",
         "prosieben/images/classified/no_logo",
         "prosieben/images/classified/special",
     ]
