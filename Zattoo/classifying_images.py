@@ -21,6 +21,7 @@ class Window(object):
     """
     def __init__(self, path_to_images, paths_to_classes):
         pygame.init()
+        self.class_keys = [K_1, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9, K_0]
         self.classes_paths = paths_to_classes
         self.image_paths = [os.path.join(path_to_images, image_path) for image_path in os.listdir(path_to_images)]
         self.images = [{"path": image_path, "class_path": None} for image_path in self.image_paths]
@@ -32,47 +33,48 @@ class Window(object):
         lock_next = False
         while True:
             for event in pygame.event.get():
+                # removes lock
                 if event.type == KEYUP:
                     lock_next = False
+                # closes windows and moves the images
                 if event.type == KEYDOWN and event.key == K_ESCAPE or event.type == QUIT:
                     self.move_imgs()
                     pygame.quit()
                     exit()
             pressed_keys = pygame.key.get_pressed()
-            if pressed_keys[K_1] and not lock_next:
-                self.images[index]["class_path"] = self.classes_paths[0]
-                lock_next = True
-                index += 1
-            elif pressed_keys[K_2] and not lock_next:
-                self.images[index]["class_path"] = self.classes_paths[1]
-                lock_next = True
-                index += 1
-            elif pressed_keys[K_3] and not lock_next:
-                self.images[index]["class_path"] = self.classes_paths[2]
-                lock_next = True
-                index += 1
-            elif pressed_keys[K_4] and not lock_next:
-                self.images[index]["class_path"] = self.classes_paths[3]
-                lock_next = True
-                index += 1
-            elif pressed_keys[K_5] and not lock_next:
-                self.images[index]["class_path"] = self.classes_paths[4]
-                lock_next = True
-                index += 1
-            elif pressed_keys[K_LEFT] and not lock_next:
+            # Alt + f4 closes window without saving
+            if pressed_keys[K_F4] and pressed_keys[K_LALT]:
+                pygame.quit()
+                exit()
+            # assign image and move to the next one
+            for index_key, key in enumerate(self.class_keys):
+                if pressed_keys[key] and not lock_next:
+                    self.images[index]["class_path"] = self.classes_paths[index_key]
+                    lock_next = True
+                    index += 1
+                    break
+            # step through the images
+            if pressed_keys[K_LEFT] and not lock_next:
                 lock_next = True
                 index -= 1
             elif pressed_keys[K_RIGHT] and not lock_next:
                 lock_next = True
                 index += 1
+            # prevents overindexing
             index %= len(self.images)
+            # loads image
             image = pygame.image.load(self.images[index]["path"])
+            # displays image
             self.screen.blit(image, (0, 0))
+
+            # makes the font and displays it
             font = pygame.font.SysFont("arial", 50)
             text = font.render(str(self.images[index]["class_path"]), True, (200, 200, 0))
             name = font.render(self.images[index]["path"].split("d")[-1], True, (200, 200, 0))
             self.screen.blit(text, (0, 0))
             self.screen.blit(name, (0, self.height - 50))
+
+            # updates screen
             pygame.display.update()
 
     def move_imgs(self):
