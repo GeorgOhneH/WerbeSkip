@@ -8,13 +8,13 @@ def load_mnist():
     train_images, train_labels = MNIST.load("mnist/train-images.idx3-ubyte", "mnist/train-labels.idx1-ubyte")
     test_images, test_labels = MNIST.load("mnist/t10k-images.idx3-ubyte", "mnist/t10k-labels.idx1-ubyte")
 
-    np_train_images = np.matrix(train_images, dtype="float64").transpose() / 255
-    np_train_labels = np.asmatrix(np.zeros((10, len(train_labels)), dtype=int))
+    np_train_images = np.matrix(train_images, dtype="float32").transpose() / 255
+    np_train_labels = np.asmatrix(np.zeros((10, len(train_labels)), dtype="int8"))
     for index, num in enumerate(train_labels):
         np_train_labels[num, index] = 1
 
-    np_test_images = np.matrix(test_images, dtype="float64").transpose() / 255
-    np_test_labels = np.asmatrix(np.zeros((10, len(test_labels)), dtype=int))
+    np_test_images = np.matrix(test_images, dtype="float32").transpose() / 255
+    np_test_labels = np.asmatrix(np.zeros((10, len(test_labels)), dtype="int8"))
     for index, num in enumerate(test_labels):
         np_test_labels[num, index] = 1
     return np_train_images, np_train_labels, np_test_images, np_test_labels

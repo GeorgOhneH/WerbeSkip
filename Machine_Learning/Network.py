@@ -128,7 +128,7 @@ class Network(object):
     def shuffle(self, x, y):
         # shuffles data in unison with helping from indexing
         indexes = np.random.permutation(x.shape[1])
-        return x[:, indexes], y[:, indexes]
+        return x[..., indexes], y[..., indexes]
 
 
 if __name__ == "__main__":
