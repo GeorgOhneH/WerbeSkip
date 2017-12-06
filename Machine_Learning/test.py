@@ -1,7 +1,5 @@
-import numpy as np
+import re
 
-x = np.arange(0, 9)
-x.shape = (3, 3)
-print(x[..., [0, 1]])
-print(x.dtype)
-
+m = re.match(r"([a-zA-Z]+)([0-9]+)","A11")
+print(int(m.group(2)))
+print(ord(m.group(1)) + int(m.group(2)) / 10 ** len(m.group(2)))
