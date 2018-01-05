@@ -1,20 +1,21 @@
 import urllib.request
 import os
 import warnings
-from time import sleep
+import time
 
 
-def save_img(url, path, name):
-    fullfilename = os.path.join(path, name)
+def save_img(path):
+    creation_date = time.strftime('%Y-%m-%d %H-%M-%S', time.localtime())
+    fullfilename = os.path.join(path, creation_date + ".jpg")
     if os.path.exists(fullfilename):
         warnings.warn("You are overwriting an existent file")
-    urllib.request.urlretrieve(url, fullfilename)
+    urllib.request.urlretrieve("https://thumb.zattic.com/prosieben/1024x576.jpg", fullfilename)
 
 
 if __name__ == "__main__":
     x = 0
     while True:
-        save_img("https://thumb.zattic.com/prosieben/1024x576.jpg", "prosieben/images/unclassified", "K" + str(x) + ".jpg")
+        save_img("prosieben/images/unclassified")
         print("image saved: %s" % x)
         x += 1
-        sleep(15)
+        time.sleep(15)
