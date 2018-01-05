@@ -25,7 +25,7 @@ class Window(object):
         self.class_keys = [K_1, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9, K_0]
         self.classes_paths = paths_to_classes
         self.image_paths = [os.path.join(path_to_images, image_path)
-                            for image_path in sorted(os.listdir(path_to_images), key=self.sort_list)]
+                            for image_path in os.listdir(path_to_images)]
         self.images = [{"path": image_path, "class_path": None} for image_path in self.image_paths]
         self.width, self.height = Image.open(self.image_paths[0]).size
         self.screen = pygame.display.set_mode((self.width, self.height))
@@ -83,11 +83,6 @@ class Window(object):
         for image in self.images:
             if image["class_path"] is not None:
                 shutil.move(image["path"], image["class_path"])
-
-    def sort_list(self, element):
-        r = re.compile("([a-zA-Z]+)([0-9]+)")
-        m = r.match(element)
-        return ord(m.group(1)) * 10000 + int(m.group(2))
 
 
 if __name__ == "__main__":
