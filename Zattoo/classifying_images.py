@@ -1,4 +1,3 @@
-import re
 import pygame
 from pygame.locals import *
 import os
@@ -62,14 +61,14 @@ class Window(object):
             elif pressed_keys[K_RIGHT] and not lock_next:
                 lock_next = True
                 index += 1
-            # prevents overindexing
+            # prevents indexerror
             index %= len(self.images)
             # loads image
             image = pygame.image.load(self.images[index]["path"])
             # displays image
             self.screen.blit(image, (0, 0))
 
-            # makes the font and displays it
+            # makes the fonts and displays it
             font = pygame.font.SysFont("arial", 50)
             text = font.render(str(self.images[index]["class_path"]), True, (200, 200, 0))
             name = font.render(self.images[index]["path"].split("d")[-1], True, (200, 200, 0))
@@ -80,9 +79,12 @@ class Window(object):
             pygame.display.update()
 
     def move_imgs(self):
+        x = 0
         for image in self.images:
             if image["class_path"] is not None:
+                x += 1
                 shutil.move(image["path"], image["class_path"])
+        print("Moved {} images".format(x))
 
 
 if __name__ == "__main__":
