@@ -6,4 +6,3 @@ Numpy is a numeric library including N-Arrays, Matrices and mathematical functio
 
 ### Work in Progress
 The program is still in an early state and can't do much
-
