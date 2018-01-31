@@ -1,4 +1,4 @@
-from prosieben.datacreation.create_images import plane_background
+from image_processing.create_images import plane_background
 import numpy as np
 
 

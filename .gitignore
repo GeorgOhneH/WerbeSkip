@@ -7,3 +7,7 @@ MaturaArbeit WerbeSkip.xlsx
 Tenserflow/__pycache__/
 test.py
 /Zattoo/prosieben/images/
+Machine_Learning/__pycache__/
+Machine_Learning/functions/__pycache__/
+Machine_Learning/layers/__pycache__/
+Zattoo/prosieben/datacreation/__pycache__/

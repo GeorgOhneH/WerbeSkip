@@ -1,5 +1,5 @@
 from Machine_Learning.Network import Network
-from prosieben.datacreation.image_loader import load_imgs
+from image_processing.image_loader import load_imgs
 
 
 train_data, train_labels, test_data, test_labels = load_imgs()

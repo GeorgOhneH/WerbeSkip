@@ -10,6 +10,9 @@ class Window(object):
     """
     Makes a Pygamewindow where all images from a directory will be displayed
     and will be moved to the correct directorys as soon the window is closed.
+
+    The Window can be closed with ESC or the red X in the left upper corner
+
     It has 2 inputs:
     1. The path to one directory were all the images are located
     2. A list with all paths to the directorys were the image should be moved to.

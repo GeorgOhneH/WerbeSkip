@@ -2,8 +2,7 @@ import tflearn
 from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.estimator import regression
-import tflearn.datasets.mnist as mnist
-from prosieben.datacreation.image_loader import load_imgs
+from image_processing.image_loader import load_imgs
 
 X, Y, test_x, test_y = load_imgs()
 X = X.T.A
