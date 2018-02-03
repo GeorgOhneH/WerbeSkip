@@ -6,6 +6,7 @@ from functions.costs import QuadraticCost
 
 import numpy as np
 import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 from scipy.signal import savgol_filter
 
 
@@ -100,28 +101,24 @@ class Network(object):
         print("accuracy:", correct / n_data, "correct", correct," of ", n_data)
 
     def plot_loss(self, epochs, current_epoch):
-        plt.style.use('ggplot')
         noisy_y_axis = self.loss[:]
         noisy_x_axis = np.arange(0, current_epoch, current_epoch / len(noisy_y_axis))
 
-        n_squeezing = 5 * current_epoch  # the larger the number so smaller the noise
-        # removes noise by taking the mean of data_pieces
-        smooth_y_axis = [np.sum(noisy_y_axis[index:index + n_squeezing]) / n_squeezing
-                         for index in range(0, len(noisy_y_axis), n_squeezing)]
+        window = int(len(noisy_y_axis) * 0.1)
+        if window % 2 == 0:
+            window -= 1
+        print(len(noisy_y_axis))
+        smooth_y_axis = savgol_filter(noisy_y_axis, window, 1)
         smooth_x_axis = np.arange(0, current_epoch, current_epoch / len(smooth_y_axis))
 
-        window = 20 * current_epoch
-        if window % 2 != 1:
-            window += 1
-        test_y_axis = savgol_filter(noisy_y_axis, window, 1)
-        test_x_axis = np.arange(0, current_epoch, current_epoch / len(test_y_axis))
-
         plt.semilogy(noisy_x_axis, noisy_y_axis, color="lightblue", linewidth=0.1)
-        plt.semilogy(test_x_axis, test_y_axis, color="blue", linewidth=0.5)
+        plt.semilogy(smooth_x_axis, smooth_y_axis, color="blue", linewidth=0.5)
+
         plt.axis([-0.2, epochs * 1.05, -0.005, np.max(noisy_y_axis) * 1.2])
-        plt.xlabel("epochs")
-        plt.ylabel("loss")
-        plt.show(block=False)
+        plt.xlabel("Epochs")
+        plt.ylabel("Loss")
+
+        plt.show(block=True)
 
     # Input x = Matrix, y = Matrix
     def shuffle(self, x, y):
