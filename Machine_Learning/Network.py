@@ -56,7 +56,7 @@ class Network(object):
         return a
 
     def fit(self, training_data_x, training_data_y, epochs, mini_batch_size, plot=False):
-        for j in range(epochs):
+        for current_epoch, j in enumerate(range(epochs)):
             training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
             mini_batches = [(training_data_x[:, k:mini_batch_size + k], training_data_y[:, k:mini_batch_size + k])
                             for k in range(0, training_data_y.shape[1], mini_batch_size)]
@@ -64,8 +64,8 @@ class Network(object):
                 self.update_weights(mini_batch, mini_batch_size)
                 print("\rEpoch %d loss: " % (j + 1), self.loss[-1], sep='', end='', flush=True)
             print("\nEpoch %d out of %d is complete" % (j + 1, epochs))
-        if plot:
-            self.plot_loss(epochs)
+            if plot:
+                self.plot_loss(epochs, current_epoch+1)
 
     def update_weights(self, mini_batch, mini_batch_size):
         x, y = mini_batch
@@ -99,30 +99,29 @@ class Network(object):
                 correct += 1
         print("accuracy:", correct / n_data, "correct", correct," of ", n_data)
 
-    def plot_loss(self, epochs):
+    def plot_loss(self, epochs, current_epoch):
         plt.style.use('ggplot')
         noisy_y_axis = self.loss[:]
-        noisy_x_axis = np.arange(0, epochs, epochs / len(noisy_y_axis))
+        noisy_x_axis = np.arange(0, current_epoch, current_epoch / len(noisy_y_axis))
 
-        n_squeezing = 5 * epochs  # the larger the number so smaller the noise
+        n_squeezing = 5 * current_epoch  # the larger the number so smaller the noise
         # removes noise by taking the mean of data_pieces
         smooth_y_axis = [np.sum(noisy_y_axis[index:index + n_squeezing]) / n_squeezing
                          for index in range(0, len(noisy_y_axis), n_squeezing)]
-        smooth_x_axis = np.arange(0, epochs, epochs / len(smooth_y_axis))
+        smooth_x_axis = np.arange(0, current_epoch, current_epoch / len(smooth_y_axis))
 
-        window = 28 * epochs
+        window = 20 * current_epoch
         if window % 2 != 1:
             window += 1
         test_y_axis = savgol_filter(noisy_y_axis, window, 1)
-        test_x_axis = np.arange(0, epochs, epochs / len(test_y_axis))
+        test_x_axis = np.arange(0, current_epoch, current_epoch / len(test_y_axis))
 
         plt.semilogy(noisy_x_axis, noisy_y_axis, color="lightblue", linewidth=0.1)
-        plt.semilogy(smooth_x_axis, smooth_y_axis, color="red", linewidth=0.5)
         plt.semilogy(test_x_axis, test_y_axis, color="blue", linewidth=0.5)
         plt.axis([-0.2, epochs * 1.05, -0.005, np.max(noisy_y_axis) * 1.2])
         plt.xlabel("epochs")
         plt.ylabel("loss")
-        plt.show()
+        plt.show(block=False)
 
     # Input x = Matrix, y = Matrix
     def shuffle(self, x, y):
