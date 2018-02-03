@@ -20,7 +20,7 @@ logo_paths = [
 ]
 
 no_logo_paths = [
-    ("prosieben/images/classified/no_logo", "no_boarder"),
+    ("../prosieben/images/classified/no_logo", "no_boarder"),
 ]
 
 PADDING = 25
@@ -49,4 +49,4 @@ def sample_imgs(logo=True):
 
 
 if __name__ == "__main__":
-    print(sample_imgs())
+    print(len(sample_imgs(False)))

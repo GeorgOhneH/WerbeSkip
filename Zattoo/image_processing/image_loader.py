@@ -1,4 +1,5 @@
 from image_processing.create_images import plane_background
+from image_processing.cropping_images import sample_imgs
 import numpy as np
 
 
@@ -14,21 +15,24 @@ def img_to_matrix(imgs):
     return imgs_matrix
 
 
+def loader(func):
+    image_logo = img_to_matrix(func(True))
+    label_logo = np.matrix([[0, 1] for _ in range(image_logo.shape[1])]).T
+
+    image_no_logo = img_to_matrix(func(False))
+    label_no_logo = np.matrix([[1, 0] for _ in range(image_no_logo.shape[1])]).T
+
+    train_image = np.c_[image_logo, image_no_logo]  # appends the matrix
+    train_label = np.c_[label_logo, label_no_logo]
+
+    return shuffle(train_image, train_label)
+
+
 def load_imgs():
-    train_image_logo = img_to_matrix(plane_background(True))
-    train_label_logo = np.matrix([[0, 1] for _ in range(train_image_logo.shape[1])]).T
+    train_image, train_label = loader(plane_background)
+    test_image, test_label = loader(sample_imgs)
 
-    train_image_no_logo = img_to_matrix(plane_background(True))
-    train_label_no_logo = np.matrix([[1, 0] for _ in range(train_image_no_logo.shape[1])]).T
-
-    train_image = np.c_[train_image_logo, train_image_no_logo]  # appends the matrix
-    train_label = np.c_[train_label_logo, train_label_no_logo]
-
-    train_image, train_label = shuffle(train_image, train_label)
-
-    test_size = int(len(train_image) * 0.1)
-
-    return train_image[:, :-test_size], train_label[:, :-test_size], train_image[:, -test_size:], train_label[:, -test_size:]
+    return train_image, train_label, test_image, test_label
 
 
 if __name__ == "__main__":
