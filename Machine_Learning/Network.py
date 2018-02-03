@@ -118,7 +118,7 @@ class Network(object):
         plt.xlabel("Epochs")
         plt.ylabel("Loss")
 
-        plt.show(block=True)
+        plt.show(block=False)
 
     # Input x = Matrix, y = Matrix
     def shuffle(self, x, y):
