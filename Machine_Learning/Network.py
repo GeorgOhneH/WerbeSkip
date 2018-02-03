@@ -107,7 +107,7 @@ class Network(object):
         window = int(len(noisy_y_axis) * 0.1)
         if window % 2 == 0:
             window -= 1
-        print(len(noisy_y_axis))
+
         smooth_y_axis = savgol_filter(noisy_y_axis, window, 1)
         smooth_x_axis = np.arange(0, current_epoch, current_epoch / len(smooth_y_axis))
 
