@@ -143,7 +143,7 @@ class Network(object):
         precision = tp/(tp+fp)
         recall = tp/(tp+fn)
         f1_score = 2*(recall * precision) / (recall + precision)
-        print("Evaluation:\nloss: {:.5f} | accuracy: {:.5f} | precision: {:.5f} | recall: {:.5f} | f1_score: {:.5f".format(
+        print("Evaluation:\nloss: {:.5f} | accuracy: {:.5f} | precision: {:.5f} | recall: {:.5f} | f1_score: {:.5f}".format(
             loss, accuracy, precision, recall, f1_score
         ))
 
