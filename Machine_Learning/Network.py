@@ -4,6 +4,7 @@ from layers.input import InputLayer
 from functions.activations import Sigmoid, ReLU
 from functions.costs import QuadraticCost
 
+from random import randint
 import numpy as np
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
@@ -66,15 +67,16 @@ class Network(object):
             for index, mini_batch in enumerate(mini_batches):
                 self.update_weights(mini_batch, mini_batch_size)
 
-            if monitoring:
-                validation_loss, validation_accuracy = self.validate(validation_data_x, validation_data_y)
-                print(
-                    "Epoch {} | train_loss: {:.5f} | train_accuracy: {:.5f}\n"
-                    "validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
-                        j+1, np.mean(self.train_loss[-len(mini_batches):]),
-                        self.train_accuracy[-1],
-                        validation_loss, validation_accuracy),
-                    sep='', end='\n', flush=True)
+                if monitoring:
+                    rand_num = randint(0, validation_data_x.shape[1]-mini_batch_size)
+                    validation_loss, validation_accuracy = self.validate(validation_data_x[..., rand_num:rand_num+mini_batch_size],
+                                                                         validation_data_y[..., rand_num:rand_num+mini_batch_size])
+                    print(
+                        "Epoch {} of {} | train_loss: {:.5f} | train_accuracy: {:.5f}\n"
+                        "progress: {:.5f} | validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
+                            j+1, epochs, np.mean(self.train_loss[-len(mini_batches):]), self.train_accuracy[-1],
+                            index / len(mini_batches), validation_loss, validation_accuracy),
+                        sep='', end='\n', flush=True)
 
         if plot:
             self.plot_loss(epochs)
@@ -122,18 +124,25 @@ class Network(object):
         return correct / n_data
 
     def plot_loss(self, epochs):
-        noisy_y_axis = self.train_loss[:]
+        noisy_train_y_axis = self.train_loss[:]
+        noisy_validation_y_axis = self.validate_loss[:]
 
-        window = int(len(noisy_y_axis) * 0.05)
-        if window % 2 == 0:
-            window -= 1
+        train_window = int(len(noisy_train_y_axis) * 0.05)
+        if train_window % 2 == 0:
+            train_window -= 1
 
-        smooth_y_axis = savgol_filter(noisy_y_axis, window, 1)
-        smooth_x_axis = np.arange(0, epochs, epochs / len(smooth_y_axis))
+        validation_window = int(len(noisy_validation_y_axis) * 0.05)
+        if validation_window % 2 == 0:
+            validation_window -= 1
 
-        plt.semilogy(smooth_x_axis, smooth_y_axis, color="blue", linewidth=1, label="train")
+        smooth_train_y_axis = savgol_filter(noisy_train_y_axis, train_window, 1)
+        smooth_train_x_axis = np.arange(0, epochs, epochs / len(smooth_train_y_axis))
 
-        plt.axis([0, epochs, np.min(smooth_y_axis), np.max(smooth_y_axis)])
+        smooth_validation_y_axis = savgol_filter(noisy_validation_y_axis, validation_window, 1)
+        smooth_validation_x_axis = np.arange(0, epochs, epochs / len(smooth_validation_y_axis))
+
+        plt.semilogy(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
+        plt.semilogy(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
 
         plt.title("model loss")
         plt.xlabel("epochs")
@@ -157,6 +166,5 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(100, activation="relu", dropout=0.8)
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=1, cost="quadratic")
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=4, mini_batch_size=10, plot=True, monitoring=True)
-    print(net.accuracy(test_data, test_labels))
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=4, mini_batch_size=50, plot=True, monitoring=True)
     # best accuracy: 0.9822
