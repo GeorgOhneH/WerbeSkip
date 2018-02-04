@@ -57,7 +57,7 @@ class Network(object):
         return a
 
     def fit(self, training_data_x, training_data_y, epochs, mini_batch_size, plot=False):
-        for current_epoch, j in enumerate(range(epochs)):
+        for j in range(epochs):
             training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
             mini_batches = [(training_data_x[:, k:mini_batch_size + k], training_data_y[:, k:mini_batch_size + k])
                             for k in range(0, training_data_y.shape[1], mini_batch_size)]
@@ -65,8 +65,9 @@ class Network(object):
                 self.update_weights(mini_batch, mini_batch_size)
                 print("\rEpoch %d loss: " % (j + 1), self.loss[-1], sep='', end='', flush=True)
             print("\nEpoch %d out of %d is complete" % (j + 1, epochs))
-            if plot:
-                self.plot_loss(epochs, current_epoch+1)
+
+        if plot:
+            self.plot(epochs)
 
     def update_weights(self, mini_batch, mini_batch_size):
         x, y = mini_batch
@@ -98,27 +99,28 @@ class Network(object):
             a = x[:, index]
             if np.argmax(a) == np.argmax(y[:, index]):
                 correct += 1
-        print("accuracy:", correct / n_data, "correct", correct," of ", n_data)
+        print("accuracy:", correct / n_data, "correct", correct, " of ", n_data)
 
-    def plot_loss(self, epochs, current_epoch):
+    def plot(self, epochs):
         noisy_y_axis = self.loss[:]
-        noisy_x_axis = np.arange(0, current_epoch, current_epoch / len(noisy_y_axis))
 
-        window = int(len(noisy_y_axis) * 0.1)
+        window = int(len(noisy_y_axis) * 0.2)
         if window % 2 == 0:
             window -= 1
 
         smooth_y_axis = savgol_filter(noisy_y_axis, window, 1)
-        smooth_x_axis = np.arange(0, current_epoch, current_epoch / len(smooth_y_axis))
+        smooth_x_axis = np.arange(0, epochs, epochs / len(smooth_y_axis))
 
-        plt.semilogy(noisy_x_axis, noisy_y_axis, color="lightblue", linewidth=0.1)
-        plt.semilogy(smooth_x_axis, smooth_y_axis, color="blue", linewidth=0.5)
+        plt.semilogy(smooth_x_axis, smooth_y_axis, color="blue", linewidth=1, label="train")
 
-        plt.axis([-0.2, epochs * 1.05, -0.005, np.max(noisy_y_axis) * 1.2])
-        plt.xlabel("Epochs")
-        plt.ylabel("Loss")
+        plt.axis([0, epochs, np.min(smooth_y_axis), np.max(smooth_y_axis)])
 
-        plt.show(block=False)
+        plt.title("model loss")
+        plt.xlabel("epochs")
+        plt.ylabel("loss")
+
+        plt.ioff()
+        plt.show()
 
     # Input x = Matrix, y = Matrix
     def shuffle(self, x, y):
