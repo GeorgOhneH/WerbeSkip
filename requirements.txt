@@ -3,3 +3,5 @@ tflearn
 matplotlib
 scipy
 pillow
+tensorflow
+python-mnist

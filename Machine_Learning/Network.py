@@ -123,6 +123,30 @@ class Network(object):
                 correct += 1
         return correct / n_data
 
+    def evaluate(self, x, y):
+        # only works by yes, no answer
+        x = self.feedforward(x)
+        loss = self.cost.function(x, y)
+        tp, tn, fp, fn = 0, 0, 0, 0  # True Positive, True Negative, False Positive, False Negative
+        for index in range(x.shape[1]):
+            a = np.argmax(x[:, index])
+            b = np.argmax(y[:, index])
+            if a == 1 and b == 1:
+                tp += 1
+            elif a == 0 and b == 0:
+                tn += 1
+            elif a == 1 and b == 0:
+                fp += 1
+            elif a == 0 and b == 1:
+                fn += 1
+        accuracy = (tp+tn)/(tp+tn+fp+fn)
+        precision = tp/(tp+fp)
+        recall = tp/(tp+fn)
+        f1_score = 2*(recall * precision) / (recall + precision)
+        print("Evaluation:\nloss: {:.5f} | accuracy: {:.5f} | precision: {:.5f} | recall: {:.5f} | f1_score: {:.5f".format(
+            loss, accuracy, precision, recall, f1_score
+        ))
+
     def plot_loss(self, epochs):
         noisy_train_y_axis = self.train_loss[:]
         noisy_validation_y_axis = self.validate_loss[:]
