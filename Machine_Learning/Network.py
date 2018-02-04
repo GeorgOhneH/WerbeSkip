@@ -63,17 +63,18 @@ class Network(object):
             training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
             mini_batches = [(training_data_x[:, k:mini_batch_size + k], training_data_y[:, k:mini_batch_size + k])
                             for k in range(0, training_data_y.shape[1], mini_batch_size)]
-            for mini_batch in mini_batches:
+            for index, mini_batch in enumerate(mini_batches):
                 self.update_weights(mini_batch, mini_batch_size)
 
-                if monitoring:
-                    validation_loss, validation_accuracy = self.validate(validation_data_x, validation_data_y)
-                    print(
-                        "Epoch {} of {} | train_loss: {:.5} | train_accuracy: {}\n"
-                        "validation_loss: {:.5} | validation_accuracy: {}".format(
-                            j+1, epochs, self.train_loss[-1],
-                            self.train_accuracy[-1], validation_loss, validation_accuracy),
-                        sep='', end='\n', flush=True)
+            if monitoring:
+                validation_loss, validation_accuracy = self.validate(validation_data_x, validation_data_y)
+                print(
+                    "Epoch {} | train_loss: {:.5f} | train_accuracy: {:.5f}\n"
+                    "validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
+                        j+1, np.mean(self.train_loss[-len(mini_batches):]),
+                        self.train_accuracy[-1],
+                        validation_loss, validation_accuracy),
+                    sep='', end='\n', flush=True)
 
         if plot:
             self.plot_loss(epochs)
@@ -156,5 +157,6 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(100, activation="relu", dropout=0.8)
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=1, cost="quadratic")
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=4, mini_batch_size=10, plot=True)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=4, mini_batch_size=10, plot=True, monitoring=True)
+    print(net.accuracy(test_data, test_labels))
     # best accuracy: 0.9822
