@@ -24,8 +24,10 @@ class Network(object):
         self.weights = None
         self.learning_rate = None
         self.cost = None
-        self.loss = np.array([])
-        self.all_loss = []
+        self.train_loss = []
+        self.train_accuracy = []
+        self.validate_loss = []
+        self.validate_accuracy = []
         self.activations = {
             "sigmoid": Sigmoid,
             "relu": ReLU,
@@ -56,15 +58,22 @@ class Network(object):
             a = layer.forward(a)
         return a
 
-    def fit(self, training_data_x, training_data_y, epochs, mini_batch_size, plot=False):
+    def fit(self, training_data_x, training_data_y, validation_data_x, validation_data_y, epochs, mini_batch_size, plot=False, monitoring=True):
         for j in range(epochs):
             training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
             mini_batches = [(training_data_x[:, k:mini_batch_size + k], training_data_y[:, k:mini_batch_size + k])
                             for k in range(0, training_data_y.shape[1], mini_batch_size)]
             for mini_batch in mini_batches:
                 self.update_weights(mini_batch, mini_batch_size)
-                print("\rEpoch %d loss: " % (j + 1), self.loss[-1], sep='', end='', flush=True)
-            print("\nEpoch %d out of %d is complete" % (j + 1, epochs))
+
+                if monitoring:
+                    validation_loss, validation_accuracy = self.validate(validation_data_x, validation_data_y)
+                    print(
+                        "Epoch {} of {} | train_loss: {:.5} | train_accuracy: {}\n"
+                        "validation_loss: {:.5} | validation_accuracy: {}".format(
+                            j+1, epochs, self.train_loss[-1],
+                            self.train_accuracy[-1], validation_loss, validation_accuracy),
+                        sep='', end='\n', flush=True)
 
         if plot:
             self.plot_loss(epochs)
@@ -81,8 +90,11 @@ class Network(object):
         for layer in self.layers[1:]:
             activation = layer.forward_backpropagation(activation)
         # https://sudeepraja.github.io/Neural/
-        loss = self.layers[-1].calculate_loss(self.cost, y)
-        self.loss = np.append(self.loss, loss)
+        loss = self.cost.function(activation, y)
+        self.train_loss.append(loss)
+
+        accuracy = self.accuracy(activation, y)
+        self.train_accuracy.append(accuracy)
 
         # calculates delta and saves it in each layer
         delta = self.layers[-1].make_first_delta(self.cost, y)
@@ -91,18 +103,25 @@ class Network(object):
             delta = layer.make_next_delta(delta, last_weights)
             last_weights = layer.weights
 
+    def validate(self, x, y):
+        x = self.feedforward(x)
+        loss = self.cost.function(x, y)
+        accuracy = self.accuracy(x, y)
+        self.validate_accuracy.append(accuracy)
+        self.validate_loss.append(loss)
+        return loss, accuracy
+
     def accuracy(self, x, y):
         n_data = x.shape[1]
         correct = 0
-        x = self.feedforward(x)
         for index in range(n_data):
             a = x[:, index]
             if np.argmax(a) == np.argmax(y[:, index]):
                 correct += 1
-        print("accuracy:", correct / n_data, "correct", correct, " of ", n_data)
+        return correct / n_data
 
     def plot_loss(self, epochs):
-        noisy_y_axis = self.loss[:]
+        noisy_y_axis = self.train_loss[:]
 
         window = int(len(noisy_y_axis) * 0.05)
         if window % 2 == 0:
@@ -137,6 +156,5 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(100, activation="relu", dropout=0.8)
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=1, cost="quadratic")
-    net.fit(train_data, train_labels, epochs=4, mini_batch_size=10, plot=True)
-    net.accuracy(test_data, test_labels)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=4, mini_batch_size=10, plot=True)
     # best accuracy: 0.9822
