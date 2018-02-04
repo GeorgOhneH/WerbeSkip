@@ -67,7 +67,7 @@ class Network(object):
             print("\nEpoch %d out of %d is complete" % (j + 1, epochs))
 
         if plot:
-            self.plot(epochs)
+            self.plot_loss(epochs)
 
     def update_weights(self, mini_batch, mini_batch_size):
         x, y = mini_batch
@@ -101,10 +101,10 @@ class Network(object):
                 correct += 1
         print("accuracy:", correct / n_data, "correct", correct, " of ", n_data)
 
-    def plot(self, epochs):
+    def plot_loss(self, epochs):
         noisy_y_axis = self.loss[:]
 
-        window = int(len(noisy_y_axis) * 0.2)
+        window = int(len(noisy_y_axis) * 0.05)
         if window % 2 == 0:
             window -= 1
 
@@ -118,6 +118,7 @@ class Network(object):
         plt.title("model loss")
         plt.xlabel("epochs")
         plt.ylabel("loss")
+        plt.legend()
 
         plt.ioff()
         plt.show()
