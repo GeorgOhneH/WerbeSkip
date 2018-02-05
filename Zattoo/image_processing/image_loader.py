@@ -30,14 +30,13 @@ def loader(func):
 
 def load_imgs():
     train_image, train_label = loader(plane_background)
-    test_image, test_label = loader(sample_imgs)
+    validation_image, validation_label = loader(sample_imgs)
+    split_data = validation_image.shape[1] // 2
 
-    return train_image, train_label, test_image, test_label
+    return train_image, train_label, \
+           validation_image[..., :split_data], validation_label[..., :split_data], \
+           validation_image[..., -split_data:], validation_label[..., -split_data:]
 
 
 if __name__ == "__main__":
-    np.set_printoptions(threshold=np.inf)
-    print(load_imgs()[0][:, 0].reshape((50, 50)))
-
-
-
+    print(load_imgs()[2].shape[1])

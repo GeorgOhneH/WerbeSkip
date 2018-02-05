@@ -7,6 +7,7 @@ from functions.costs import QuadraticCost
 from random import randint
 import numpy as np
 import matplotlib.pyplot as plt
+
 plt.style.use('ggplot')
 from scipy.signal import savgol_filter
 
@@ -19,6 +20,7 @@ class Network(object):
     It supports only a FullyConnectedLayer
     The inputform is a numpymatrix, where the rows of the matrix the single dataelements represent
     """
+
     def __init__(self):
         self.layers = []
         self.biases = None
@@ -59,7 +61,8 @@ class Network(object):
             a = layer.forward(a)
         return a
 
-    def fit(self, training_data_x, training_data_y, validation_data_x, validation_data_y, epochs, mini_batch_size, plot=False, monitoring=True):
+    def fit(self, training_data_x, training_data_y, validation_data_x, validation_data_y, epochs, mini_batch_size,
+            plot=False, monitoring=True):
         for j in range(epochs):
             training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
             mini_batches = [(training_data_x[:, k:mini_batch_size + k], training_data_y[:, k:mini_batch_size + k])
@@ -68,18 +71,20 @@ class Network(object):
                 self.update_weights(mini_batch, mini_batch_size)
 
                 if monitoring:
-                    rand_num = randint(0, validation_data_x.shape[1]-mini_batch_size)
-                    validation_loss, validation_accuracy = self.validate(validation_data_x[..., rand_num:rand_num+mini_batch_size],
-                                                                         validation_data_y[..., rand_num:rand_num+mini_batch_size])
+                    rand_num = randint(0, validation_data_x.shape[1] - mini_batch_size)
+                    validation_loss, validation_accuracy = self.validate(
+                        validation_data_x[..., rand_num:rand_num + mini_batch_size],
+                        validation_data_y[..., rand_num:rand_num + mini_batch_size])
                     print(
                         "Epoch {} of {} | train_loss: {:.5f} | train_accuracy: {:.5f}\n"
                         "progress: {:.5f} | validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
-                            j+1, epochs, np.mean(self.train_loss[-len(mini_batches):]), self.train_accuracy[-1],
+                            j + 1, epochs, np.mean(self.train_loss[-len(mini_batches):]), self.train_accuracy[-1],
                             index / len(mini_batches), validation_loss, validation_accuracy),
                         sep='', end='\n', flush=True)
 
         if plot:
-            self.plot_loss(epochs)
+            self.plot_loss(epochs, mini_batch_size)
+            self.plot_accuracy(epochs, mini_batch_size)
 
     def update_weights(self, mini_batch, mini_batch_size):
         x, y = mini_batch
@@ -139,31 +144,18 @@ class Network(object):
                 fp += 1
             elif a == 0 and b == 1:
                 fn += 1
-        accuracy = (tp+tn)/(tp+tn+fp+fn)
-        precision = tp/(tp+fp)
-        recall = tp/(tp+fn)
-        f1_score = 2*(recall * precision) / (recall + precision)
-        print("Evaluation:\nloss: {:.5f} | accuracy: {:.5f} | precision: {:.5f} | recall: {:.5f} | f1_score: {:.5f}".format(
-            loss, accuracy, precision, recall, f1_score
+        accuracy = (tp + tn) / (tp + tn + fp + fn)
+        precision = tp / (tp + fp)
+        recall = tp / (tp + fn)
+        f1_score = 2 * (recall * precision) / (recall + precision)
+        print("Evaluation with {} data:\n"
+              "loss: {:.5f} | accuracy: {:.5f} | precision: {:.5f} | recall: {:.5f} | f1_score: {:.5f}".format(
+            x.shape[1], loss, accuracy, precision, recall, f1_score
         ))
 
-    def plot_loss(self, epochs):
-        noisy_train_y_axis = self.train_loss[:]
-        noisy_validation_y_axis = self.validate_loss[:]
-
-        train_window = int(len(noisy_train_y_axis) * 0.05)
-        if train_window % 2 == 0:
-            train_window -= 1
-
-        validation_window = int(len(noisy_validation_y_axis) * 0.05)
-        if validation_window % 2 == 0:
-            validation_window -= 1
-
-        smooth_train_y_axis = savgol_filter(noisy_train_y_axis, train_window, 1)
-        smooth_train_x_axis = np.arange(0, epochs, epochs / len(smooth_train_y_axis))
-
-        smooth_validation_y_axis = savgol_filter(noisy_validation_y_axis, validation_window, 1)
-        smooth_validation_x_axis = np.arange(0, epochs, epochs / len(smooth_validation_y_axis))
+    def plot_loss(self, epochs, mini_batch_size):
+        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_loss[:], epochs, mini_batch_size)
+        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_loss[:], epochs, mini_batch_size)
 
         plt.semilogy(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
         plt.semilogy(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
@@ -175,6 +167,31 @@ class Network(object):
 
         plt.ioff()
         plt.show()
+
+    def plot_accuracy(self, epochs, mini_batch_size):
+        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_accuracy[:], epochs, mini_batch_size)
+        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_accuracy[:], epochs, mini_batch_size)
+
+        plt.plot(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
+        plt.plot(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
+
+        plt.title("model accuracy")
+        plt.xlabel("epochs")
+        plt.ylabel("accuracy")
+        plt.legend()
+
+        plt.ioff()
+        plt.show()
+
+    def smooth_data(self, data, epochs, mini_batch_size):
+        window = 5000 * epochs // mini_batch_size
+        if window % 2 == 0:
+            window -= 1
+
+        smooth_y_axis = savgol_filter(data, window, 1)
+        smooth_x_axis = np.arange(0, epochs, epochs / len(smooth_y_axis))
+
+        return smooth_x_axis, smooth_y_axis
 
     # Input x = Matrix, y = Matrix
     def shuffle(self, x, y):
@@ -190,5 +207,5 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(100, activation="relu", dropout=0.8)
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=1, cost="quadratic")
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=4, mini_batch_size=50, plot=True, monitoring=True)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=True, monitoring=True)
     # best accuracy: 0.9822

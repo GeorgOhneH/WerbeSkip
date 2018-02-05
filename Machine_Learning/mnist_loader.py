@@ -5,8 +5,9 @@ from mnist import MNIST
 
 
 def load_mnist():
-    train_images, train_labels = MNIST.load("mnist/train-images.idx3-ubyte", "mnist/train-labels.idx1-ubyte")
-    test_images, test_labels = MNIST.load("mnist/t10k-images.idx3-ubyte", "mnist/t10k-labels.idx1-ubyte")
+    mn = MNIST("mnist")
+    train_images, train_labels = mn.load_training()
+    test_images, test_labels = mn.load_testing()
 
     np_train_images = np.matrix(train_images, dtype="float16").transpose() / 255
     np_train_labels = np.asmatrix(np.zeros((10, len(train_labels)), dtype="int8"))
