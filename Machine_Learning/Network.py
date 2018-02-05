@@ -4,7 +4,6 @@ from layers.input import InputLayer
 from functions.activations import Sigmoid, ReLU
 from functions.costs import QuadraticCost
 
-from random import randint
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -27,6 +26,8 @@ class Network(object):
         self.weights = None
         self.learning_rate = None
         self.cost = None
+        self.temp_loss = []
+        self.temp_accuracy = []
         self.train_loss = []
         self.train_accuracy = []
         self.validate_loss = []
@@ -62,25 +63,25 @@ class Network(object):
         return a
 
     def fit(self, training_data_x, training_data_y, validation_data_x, validation_data_y, epochs, mini_batch_size,
-            plot=False, monitoring=True):
+            plot=False):
         for j in range(epochs):
             training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
             mini_batches = [(training_data_x[:, k:mini_batch_size + k], training_data_y[:, k:mini_batch_size + k])
                             for k in range(0, training_data_y.shape[1], mini_batch_size)]
+            counter = 0.0
             for index, mini_batch in enumerate(mini_batches):
                 self.update_weights(mini_batch, mini_batch_size)
 
-                if monitoring:
-                    rand_num = randint(0, validation_data_x.shape[1] - mini_batch_size)
-                    validation_loss, validation_accuracy = self.validate(
-                        validation_data_x[..., rand_num:rand_num + mini_batch_size],
-                        validation_data_y[..., rand_num:rand_num + mini_batch_size])
+                if index / len(mini_batches) >= counter:
+                    train_loss, train_accuracy = self.get_train_data()
+                    validation_loss, validation_accuracy = self.validate(validation_data_x, validation_data_y)
                     print(
                         "Epoch {} of {} | train_loss: {:.5f} | train_accuracy: {:.5f}\n"
                         "progress: {:.5f} | validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
-                            j + 1, epochs, np.mean(self.train_loss[-len(mini_batches):]), self.train_accuracy[-1],
+                            j + 1, epochs, train_loss, train_accuracy,
                             index / len(mini_batches), validation_loss, validation_accuracy),
                         sep='', end='\n', flush=True)
+                    counter += 0.1
 
         if plot:
             self.plot_loss(epochs, mini_batch_size)
@@ -99,10 +100,10 @@ class Network(object):
             activation = layer.forward_backpropagation(activation)
         # https://sudeepraja.github.io/Neural/
         loss = self.cost.function(activation, y)
-        self.train_loss.append(loss)
+        self.temp_loss.append(loss)
 
         accuracy = self.accuracy(activation, y)
-        self.train_accuracy.append(accuracy)
+        self.temp_accuracy.append(accuracy)
 
         # calculates delta and saves it in each layer
         delta = self.layers[-1].make_first_delta(self.cost, y)
@@ -110,6 +111,14 @@ class Network(object):
         for layer in reversed(self.layers[1:-1]):
             delta = layer.make_next_delta(delta, last_weights)
             last_weights = layer.weights
+
+    def get_train_data(self):
+        loss = np.mean(self.temp_loss)
+        accuracy = np.mean(self.temp_accuracy)
+
+        self.train_loss.append(loss)
+        self.train_accuracy.append(accuracy)
+        return loss, accuracy
 
     def validate(self, x, y):
         x = self.feedforward(x)
@@ -129,9 +138,15 @@ class Network(object):
         return correct / n_data
 
     def evaluate(self, x, y):
-        # only works by yes, no answer
         x = self.feedforward(x)
         loss = self.cost.function(x, y)
+        if self.layers[-1].neurons != 2:
+            accuracy = self.accuracy(x, y)
+            print("Evaluation with {} data:\n"
+                  "loss: {:.5f} | accuracy: {:.5f}".format(
+                x.shape[1], loss, accuracy,
+            ))
+            return
         tp, tn, fp, fn = 0, 0, 0, 0  # True Positive, True Negative, False Positive, False Negative
         for index in range(x.shape[1]):
             a = np.argmax(x[:, index])
@@ -155,7 +170,8 @@ class Network(object):
 
     def plot_loss(self, epochs, mini_batch_size):
         smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_loss[:], epochs, mini_batch_size)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_loss[:], epochs, mini_batch_size)
+        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_loss[:], epochs,
+                                                                              mini_batch_size)
 
         plt.semilogy(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
         plt.semilogy(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
@@ -170,7 +186,8 @@ class Network(object):
 
     def plot_accuracy(self, epochs, mini_batch_size):
         smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_accuracy[:], epochs, mini_batch_size)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_accuracy[:], epochs, mini_batch_size)
+        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_accuracy[:], epochs,
+                                                                              mini_batch_size)
 
         plt.plot(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
         plt.plot(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
@@ -184,7 +201,7 @@ class Network(object):
         plt.show()
 
     def smooth_data(self, data, epochs, mini_batch_size):
-        window = 5000 * epochs // mini_batch_size
+        window = 600 * epochs // mini_batch_size
         if window % 2 == 0:
             window -= 1
 
@@ -207,5 +224,5 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(100, activation="relu", dropout=0.8)
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=1, cost="quadratic")
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=True, monitoring=True)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=True)
     # best accuracy: 0.9822

@@ -39,4 +39,4 @@ def load_imgs():
 
 
 if __name__ == "__main__":
-    print(load_imgs()[2].shape[1])
+    print(len(load_imgs()[0]))
