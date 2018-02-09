@@ -23,7 +23,7 @@ no_logo_paths = [
     ("../prosieben/images/classified/no_logo", "no_boarder"),
 ]
 
-PADDING = 25
+PADDING = 26
 
 
 def get_logo(path_to_img, type):

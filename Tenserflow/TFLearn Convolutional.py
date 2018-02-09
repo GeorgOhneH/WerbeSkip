@@ -4,7 +4,7 @@ from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.estimator import regression
 from image_processing.image_loader import load_imgs
 
-X, Y, test_x, test_y = load_imgs()
+X, Y, validation_x, validation_y, test_x, test_y = load_imgs()
 X = X.T.A
 Y = Y.T.A
 test_x = test_x.T.A

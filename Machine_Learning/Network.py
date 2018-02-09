@@ -4,6 +4,9 @@ from layers.input import InputLayer
 from functions.activations import Sigmoid, ReLU
 from functions.costs import QuadraticCost
 
+from random import randint
+import time
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -26,8 +29,6 @@ class Network(object):
         self.weights = None
         self.learning_rate = None
         self.cost = None
-        self.temp_loss = []
-        self.temp_accuracy = []
         self.train_loss = []
         self.train_accuracy = []
         self.validate_loss = []
@@ -63,29 +64,31 @@ class Network(object):
         return a
 
     def fit(self, training_data_x, training_data_y, validation_data_x, validation_data_y, epochs, mini_batch_size,
-            plot=False):
+            plot=False, snapshot_step=200):
+        start_time = time.time()
+        counter = 0
         for j in range(epochs):
             training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
             mini_batches = [(training_data_x[:, k:mini_batch_size + k], training_data_y[:, k:mini_batch_size + k])
                             for k in range(0, training_data_y.shape[1], mini_batch_size)]
-            counter = 0.0
-            for index, mini_batch in enumerate(mini_batches):
-                self.update_weights(mini_batch, mini_batch_size)
 
-                if index / len(mini_batches) >= counter:
-                    train_loss, train_accuracy = self.get_train_data()
-                    validation_loss, validation_accuracy = self.validate(validation_data_x, validation_data_y)
+            for index, mini_batch in enumerate(mini_batches):
+                counter += 1
+                self.update_weights(mini_batch, mini_batch_size)
+                self.validate(validation_data_x, validation_data_y, mini_batch_size)
+
+                if counter >= snapshot_step:
+                    counter = 0
                     print(
-                        "Epoch {} of {} | train_loss: {:.5f} | train_accuracy: {:.5f}\n"
+                        "Epoch {} of {} | train_loss: {:.5f} | train_accuracy: {:.5f} | time {:.3f}\n"
                         "progress: {:.5f} | validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
-                            j + 1, epochs, train_loss, train_accuracy,
-                            index / len(mini_batches), validation_loss, validation_accuracy),
+                            j + 1, epochs, np.mean(self.train_loss[-100:]), np.mean(self.train_accuracy[-100:]), time.time() - start_time,
+                            index / len(mini_batches), np.mean(self.validate_loss[-100:]), np.mean(self.validate_accuracy[-100:])),
                         sep='', end='\n', flush=True)
-                    counter += 0.1
 
         if plot:
-            self.plot_loss(epochs, mini_batch_size)
-            self.plot_accuracy(epochs, mini_batch_size)
+            self.plot_loss(epochs)
+            self.plot_accuracy(epochs)
 
     def update_weights(self, mini_batch, mini_batch_size):
         x, y = mini_batch
@@ -100,10 +103,10 @@ class Network(object):
             activation = layer.forward_backpropagation(activation)
         # https://sudeepraja.github.io/Neural/
         loss = self.cost.function(activation, y)
-        self.temp_loss.append(loss)
+        self.train_loss.append(loss)
 
         accuracy = self.accuracy(activation, y)
-        self.temp_accuracy.append(accuracy)
+        self.train_accuracy.append(accuracy)
 
         # calculates delta and saves it in each layer
         delta = self.layers[-1].make_first_delta(self.cost, y)
@@ -112,15 +115,12 @@ class Network(object):
             delta = layer.make_next_delta(delta, last_weights)
             last_weights = layer.weights
 
-    def get_train_data(self):
-        loss = np.mean(self.temp_loss)
-        accuracy = np.mean(self.temp_accuracy)
+    def validate(self, x, y, size=None):
+        if size is not None:
+            rand = randint(0, x.shape[1]-size)
+            x = x[..., rand:rand+size]
+            y = y[..., rand:rand+size]
 
-        self.train_loss.append(loss)
-        self.train_accuracy.append(accuracy)
-        return loss, accuracy
-
-    def validate(self, x, y):
         x = self.feedforward(x)
         loss = self.cost.function(x, y)
         accuracy = self.accuracy(x, y)
@@ -138,6 +138,8 @@ class Network(object):
         return correct / n_data
 
     def evaluate(self, x, y):
+        orig_x = x
+        wrong = []
         x = self.feedforward(x)
         loss = self.cost.function(x, y)
         if self.layers[-1].neurons != 2:
@@ -157,8 +159,10 @@ class Network(object):
                 tn += 1
             elif a == 1 and b == 0:
                 fp += 1
+                wrong.append((np.squeeze(np.asarray(orig_x[:, index])), "no_logo.BMP"))
             elif a == 0 and b == 1:
                 fn += 1
+                wrong.append((np.squeeze(np.asarray(orig_x[:, index])), "logo.BMP"))
         accuracy = (tp + tn) / (tp + tn + fp + fn)
         precision = tp / (tp + fp)
         recall = tp / (tp + fn)
@@ -167,11 +171,11 @@ class Network(object):
               "loss: {:.5f} | accuracy: {:.5f} | precision: {:.5f} | recall: {:.5f} | f1_score: {:.5f}".format(
             x.shape[1], loss, accuracy, precision, recall, f1_score
         ))
+        return wrong
 
-    def plot_loss(self, epochs, mini_batch_size):
-        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_loss[:], epochs, mini_batch_size)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_loss[:], epochs,
-                                                                              mini_batch_size)
+    def plot_loss(self, epochs):
+        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_loss[:], epochs)
+        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_loss[:], epochs)
 
         plt.semilogy(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
         plt.semilogy(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
@@ -184,10 +188,9 @@ class Network(object):
         plt.ioff()
         plt.show()
 
-    def plot_accuracy(self, epochs, mini_batch_size):
-        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_accuracy[:], epochs, mini_batch_size)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_accuracy[:], epochs,
-                                                                              mini_batch_size)
+    def plot_accuracy(self, epochs):
+        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_accuracy[:], epochs)
+        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_accuracy[:], epochs,)
 
         plt.plot(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
         plt.plot(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
@@ -200,12 +203,12 @@ class Network(object):
         plt.ioff()
         plt.show()
 
-    def smooth_data(self, data, epochs, mini_batch_size):
-        window = 600 * epochs // mini_batch_size
+    def smooth_data(self, data, epochs):
+        window = len(data) // 30
         if window % 2 == 0:
             window -= 1
 
-        smooth_y_axis = savgol_filter(data, window, 1)
+        smooth_y_axis = savgol_filter(data, window, 0)
         smooth_x_axis = np.arange(0, epochs, epochs / len(smooth_y_axis))
 
         return smooth_x_axis, smooth_y_axis
@@ -223,6 +226,7 @@ if __name__ == "__main__":
     net.addInputLayer(28 * 28)
     net.addFullyConnectedLayer(100, activation="relu", dropout=0.8)
     net.addFullyConnectedLayer(10, activation="sigmoid")
-    net.regression(learning_rate=1, cost="quadratic")
+    net.regression(learning_rate=0.1, cost="quadratic")
     net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=True)
+    net.evaluate(test_data, test_labels)
     # best accuracy: 0.9822

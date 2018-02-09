@@ -3,7 +3,7 @@ from PIL import Image, ImageChops, ImageOps, ImageFilter
 
 def plane_background(with_logo=True):
     imgs = []
-    padding = 9
+    padding = 10
     borders = [
         (padding, padding, padding, padding),
         # (padding - 1, padding, padding + 1, padding),
@@ -25,7 +25,7 @@ def plane_background(with_logo=True):
     logo = logo.convert(mode="L")  # mode L is white and black
     for border in borders:
         exp_logo = ImageOps.expand(logo, border, fill="black")
-        for color in range(0, 221):
+        for color in range(0, 224):
             img = Image.new("L", color=color, size=exp_logo.size)
             if with_logo:
                 img = ImageChops.screen(exp_logo, img)

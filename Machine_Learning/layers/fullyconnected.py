@@ -1,20 +1,9 @@
+from layers.layer import Layer
+
 import numpy as np
 
 
-class FullyConnectedLayer(object):
-    def __init__(self, neurons, activation, dropout):
-        self.neurons = neurons
-        self.activation = activation
-        self.dropout = dropout
-        self.dropout_mask = None
-        self.biases = None
-        self.weights = None
-        self.nabla_b = None
-        self.nabla_w = None
-        self.z = None
-        self.before_a = None
-        self.a = None
-
+class FullyConnectedLayer(Layer):
     def init(self, neurons_before):
         self.biases = np.random.randn(self.neurons, 1)
         self.weights = np.random.randn(self.neurons, neurons_before) / np.sqrt(neurons_before)

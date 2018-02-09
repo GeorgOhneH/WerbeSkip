@@ -31,7 +31,7 @@ def loader(func):
 def load_imgs():
     train_image, train_label = loader(plane_background)
     validation_image, validation_label = loader(sample_imgs)
-    split_data = validation_image.shape[1] // 2
+    split_data = int(validation_image.shape[1] * 0.8)
 
     return train_image, train_label, \
            validation_image[..., :split_data], validation_label[..., :split_data], \
@@ -39,4 +39,4 @@ def load_imgs():
 
 
 if __name__ == "__main__":
-    print(len(load_imgs()[0]))
+    print(loader(sample_imgs)[0].shape, loader(plane_background)[0].shape)
