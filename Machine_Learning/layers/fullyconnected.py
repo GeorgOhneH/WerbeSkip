@@ -12,33 +12,30 @@ class FullyConnectedLayer(Layer):
     def forward(self, a):
         z = np.dot(self.weights, a) + self.biases
         a = self.activation.function(z)
-        if self.dropout is not None:
-            a *= self.dropout
         return a
 
     def forward_backpropagation(self, a):
         self.before_a = a
         z = np.dot(self.weights, a) + self.biases
         a = self.activation.function(z)
-        if self.dropout is not None:
-            self.dropout_mask = np.random.binomial(1, self.dropout, size=a.shape)
-            a = np.multiply(a, self.dropout_mask)
         self.z = z
         self.a = a
         return a
 
-    def make_first_delta(self, cost, y):
+    def make_first_delta(self,cost, y):
         delta = np.multiply(cost.delta(self.a, y), self.activation.derivative(self.z))
         self.update_nabla(delta)
-        return delta
+        return delta, self.weights
 
-    def make_next_delta(self, delta, last_weights):
+    def make_delta(self, delta, last_weights):
         delta = np.multiply(np.dot(last_weights.transpose(), delta), self.activation.derivative(self.z))
-        if self.dropout is not None:
-            delta = np.multiply(delta, self.dropout_mask)
         self.update_nabla(delta)
-        return delta
+        return delta, self.weights
 
     def update_nabla(self, delta):
         self.nabla_b = np.sum(delta, axis=1)
         self.nabla_w = np.dot(delta, self.before_a.transpose())
+
+    def adjust_weights(self, factor):
+        self.weights -= np.multiply(factor, self.nabla_w)
+        self.biases -= np.multiply(factor, self.nabla_b)

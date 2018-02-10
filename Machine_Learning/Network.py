@@ -1,6 +1,5 @@
 from mnist_loader import load_mnist
-from layers.fullyconnected import FullyConnectedLayer
-from layers.input import InputLayer
+from layers import InputLayer, FullyConnectedLayer, Dropout
 from functions.activations import Sigmoid, ReLU
 from functions.costs import QuadraticCost
 
@@ -9,8 +8,8 @@ import time
 
 import numpy as np
 import matplotlib.pyplot as plt
-
 plt.style.use('ggplot')
+
 from scipy.signal import savgol_filter
 
 
@@ -44,8 +43,11 @@ class Network(object):
     def addInputLayer(self, neurons):
         self.layers.append(InputLayer(neurons))
 
-    def addFullyConnectedLayer(self, neurons, activation="sigmoid", dropout=None):
-        self.layers.append(FullyConnectedLayer(neurons, self.activations[activation], dropout))
+    def addFullyConnectedLayer(self, neurons, activation="sigmoid"):
+        self.layers.append(FullyConnectedLayer(neurons, self.activations[activation]))
+
+    def addDropout(self, dropout):
+        self.layers.append(Dropout(dropout))
 
     def regression(self, learning_rate=0.01, cost="quadratic"):
         self.learning_rate = learning_rate
@@ -95,8 +97,7 @@ class Network(object):
         self.backprop(x, y)
         # Uses the error and adjusts the weights for each layer
         for layer in self.layers[1:]:
-            layer.weights -= np.multiply(self.learning_rate / mini_batch_size, layer.nabla_w)
-            layer.biases -= np.multiply(self.learning_rate / mini_batch_size, layer.nabla_b)
+            layer.adjust_weights(self.learning_rate / mini_batch_size)
 
     def backprop(self, activation, y):
         for layer in self.layers[1:]:
@@ -109,11 +110,9 @@ class Network(object):
         self.train_accuracy.append(accuracy)
 
         # calculates delta and saves it in each layer
-        delta = self.layers[-1].make_first_delta(self.cost, y)
-        last_weights = self.layers[-1].weights
+        delta, last_weights = self.layers[-1].make_first_delta(self.cost, y)
         for layer in reversed(self.layers[1:-1]):
-            delta = layer.make_next_delta(delta, last_weights)
-            last_weights = layer.weights
+            delta, last_weights = layer.make_delta(delta, last_weights)
 
     def validate(self, x, y, size=None):
         if size is not None:
@@ -122,8 +121,10 @@ class Network(object):
             y = y[..., rand:rand+size]
 
         x = self.feedforward(x)
+
         loss = self.cost.function(x, y)
         accuracy = self.accuracy(x, y)
+
         self.validate_accuracy.append(accuracy)
         self.validate_loss.append(loss)
         return loss, accuracy
@@ -174,8 +175,8 @@ class Network(object):
         return wrong
 
     def plot_loss(self, epochs):
-        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_loss[:], epochs)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_loss[:], epochs)
+        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_loss, epochs)
+        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_loss, epochs)
 
         plt.semilogy(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
         plt.semilogy(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
@@ -189,8 +190,8 @@ class Network(object):
         plt.show()
 
     def plot_accuracy(self, epochs):
-        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_accuracy[:], epochs)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_accuracy[:], epochs,)
+        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_accuracy, epochs)
+        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_accuracy, epochs,)
 
         plt.plot(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
         plt.plot(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
@@ -224,9 +225,9 @@ if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
     net.addInputLayer(28 * 28)
-    net.addFullyConnectedLayer(100, activation="relu", dropout=0.8)
+    net.addFullyConnectedLayer(100, activation="relu")
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=0.1, cost="quadratic")
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=True)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=False)
     net.evaluate(test_data, test_labels)
     # best accuracy: 0.9822
