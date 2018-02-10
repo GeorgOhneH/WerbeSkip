@@ -2,6 +2,7 @@ from mnist_loader import load_mnist
 from layers import FullyConnectedLayer, Dropout
 from functions.activations import Sigmoid, ReLU
 from functions.costs import QuadraticCost
+from utils import shuffle, make_mini_batches
 
 from random import randint
 import time
@@ -72,9 +73,8 @@ class Network(object):
         start_time = time.time()
         counter = 0
         for j in range(epochs):
-            training_data_x, training_data_y = self.shuffle(training_data_x, training_data_y)
-            mini_batches = [(training_data_x[:, k:mini_batch_size + k], training_data_y[:, k:mini_batch_size + k])
-                            for k in range(0, training_data_y.shape[1], mini_batch_size)]
+            training_data_x, training_data_y = shuffle(training_data_x, training_data_y)
+            mini_batches = make_mini_batches(training_data_x, training_data_y, mini_batch_size)
 
             for index, mini_batch in enumerate(mini_batches):
                 counter += 1
@@ -215,12 +215,6 @@ class Network(object):
         smooth_x_axis = np.arange(0, epochs, epochs / len(smooth_y_axis))
 
         return smooth_x_axis, smooth_y_axis
-
-    # Input x = Matrix, y = Matrix
-    def shuffle(self, x, y):
-        # shuffles data in unison with helping from indexing
-        indexes = np.random.permutation(x.shape[1])
-        return x[..., indexes], y[..., indexes]
 
 
 if __name__ == "__main__":
