@@ -7,21 +7,20 @@ class Layer(object):
         self.nabla_b = None
         self.nabla_w = None
         self.z = None
-        self.before_a = None
         self.a = None
 
     def init(self, neurons_before):
-        pass
+        return neurons_before
 
     # Input Matrix Output Matrix
     def forward(self, a):
         pass
 
     def forward_backpropagation(self, a):
-        pass
+        return a
 
-    def make_delta(self, delta, last_weights):
-        pass
+    def make_delta(self, delta):
+        return delta
 
     def adjust_weights(self, factor):
         pass

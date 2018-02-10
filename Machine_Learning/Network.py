@@ -1,5 +1,5 @@
 from mnist_loader import load_mnist
-from layers import InputLayer, FullyConnectedLayer, Dropout
+from layers import FullyConnectedLayer, Dropout
 from functions.activations import Sigmoid, ReLU
 from functions.costs import QuadraticCost
 
@@ -23,6 +23,7 @@ class Network(object):
     """
 
     def __init__(self):
+        self.input_neurons = 0
         self.layers = []
         self.biases = None
         self.weights = None
@@ -41,7 +42,7 @@ class Network(object):
         }
 
     def addInputLayer(self, neurons):
-        self.layers.append(InputLayer(neurons))
+        self.input_neurons = neurons
 
     def addFullyConnectedLayer(self, neurons, activation="sigmoid"):
         self.layers.append(FullyConnectedLayer(neurons, self.activations[activation]))
@@ -56,12 +57,13 @@ class Network(object):
 
     def init(self):
         # Uses Gaussian random variables with a mean of 0 and a standard deviation of 1
-        for layer, layer_before in zip(self.layers[1:], self.layers[:-1]):
-            layer.init(layer_before.neurons)
+        neurons_before = self.input_neurons
+        for layer in self.layers:
+            neurons_before = layer.init(neurons_before)
 
     def feedforward(self, a):
         # Input is in Matrixform. Each row represents one datapoint
-        for layer in self.layers[1:]:
+        for layer in self.layers:
             a = layer.forward(a)
         return a
 
@@ -96,11 +98,11 @@ class Network(object):
         x, y = mini_batch
         self.backprop(x, y)
         # Uses the error and adjusts the weights for each layer
-        for layer in self.layers[1:]:
+        for layer in self.layers:
             layer.adjust_weights(self.learning_rate / mini_batch_size)
 
     def backprop(self, activation, y):
-        for layer in self.layers[1:]:
+        for layer in self.layers:
             activation = layer.forward_backpropagation(activation)
         # https://sudeepraja.github.io/Neural/
         loss = self.cost.function(activation, y)
@@ -110,9 +112,9 @@ class Network(object):
         self.train_accuracy.append(accuracy)
 
         # calculates delta and saves it in each layer
-        delta, last_weights = self.layers[-1].make_first_delta(self.cost, y)
-        for layer in reversed(self.layers[1:-1]):
-            delta, last_weights = layer.make_delta(delta, last_weights)
+        delta = self.cost.delta(activation, y)
+        for layer in reversed(self.layers):
+            delta = layer.make_delta(delta)
 
     def validate(self, x, y, size=None):
         if size is not None:
@@ -226,6 +228,7 @@ if __name__ == "__main__":
     net = Network()
     net.addInputLayer(28 * 28)
     net.addFullyConnectedLayer(100, activation="relu")
+    net.addDropout(0.8)
     net.addFullyConnectedLayer(10, activation="sigmoid")
     net.regression(learning_rate=0.1, cost="quadratic")
     net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=False)

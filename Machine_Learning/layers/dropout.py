@@ -8,7 +8,6 @@ class Dropout(Layer):
         self.dropout = dropout
         self.dropout_mask = None
         self.z = None
-        self.before_a = None
         self.a = None
 
     def forward(self, a):
@@ -20,7 +19,7 @@ class Dropout(Layer):
         a = np.multiply(a, self.dropout_mask)
         return a
 
-    def make_delta(self, delta, last_weights):
+    def make_delta(self, delta):
         delta = np.multiply(delta, self.dropout_mask)
-        return delta, last_weights
+        return delta
 
