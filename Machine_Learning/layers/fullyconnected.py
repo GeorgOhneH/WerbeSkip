@@ -11,13 +11,13 @@ class FullyConnectedLayer(Layer):
 
     # Input Matrix Output Matrix
     def forward(self, a):
-        z = np.dot(self.weights, a) + self.biases
+        z = self.weights @ a + self.biases
         a = self.activation.function(z)
         return a
 
     def forward_backpropagation(self, a):
         self.a = a
-        z = np.dot(self.weights, a) + self.biases
+        z = self.weights @ a + self.biases
         self.z = z
         a = self.activation.function(z)
         return a
@@ -25,9 +25,9 @@ class FullyConnectedLayer(Layer):
     def make_delta(self, delta):
         delta = np.multiply(delta, self.activation.derivative(self.z))
         self.nabla_b = np.sum(delta, axis=1)
-        self.nabla_w = np.dot(delta, self.a.transpose())
-        return np.dot(self.weights.transpose(), delta)
+        self.nabla_w = delta @ self.a.T
+        return self.weights.T @ delta
 
     def adjust_weights(self, factor):
-        self.weights -= np.multiply(factor, self.nabla_w)
-        self.biases -= np.multiply(factor, self.nabla_b)
+        self.weights -= factor * self.nabla_w
+        self.biases -= factor * self.nabla_b

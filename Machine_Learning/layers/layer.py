@@ -14,7 +14,7 @@ class Layer(object):
 
     # Input Matrix Output Matrix
     def forward(self, a):
-        pass
+        return a
 
     def forward_backpropagation(self, a):
         return a
