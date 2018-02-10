@@ -4,6 +4,16 @@ import numpy as np
 
 
 class FullyConnectedLayer(Layer):
+    def __init__(self, neurons, activation):
+        self.neurons = neurons
+        self.activation = activation
+        self.biases = None
+        self.weights = None
+        self.nabla_b = None
+        self.nabla_w = None
+        self.z = None
+        self.a = None
+
     def init(self, neurons_before):
         self.biases = np.random.randn(self.neurons, 1)
         self.weights = np.random.randn(self.neurons, neurons_before) / np.sqrt(neurons_before)

@@ -1,4 +1,4 @@
-
+from layers import FullyConnectedLayer
 
 import numpy as np
 
