@@ -2,16 +2,12 @@ from mnist_loader import load_mnist
 from layers import FullyConnectedLayer, Dropout
 from functions.activations import Sigmoid, ReLU
 from functions.costs import QuadraticCost
-from utils import shuffle, make_mini_batches
+from utils import shuffle, make_mini_batches, Plotter
 
 from random import randint
 import time
 
 import numpy as np
-import matplotlib.pyplot as plt
-plt.style.use('ggplot')
-
-from scipy.signal import savgol_filter
 
 
 class Network(object):
@@ -41,6 +37,7 @@ class Network(object):
         self.costs = {
             "quadratic": QuadraticCost,
         }
+        self.plotter = Plotter(self.train_loss, self.validate_loss, self.train_accuracy, self.validate_accuracy)
 
     def addInputLayer(self, neurons):
         self.input_neurons = neurons
@@ -91,8 +88,8 @@ class Network(object):
                         sep='', end='\n', flush=True)
 
         if plot:
-            self.plot_loss(epochs)
-            self.plot_accuracy(epochs)
+            self.plotter.plot_accuracy(epochs)
+            self.plotter.plot_loss(epochs)
 
     def update_weights(self, mini_batch, mini_batch_size):
         x, y = mini_batch
@@ -175,46 +172,6 @@ class Network(object):
             x.shape[1], loss, accuracy, precision, recall, f1_score
         ))
         return wrong
-
-    def plot_loss(self, epochs):
-        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_loss, epochs)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_loss, epochs)
-
-        plt.semilogy(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
-        plt.semilogy(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
-
-        plt.title("model loss")
-        plt.xlabel("epochs")
-        plt.ylabel("loss")
-        plt.legend()
-
-        plt.ioff()
-        plt.show()
-
-    def plot_accuracy(self, epochs):
-        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_accuracy, epochs)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_accuracy, epochs,)
-
-        plt.plot(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
-        plt.plot(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
-
-        plt.title("model accuracy")
-        plt.xlabel("epochs")
-        plt.ylabel("accuracy")
-        plt.legend()
-
-        plt.ioff()
-        plt.show()
-
-    def smooth_data(self, data, epochs):
-        window = len(data) // 30
-        if window % 2 == 0:
-            window -= 1
-
-        smooth_y_axis = savgol_filter(data, window, 0)
-        smooth_x_axis = np.arange(0, epochs, epochs / len(smooth_y_axis))
-
-        return smooth_x_axis, smooth_y_axis
 
 
 if __name__ == "__main__":
