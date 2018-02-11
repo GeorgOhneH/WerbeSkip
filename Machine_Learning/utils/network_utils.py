@@ -8,6 +8,7 @@ def shuffle(x, y):
 
 
 def make_mini_batches(x, y, size):
+    x, y = shuffle(x, y)
     mini_batches = []
     length = x.shape[1]
     for i in range(0, length, size):

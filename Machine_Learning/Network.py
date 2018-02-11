@@ -2,7 +2,7 @@ from mnist_loader import load_mnist
 from layers import FullyConnectedLayer, Dropout
 from functions.activations import Sigmoid, ReLU
 from functions.costs import QuadraticCost
-from utils import shuffle, make_mini_batches, Plotter
+from utils import make_mini_batches, Plotter
 
 from random import randint
 import time
@@ -70,7 +70,6 @@ class Network(object):
         start_time = time.time()
         counter = 0
         for j in range(epochs):
-            training_data_x, training_data_y = shuffle(training_data_x, training_data_y)
             mini_batches = make_mini_batches(training_data_x, training_data_y, mini_batch_size)
 
             for index, mini_batch in enumerate(mini_batches):
