@@ -10,27 +10,25 @@ class Adam(Optimizer):
         self.beta1 = beta1
         self.e = e
         self.t = 1
-        self.momentum_w = 0
-        self.momentum_b = 0
-        self.velocity_w = 0
-        self.velocity_b = 0
+        self.momenta = None
+        self.velocities = None
 
-    def calculate_change(self, nabla_w, nabla_b):
-        self.momentum_w = self.beta1*self.momentum_w + (1-self.beta1)*nabla_w
-        self.momentum_b = self.beta1*self.momentum_b + (1-self.beta1)*nabla_b
+    def calculate_change(self, *nablas):
+        change = []
 
-        self.velocity_w = self.beta2*self.velocity_w + (1-self.beta2)*np.power(nabla_w, 2)
-        self.velocity_b = self.beta2*self.velocity_b + (1-self.beta2)*np.power(nabla_b, 2)
+        if self.momenta is None and self.velocities is None:
+            self.momenta = [0 for _ in nablas]
+            self.velocities = [0 for _ in nablas]
 
-        estimate_momentum_w = self.momentum_w / (1 - self.beta1 ** self.t)
-        estimate_momentum_b = self.momentum_b / (1 - self.beta1 ** self.t)
+        for index, nabla in enumerate(nablas):
+            self.momenta[index] = self.beta1*self.momenta[index] + (1-self.beta1)*nabla
+            self.velocities[index] = self.beta2*self.velocities[index] + (1-self.beta2)*np.power(nabla, 2)
 
-        estimate_velocity_w = self.velocity_w / (1 - self.beta2 ** self.t)
-        estimate_velocity_b = self.velocity_b / (1 - self.beta2 ** self.t)
+            estimate_momentum = self.momenta[index] / (1 - self.beta1 ** self.t)
+            estimate_velocity = self.velocities[index] / (1 - self.beta2 ** self.t)
 
-        change_w = self.learning_rate * estimate_momentum_w / (np.sqrt(estimate_velocity_w) + self.e)
-        change_b = self.learning_rate * estimate_momentum_b / (np.sqrt(estimate_velocity_b) + self.e)
+            change.append(self.learning_rate * estimate_momentum / (np.sqrt(estimate_velocity) + self.e))
 
         self.t += 1
 
-        return change_w, change_b
+        return change
