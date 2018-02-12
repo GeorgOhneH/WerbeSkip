@@ -2,10 +2,12 @@ from mnist_loader import load_mnist
 from layers import FullyConnectedLayer, Dropout
 from functions.activations import Sigmoid, ReLU
 from functions.costs import QuadraticCost
+from optimizers import SGD
 from utils import make_mini_batches, Plotter
 
 from random import randint
 import time
+from copy import copy
 
 import numpy as np
 
@@ -20,11 +22,11 @@ class Network(object):
     """
 
     def __init__(self):
+        self.optimizer = None
         self.input_neurons = 0
         self.layers = []
         self.biases = None
         self.weights = None
-        self.learning_rate = None
         self.cost = None
         self.train_loss = []
         self.train_accuracy = []
@@ -48,8 +50,8 @@ class Network(object):
     def addDropout(self, dropout):
         self.layers.append(Dropout(dropout))
 
-    def regression(self, learning_rate=0.01, cost="quadratic"):
-        self.learning_rate = learning_rate
+    def regression(self, optimizer, cost="quadratic"):
+        self.optimizer = optimizer
         self.cost = self.costs[cost]
         self.init()
 
@@ -57,7 +59,7 @@ class Network(object):
         # Uses Gaussian random variables with a mean of 0 and a standard deviation of 1
         neurons_before = self.input_neurons
         for layer in self.layers:
-            neurons_before = layer.init(neurons_before)
+            neurons_before = layer.init(neurons_before, copy(self.optimizer))
 
     def feedforward(self, a):
         # Input is in Matrixform. Each row represents one datapoint
@@ -74,7 +76,7 @@ class Network(object):
 
             for index, mini_batch in enumerate(mini_batches):
                 counter += 1
-                self.update_weights(mini_batch, mini_batch_size)
+                self.update_weights(mini_batch)
                 self.validate(validation_data_x, validation_data_y, mini_batch_size)
 
                 if counter >= snapshot_step:
@@ -90,12 +92,12 @@ class Network(object):
             self.plotter.plot_accuracy(epochs)
             self.plotter.plot_loss(epochs)
 
-    def update_weights(self, mini_batch, mini_batch_size):
+    def update_weights(self, mini_batch):
         x, y = mini_batch
         self.backprop(x, y)
         # Uses the error and adjusts the weights for each layer
         for layer in self.layers:
-            layer.adjust_weights(self.learning_rate / mini_batch_size)
+            layer.adjust_weights()
 
     def backprop(self, activation, y):
         for layer in self.layers:
@@ -180,7 +182,7 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(100, activation="relu")
     net.addDropout(0.8)
     net.addFullyConnectedLayer(10, activation="sigmoid")
-    net.regression(learning_rate=0.1, cost="quadratic")
+    net.regression(optimizer=SGD(learning_rate=0.1), cost="quadratic")
     net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=False)
     net.evaluate(test_data, test_labels)
     # best accuracy: 0.9822

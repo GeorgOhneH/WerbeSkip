@@ -1,5 +1,5 @@
 class Layer(object):
-    def init(self, neurons_before):
+    def init(self, neurons_before, optimizer):
         return neurons_before
 
     def forward(self, a):
@@ -11,5 +11,5 @@ class Layer(object):
     def make_delta(self, delta):
         return delta
 
-    def adjust_weights(self, factor):
+    def adjust_weights(self):
         pass

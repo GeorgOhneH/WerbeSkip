@@ -7,6 +7,7 @@ class FullyConnectedLayer(Layer):
     def __init__(self, neurons, activation):
         self.neurons = neurons
         self.activation = activation
+        self.optimizer = None
         self.biases = None
         self.weights = None
         self.nabla_b = None
@@ -14,9 +15,10 @@ class FullyConnectedLayer(Layer):
         self.z = None
         self.a = None
 
-    def init(self, neurons_before):
+    def init(self, neurons_before, optimizer):
         self.biases = np.random.randn(self.neurons, 1)
         self.weights = np.random.randn(self.neurons, neurons_before) / np.sqrt(neurons_before)
+        self.optimizer = optimizer
         return self.neurons
 
     # Input Matrix Output Matrix
@@ -38,6 +40,7 @@ class FullyConnectedLayer(Layer):
         self.nabla_w = delta @ self.a.T
         return self.weights.T @ delta
 
-    def adjust_weights(self, factor):
-        self.weights -= factor * self.nabla_w
-        self.biases -= factor * self.nabla_b
+    def adjust_weights(self):
+        change_w, change_b = self.optimizer.calculate_change(self.nabla_w, self.nabla_b)
+        self.weights -= change_w
+        self.biases -= change_b

@@ -44,3 +44,5 @@ http://cs231n.github.io/convolutional-networks/
 
 http://ruder.io/optimizing-gradient-descent/
 
+https://towardsdatascience.com/types-of-optimization-algorithms-used-in-neural-networks-and-ways-to-optimize-gradient-95ae5d39529f
+
