@@ -11,5 +11,5 @@ class Layer(object):
     def make_delta(self, delta):
         return delta
 
-    def adjust_weights(self):
+    def adjust_weights(self, mini_batch_size):
         pass

@@ -74,7 +74,7 @@ class Network(object):
 
             for index, mini_batch in enumerate(mini_batches):
                 counter += 1
-                self.update_weights(mini_batch)
+                self.update_weights(mini_batch, mini_batch_size)
                 self.validate(validation_data_x, validation_data_y, mini_batch_size)
 
                 if counter >= snapshot_step:
@@ -90,12 +90,12 @@ class Network(object):
             self.plotter.plot_accuracy(epochs)
             self.plotter.plot_loss(epochs)
 
-    def update_weights(self, mini_batch):
+    def update_weights(self, mini_batch, mini_batch_size):
         x, y = mini_batch
         self.backprop(x, y)
         # Uses the error and adjusts the weights for each layer
         for layer in self.layers:
-            layer.adjust_weights()
+            layer.adjust_weights(mini_batch_size)
 
     def backprop(self, activation, y):
         for layer in self.layers:
@@ -141,7 +141,7 @@ class Network(object):
         wrong = []
         x = self.feedforward(x)
         loss = self.cost.function(x, y)
-        if self.layers[-1].neurons != 2:
+        if x.shape[0] != 2:
             accuracy = self.accuracy(x, y)
             print("Evaluation with {} data:\n"
                   "loss: {:.5f} | accuracy: {:.5f}".format(
@@ -179,12 +179,14 @@ if __name__ == "__main__":
     net.addInputLayer(28 * 28)
     net.addFullyConnectedLayer(100)
     net.addActivation(ReLU())
+    net.addDropout(0.8)
     net.addFullyConnectedLayer(100)
-    net.addActivation(TanH())
+    net.addActivation(ReLU())
+    net.addDropout(0.8)
     net.addFullyConnectedLayer(10)
     net.addActivation(Sigmoid())
-    optimizer = Adam(learning_rate=0.001)
+    optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="quadratic")
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=True)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=8, mini_batch_size=20, plot=True)
     net.evaluate(test_data, test_labels)
     # best accuracy: 0.9822
