@@ -180,10 +180,10 @@ if __name__ == "__main__":
     net = Network()
     net.addInputLayer(28 * 28)
     net.addFullyConnectedLayer(100, activation="relu")
-    net.addDropout(0.8)
+    net.addFullyConnectedLayer(100, activation="relu")
     net.addFullyConnectedLayer(10, activation="sigmoid")
-    optimizer = Adam(learning_rate=0.01)
+    optimizer = SGDMomentum(learning_rate=0.001, nesterov=True)
     net.regression(optimizer=optimizer, cost="quadratic")
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=False)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=True)
     net.evaluate(test_data, test_labels)
     # best accuracy: 0.9822

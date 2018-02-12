@@ -1,11 +1,11 @@
 import numpy as np
+from scipy.special import expit
 
 
 class Sigmoid(object):
     @staticmethod
     def function(z):
-        z = 1.0 / (1.0 + np.exp(-z))
-        return z
+        return expit(z)
 
     @staticmethod
     def derivative(z):
