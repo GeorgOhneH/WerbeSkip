@@ -8,12 +8,16 @@ class RMSprop(Optimizer):
         super().__init__(learning_rate)
         self.decay_rate = decay_rate
         self.e = e
-        self.cache_w = 0
-        self.cache_b = 0
+        self.caches = None
 
-    def calculate_change(self, nabla_w, nabla_b):
-        self.cache_w = np.power(nabla_w, 2) * self.decay_rate + (1-self.decay_rate) * self.cache_w
-        self.cache_b = np.power(nabla_b, 2) * self.decay_rate + (1-self.decay_rate) * self.cache_b
-        change_w = np.multiply(self.learning_rate / (np.sqrt(self.cache_w) + self.e), nabla_w)
-        change_b = np.multiply(self.learning_rate / (np.sqrt(self.cache_b) + self.e), nabla_b)
-        return change_w, change_b
+    def calculate_change(self, *nablas):
+        changes = []
+
+        if self.caches is None:
+            self.caches = [0 for _ in nablas]
+
+        for index, nabla in enumerate(nablas):
+            self.caches[index] = np.power(nabla, 2) * self.decay_rate + (1-self.decay_rate) * self.caches[index]
+            changes.append(np.multiply(self.learning_rate / (np.sqrt(self.caches[index]) + self.e), nabla))
+
+        return changes
