@@ -182,7 +182,7 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(100, activation="relu")
     net.addDropout(0.8)
     net.addFullyConnectedLayer(10, activation="sigmoid")
-    optimizer = RMSprop(learning_rate=0.001)
+    optimizer = RMSprop(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="quadratic")
     net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=False)
     net.evaluate(test_data, test_labels)
