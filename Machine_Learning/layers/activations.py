@@ -41,3 +41,22 @@ class Sigmoid(Layer):
         z = np.multiply(self.forward(self.z), (1 - self.forward(self.z)))
         delta = np.multiply(delta, z)
         return delta
+
+
+class TanH(Layer):
+    def __init__(self):
+        self.z = None
+
+    def forward(self, z):
+        a = np.tanh(z)
+        return a
+
+    def forward_backpropagation(self, z):
+        self.z = z
+        a = np.tanh(z)
+        return a
+
+    def make_delta(self, delta):
+        z = 1 - np.power(self.forward(self.z), 2)
+        delta = np.multiply(delta, z)
+        return delta

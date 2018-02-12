@@ -1,5 +1,5 @@
 from mnist_loader import load_mnist
-from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid
+from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid, TanH
 from functions.costs import QuadraticCost
 from optimizers import SGD, SGDMomentum, AdaGrad, RMSprop, Adam
 from utils import make_mini_batches, Plotter
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(100)
     net.addActivation(ReLU())
     net.addFullyConnectedLayer(100)
-    net.addActivation(ReLU())
+    net.addActivation(TanH())
     net.addFullyConnectedLayer(10)
     net.addActivation(Sigmoid())
     optimizer = Adam(learning_rate=0.001)

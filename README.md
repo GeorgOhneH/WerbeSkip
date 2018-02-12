@@ -50,3 +50,5 @@ https://towardsdatascience.com/batch-normalization-in-neural-networks-1ac9151682
 
 https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/batch_norm_layer.html
 
+https://en.wikipedia.org/wiki/Activation_function
+
