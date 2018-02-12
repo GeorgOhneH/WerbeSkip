@@ -1,6 +1,5 @@
 from mnist_loader import load_mnist
-from layers import FullyConnectedLayer, Dropout
-from functions.activations import Sigmoid, ReLU
+from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid
 from functions.costs import QuadraticCost
 from optimizers import SGD, SGDMomentum, AdaGrad, RMSprop, Adam
 from utils import make_mini_batches, Plotter
@@ -32,10 +31,6 @@ class Network(object):
         self.train_accuracy = []
         self.validate_loss = []
         self.validate_accuracy = []
-        self.activations = {
-            "sigmoid": Sigmoid,
-            "relu": ReLU,
-        }
         self.costs = {
             "quadratic": QuadraticCost,
         }
@@ -44,8 +39,11 @@ class Network(object):
     def addInputLayer(self, neurons):
         self.input_neurons = neurons
 
-    def addFullyConnectedLayer(self, neurons, activation="sigmoid"):
-        self.layers.append(FullyConnectedLayer(neurons, self.activations[activation]))
+    def addFullyConnectedLayer(self, neurons):
+        self.layers.append(FullyConnectedLayer(neurons))
+
+    def addActivation(self, activation):
+        self.layers.append(activation)
 
     def addDropout(self, dropout):
         self.layers.append(Dropout(dropout))
@@ -179,9 +177,12 @@ if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
     net.addInputLayer(28 * 28)
-    net.addFullyConnectedLayer(100, activation="relu")
-    net.addFullyConnectedLayer(100, activation="relu")
-    net.addFullyConnectedLayer(10, activation="sigmoid")
+    net.addFullyConnectedLayer(100)
+    net.addActivation(ReLU())
+    net.addFullyConnectedLayer(100)
+    net.addActivation(ReLU())
+    net.addFullyConnectedLayer(10)
+    net.addActivation(Sigmoid())
     optimizer = Adam(learning_rate=0.001)
     net.regression(optimizer=optimizer, cost="quadratic")
     net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=True)

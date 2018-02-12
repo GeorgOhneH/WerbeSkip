@@ -46,3 +46,7 @@ http://ruder.io/optimizing-gradient-descent/
 
 https://towardsdatascience.com/types-of-optimization-algorithms-used-in-neural-networks-and-ways-to-optimize-gradient-95ae5d39529f
 
+https://towardsdatascience.com/batch-normalization-in-neural-networks-1ac91516821c
+
+https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/batch_norm_layer.html
+

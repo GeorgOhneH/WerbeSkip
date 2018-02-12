@@ -4,15 +4,13 @@ import numpy as np
 
 
 class FullyConnectedLayer(Layer):
-    def __init__(self, neurons, activation):
+    def __init__(self, neurons):
         self.neurons = neurons
-        self.activation = activation
         self.optimizer = None
         self.biases = None
         self.weights = None
         self.nabla_b = None
         self.nabla_w = None
-        self.z = None
         self.a = None
 
     def init(self, neurons_before, optimizer):
@@ -24,18 +22,14 @@ class FullyConnectedLayer(Layer):
     # Input Matrix Output Matrix
     def forward(self, a):
         z = self.weights @ a + self.biases
-        a = self.activation.function(z)
-        return a
+        return z
 
     def forward_backpropagation(self, a):
         self.a = a
         z = self.weights @ a + self.biases
-        self.z = z
-        a = self.activation.function(z)
-        return a
+        return z
 
     def make_delta(self, delta):
-        delta = np.multiply(delta, self.activation.derivative(self.z))
         self.nabla_b = np.sum(delta, axis=1)
         self.nabla_w = delta @ self.a.T
         return self.weights.T @ delta
