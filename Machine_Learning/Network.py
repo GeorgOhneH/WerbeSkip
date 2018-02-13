@@ -65,6 +65,10 @@ class Network(object):
             a = layer.forward(a)
         return a
 
+    def predict(self, a):
+        a = self.feedforward(a)
+        return np.argmax(a, axis=0)
+
     def fit(self, training_data_x, training_data_y, validation_data_x, validation_data_y, epochs, mini_batch_size,
             plot=False, snapshot_step=200):
         start_time = time.time()
@@ -125,7 +129,7 @@ if __name__ == "__main__":
     net.addDropout(0.8)
     net.addFullyConnectedLayer(10)
     net.addActivation(Sigmoid())
-    optimizer = Adam(learning_rate=0.05)
+    optimizer = Adam(learning_rate=0.001)
     net.regression(optimizer=optimizer, cost="quadratic")
     net.fit(train_data, train_labels, test_data, test_labels, epochs=8, mini_batch_size=20, plot=True)
     net.evaluate(test_data, test_labels)
