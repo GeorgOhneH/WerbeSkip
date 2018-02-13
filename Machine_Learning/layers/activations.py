@@ -31,7 +31,7 @@ class ReLU(Layer):
 
 class Sigmoid(Layer):
     """
-    ReLU is an activation function
+    Sigmoid is an activation function
     It behaves like a layer
     The shape of the input is the same as the output
     """
@@ -55,7 +55,7 @@ class Sigmoid(Layer):
 
 class TanH(Layer):
     """
-    ReLU is an activation function
+    TanH is an activation function
     It behaves like a layer
     The shape of the input is the same as the output
     """
