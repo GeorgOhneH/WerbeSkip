@@ -2,9 +2,8 @@ from mnist_loader import load_mnist
 from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid, TanH
 from functions.costs import QuadraticCost
 from optimizers import SGD, SGDMomentum, AdaGrad, RMSprop, Adam
-from utils import make_mini_batches, Plotter
+from utils import make_mini_batches, Plotter, Analysis
 
-from random import randint
 import time
 from copy import copy
 
@@ -35,6 +34,7 @@ class Network(object):
             "quadratic": QuadraticCost,
         }
         self.plotter = Plotter(self.train_loss, self.validate_loss, self.train_accuracy, self.validate_accuracy)
+        self.analysis = Analysis(self)
 
     def addInputLayer(self, neurons):
         self.input_neurons = neurons
@@ -75,7 +75,7 @@ class Network(object):
             for index, mini_batch in enumerate(mini_batches):
                 counter += 1
                 self.update_weights(mini_batch, mini_batch_size)
-                self.validate(validation_data_x, validation_data_y, mini_batch_size)
+                self.analysis.validate(validation_data_x, validation_data_y, mini_batch_size)
 
                 if counter >= snapshot_step:
                     counter = 0
@@ -104,7 +104,7 @@ class Network(object):
         loss = self.cost.function(activation, y)
         self.train_loss.append(loss)
 
-        accuracy = self.accuracy(activation, y)
+        accuracy = self.analysis.accuracy(activation, y)
         self.train_accuracy.append(accuracy)
 
         # calculates delta and saves it in each layer
@@ -112,65 +112,8 @@ class Network(object):
         for layer in reversed(self.layers):
             delta = layer.make_delta(delta)
 
-    def validate(self, x, y, size=None):
-        if size is not None:
-            rand = randint(0, x.shape[1]-size)
-            x = x[..., rand:rand+size]
-            y = y[..., rand:rand+size]
-
-        x = self.feedforward(x)
-
-        loss = self.cost.function(x, y)
-        accuracy = self.accuracy(x, y)
-
-        self.validate_accuracy.append(accuracy)
-        self.validate_loss.append(loss)
-        return loss, accuracy
-
-    def accuracy(self, x, y):
-        n_data = x.shape[1]
-        correct = 0
-        for index in range(n_data):
-            a = x[:, index]
-            if np.argmax(a) == np.argmax(y[:, index]):
-                correct += 1
-        return correct / n_data
-
     def evaluate(self, x, y):
-        orig_x = x
-        wrong = []
-        x = self.feedforward(x)
-        loss = self.cost.function(x, y)
-        if x.shape[0] != 2:
-            accuracy = self.accuracy(x, y)
-            print("Evaluation with {} data:\n"
-                  "loss: {:.5f} | accuracy: {:.5f}".format(
-                x.shape[1], loss, accuracy,
-            ))
-            return
-        tp, tn, fp, fn = 0, 0, 0, 0  # True Positive, True Negative, False Positive, False Negative
-        for index in range(x.shape[1]):
-            a = np.argmax(x[:, index])
-            b = np.argmax(y[:, index])
-            if a == 1 and b == 1:
-                tp += 1
-            elif a == 0 and b == 0:
-                tn += 1
-            elif a == 1 and b == 0:
-                fp += 1
-                wrong.append((np.squeeze(np.asarray(orig_x[:, index])), "no_logo.BMP"))
-            elif a == 0 and b == 1:
-                fn += 1
-                wrong.append((np.squeeze(np.asarray(orig_x[:, index])), "logo.BMP"))
-        accuracy = (tp + tn) / (tp + tn + fp + fn)
-        precision = tp / (tp + fp)
-        recall = tp / (tp + fn)
-        f1_score = 2 * (recall * precision) / (recall + precision)
-        print("Evaluation with {} data:\n"
-              "loss: {:.5f} | accuracy: {:.5f} | precision: {:.5f} | recall: {:.5f} | f1_score: {:.5f}".format(
-            x.shape[1], loss, accuracy, precision, recall, f1_score
-        ))
-        return wrong
+        self.analysis.evaluate(x, y)
 
 
 if __name__ == "__main__":
@@ -180,12 +123,9 @@ if __name__ == "__main__":
     net.addFullyConnectedLayer(100)
     net.addActivation(ReLU())
     net.addDropout(0.8)
-    net.addFullyConnectedLayer(100)
-    net.addActivation(ReLU())
-    net.addDropout(0.8)
     net.addFullyConnectedLayer(10)
     net.addActivation(Sigmoid())
-    optimizer = Adam(learning_rate=0.01)
+    optimizer = Adam(learning_rate=0.05)
     net.regression(optimizer=optimizer, cost="quadratic")
     net.fit(train_data, train_labels, test_data, test_labels, epochs=8, mini_batch_size=20, plot=True)
     net.evaluate(test_data, test_labels)

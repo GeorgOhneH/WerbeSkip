@@ -28,14 +28,14 @@ def loader(func):
     return shuffle(train_image, train_label)
 
 
-def load_imgs():
+def load_imgs(split=0.8):
     train_image, train_label = loader(plane_background)
-    validation_image, validation_label = loader(sample_imgs)
-    split_data = int(validation_image.shape[1] * 0.8)
+    sample_images, sample_labels = loader(sample_imgs)
+    split_data = int(sample_images.shape[1] * split)
 
     return train_image, train_label, \
-           validation_image[..., :split_data], validation_label[..., :split_data], \
-           validation_image[..., -split_data:], validation_label[..., -split_data:]
+           sample_images[..., :split_data], sample_labels[..., :split_data], \
+           sample_images[..., -split_data:], sample_labels[..., -split_data:]
 
 
 if __name__ == "__main__":
