@@ -5,6 +5,11 @@ from scipy.special import expit
 
 
 class ReLU(Layer):
+    """
+    ReLU is an activation function
+    It behaves like a layer
+    The shape of the input is the same as the output
+    """
     def __init__(self):
         self.z = None
 
@@ -20,11 +25,16 @@ class ReLU(Layer):
     def make_delta(self, delta):
         self.z[self.z <= 0] = 0
         self.z[self.z > 0] = 1
-        delta = np.multiply(delta, self.z)
+        delta = delta * self.z
         return delta
 
 
 class Sigmoid(Layer):
+    """
+    ReLU is an activation function
+    It behaves like a layer
+    The shape of the input is the same as the output
+    """
     def __init__(self):
         self.z = None
 
@@ -39,11 +49,16 @@ class Sigmoid(Layer):
 
     def make_delta(self, delta):
         z = np.multiply(self.forward(self.z), (1 - self.forward(self.z)))
-        delta = np.multiply(delta, z)
+        delta = delta * z
         return delta
 
 
 class TanH(Layer):
+    """
+    ReLU is an activation function
+    It behaves like a layer
+    The shape of the input is the same as the output
+    """
     def __init__(self):
         self.z = None
 
@@ -57,6 +72,6 @@ class TanH(Layer):
         return a
 
     def make_delta(self, delta):
-        z = 1 - np.power(self.forward(self.z), 2)
-        delta = np.multiply(delta, z)
+        z = 1 - self.forward(self.z) ** 2
+        delta = delta * z
         return delta

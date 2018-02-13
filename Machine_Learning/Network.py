@@ -57,7 +57,6 @@ class Network(object):
         self.init()
 
     def init(self):
-        # Uses Gaussian random variables with a mean of 0 and a standard deviation of 1
         neurons_before = self.input_neurons
         for layer in self.layers:
             neurons_before = layer.init(neurons_before, copy(self.optimizer))

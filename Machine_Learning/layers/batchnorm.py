@@ -4,7 +4,20 @@ import numpy as np
 
 
 class BatchNorm(Layer):
+    """
+    BatchNorm is layer, which only normalises the values
+
+    It sets the values, so that the have a standard derivative of 1
+    and a mean of 0
+    exactly like the weights and biases are initialized
+
+    It has 2 learnable parameters, so the network can decide if needs normalisation
+    or if it better works with out it
+
+    BatchNorm helps by preventing overfitting and alloys higher learning rates
+    """
     def __init__(self):
+        """Takes no arguments"""
         self.beta = None
         self.gamma = None
         self.nabla_g = None
@@ -16,18 +29,21 @@ class BatchNorm(Layer):
         self.norm = None
 
     def init(self, neurons_before, optimizer):
+        """Initial gamma and beta, so that they don't have an effect"""
         self.optimizer = optimizer
         self.gamma = np.ones((neurons_before, 1))
         self.beta = np.zeros((neurons_before, 1))
         return neurons_before
 
     def forward(self, a):
+        """Normalises the values"""
         mu = np.mean(a, axis=1, keepdims=True)
         var = np.var(a, axis=1, keepdims=True)
         norm = (a - mu)/np.sqrt(var + 1e-8)
         return np.multiply(self.gamma, norm) + self.beta
 
     def forward_backpropagation(self, a):
+        """Normalises the values"""
         self.a = a
         self.mu = np.mean(a, axis=1, keepdims=True)
         self.var = np.var(a, axis=1, keepdims=True)
@@ -35,6 +51,7 @@ class BatchNorm(Layer):
         return self.gamma * self.norm + self.beta
 
     def make_delta(self, delta):
+        """Calculates the derivative and saves the error """
         self.nabla_g = np.sum(delta * self.norm, axis=1, keepdims=True)
         self.nabla_b = np.sum(delta, axis=1, keepdims=True)
 
@@ -52,6 +69,7 @@ class BatchNorm(Layer):
         return delta
 
     def adjust_weights(self, mini_batch_size):
+        """adjust the param gamma and beta with the optimizer"""
         change_g, change_b = self.optimizer.calculate_change(self.nabla_g, self.nabla_b)
         self.gamma -= change_g/mini_batch_size
         self.beta -= change_b/mini_batch_size
