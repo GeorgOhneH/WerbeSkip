@@ -30,7 +30,7 @@ class FullyConnectedLayer(Layer):
         return z
 
     def make_delta(self, delta):
-        self.nabla_b = np.sum(delta, axis=1)
+        self.nabla_b = np.sum(delta, axis=1, keepdims=True)
         self.nabla_w = delta @ self.a.T
         return self.weights.T @ delta
 

@@ -1,5 +1,5 @@
 from mnist_loader import load_mnist
-from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid, TanH
+from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid, TanH, BatchNorm
 from functions.costs import QuadraticCost
 from optimizers import SGD, SGDMomentum, AdaGrad, RMSprop, Adam
 from utils import make_mini_batches, Plotter, Analysis
@@ -47,6 +47,9 @@ class Network(object):
 
     def addDropout(self, dropout):
         self.layers.append(Dropout(dropout))
+
+    def addBatchNorm(self):
+        self.layers.append(BatchNorm())
 
     def regression(self, optimizer, cost="quadratic"):
         self.optimizer = optimizer
@@ -125,12 +128,17 @@ if __name__ == "__main__":
     net = Network()
     net.addInputLayer(28 * 28)
     net.addFullyConnectedLayer(100)
+    net.addBatchNorm()
+    net.addActivation(ReLU())
+    net.addDropout(0.8)
+    net.addFullyConnectedLayer(100)
+    net.addBatchNorm()
     net.addActivation(ReLU())
     net.addDropout(0.8)
     net.addFullyConnectedLayer(10)
     net.addActivation(Sigmoid())
-    optimizer = Adam(learning_rate=0.001)
+    optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="quadratic")
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=8, mini_batch_size=20, plot=True)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=True)
     net.evaluate(test_data, test_labels)
     # best accuracy: 0.9822

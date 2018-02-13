@@ -52,3 +52,7 @@ https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/batch_no
 
 https://en.wikipedia.org/wiki/Activation_function
 
+https://kratzert.github.io/2016/02/12/understanding-the-gradient-flow-through-the-batch-normalization-layer.html
+
+https://wiseodd.github.io/techblog/2016/07/04/batchnorm/
+
