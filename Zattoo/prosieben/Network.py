@@ -11,7 +11,7 @@ net.addFullyConnectedLayer(100, activation="relu")
 net.addDropout(0.8)
 net.addFullyConnectedLayer(2, activation="sigmoid")
 net.regression(learning_rate=0.01, cost="quadratic")
-net.fit(train_data, train_labels, validation_data, validation_labels, epochs=40, mini_batch_size=20, plot=True, snapshot_step=10)
+net.fit(train_data, train_labels, validation_data, validation_labels, epochs=40, mini_batch_size=20, plot=True, snapshot_step=100)
 img_dataer = net.evaluate(test_data, test_labels)
 
 # print(len(img_dataer))

@@ -127,18 +127,21 @@ if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
     net.addInputLayer(28 * 28)
-    net.addFullyConnectedLayer(100)
+
+    net.addFullyConnectedLayer(200)
     net.addBatchNorm()
     net.addActivation(ReLU())
     net.addDropout(0.8)
-    net.addFullyConnectedLayer(100)
+
+    net.addFullyConnectedLayer(200)
     net.addBatchNorm()
     net.addActivation(ReLU())
     net.addDropout(0.8)
+
     net.addFullyConnectedLayer(10)
     net.addActivation(Sigmoid())
-    optimizer = Adam(learning_rate=0.01)
+
+    optimizer = Adam(learning_rate=0.1)
     net.regression(optimizer=optimizer, cost="quadratic")
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=20, plot=True)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)
-    # best accuracy: 0.9822
