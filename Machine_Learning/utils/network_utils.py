@@ -2,12 +2,24 @@ import numpy as np
 
 
 def shuffle(x, y):
-    # shuffles data in unison with helping from indexing
+    """
+    Shuffles data in unison with helping from indexing
+    :param x: ndarray
+    :param y: ndarray
+    :return x, y: ndarray
+    """
     indexes = np.random.permutation(x.shape[1])
     return x[..., indexes], y[..., indexes]
 
 
 def make_mini_batches(x, y, size):
+    """
+    Shuffles data and makes mini batches
+    :param x: ndarray
+    :param y: ndarray
+    :param size: unsigned int
+    :return mini_batches: list with ndarray's
+    """
     x, y = shuffle(x, y)
     mini_batches = []
     length = x.shape[1]
