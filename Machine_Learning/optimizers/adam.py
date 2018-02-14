@@ -4,6 +4,11 @@ import numpy as np
 
 
 class Adam(Optimizer):
+    """
+    Adam is like RMSprop but with momentum
+
+    It works really well
+    """
     def __init__(self, learning_rate=0.001, beta1=0.9, beta2=0.999, e=1e-8):
         super().__init__(learning_rate)
         self.beta2 = beta2

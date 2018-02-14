@@ -5,16 +5,16 @@ import numpy as np
 
 class BatchNorm(Layer):
     """
-    BatchNorm is layer, which only normalises the values
+    BatchNorm is layer, which normalises the values
 
-    It sets the values, so that the have a standard derivative of 1
+    It normalises the values, so that the have a standard derivative of 1
     and a mean of 0
     exactly like the weights and biases are initialized
 
     It has 2 learnable parameters, so the network can decide if needs normalisation
     or if it better works with out it
 
-    BatchNorm helps by preventing overfitting and alloys higher learning rates
+    BatchNorm helps  preventing overfitting and alloys higher learning rates
     """
     def __init__(self):
         """Takes no arguments"""
@@ -69,7 +69,7 @@ class BatchNorm(Layer):
         return delta
 
     def adjust_weights(self, mini_batch_size):
-        """adjust the param gamma and beta with the optimizer"""
+        """Adjust the param gamma and beta with the optimizer"""
         change_g, change_b = self.optimizer.calculate_change(self.nabla_g, self.nabla_b)
         self.gamma -= change_g/mini_batch_size
         self.beta -= change_b/mini_batch_size

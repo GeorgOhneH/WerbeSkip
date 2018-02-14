@@ -29,8 +29,9 @@ class Dropout(Layer):
 
     def forward(self, a):
         """
-        Multiples the activation by the dropout, so the sum is
-        still the same as it was while it was training
+        Multiples the activation by the dropout
+        This is need because so are the sum of the weights
+        the same, as they were in training
         """
         a *= self.dropout
         return a
