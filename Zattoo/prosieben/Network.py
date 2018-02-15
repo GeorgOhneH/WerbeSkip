@@ -1,4 +1,4 @@
-from Machine_Learning.Network import Network
+from Machine_Learning.network import Network
 from image_processing.image_loader import load_imgs
 from PIL import Image
 import numpy as np

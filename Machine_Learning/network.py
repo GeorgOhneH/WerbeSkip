@@ -1,7 +1,7 @@
 from mnist_loader import load_mnist
-from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid, TanH, BatchNorm
+from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid, TanH, BatchNorm, Layer
 from functions.costs import QuadraticCost
-from optimizers import SGD, SGDMomentum, AdaGrad, RMSprop, Adam
+from optimizers import SGD, SGDMomentum, AdaGrad, RMSprop, Adam, Optimizer
 from utils import make_mini_batches, Plotter, Analysis
 
 import time
@@ -20,50 +20,53 @@ class Network(object):
     """
 
     def __init__(self):
-        self.optimizer = None
-        self.input_neurons = 0
-        self.layers = []
-        self.biases = None
-        self.weights = None
+        self._optimizer = None
+        self._input_neurons = None
         self.cost = None
+        self._layers = []
         self.train_loss = []
         self.train_accuracy = []
         self.validate_loss = []
         self.validate_accuracy = []
-        self.costs = {
+        self._costs = {
             "quadratic": QuadraticCost,
         }
         self.plotter = Plotter(self.train_loss, self.validate_loss, self.train_accuracy, self.validate_accuracy)
         self.analysis = Analysis(self)
 
-    def addInputLayer(self, neurons):
-        self.input_neurons = neurons
+    def input(self, neurons):
+        if not isinstance(neurons, int):
+            raise ValueError("Must be an integer")
 
-    def addFullyConnectedLayer(self, neurons):
-        self.layers.append(FullyConnectedLayer(neurons))
+        self._input_neurons = neurons
 
-    def addActivation(self, activation):
-        self.layers.append(activation)
+    def add(self, layer):
+        if not issubclass(type(layer), Layer):
+            raise ValueError("{} must be a subclass of Layer".format(layer))
 
-    def addDropout(self, dropout):
-        self.layers.append(Dropout(dropout))
-
-    def addBatchNorm(self):
-        self.layers.append(BatchNorm())
+        self._layers.append(layer)
 
     def regression(self, optimizer, cost="quadratic"):
-        self.optimizer = optimizer
-        self.cost = self.costs[cost]
-        self.init()
+        if not issubclass(type(optimizer), Optimizer):
+            raise ValueError("{} must be a subclass of Optimizer".format(optimizer))
 
-    def init(self):
-        neurons_before = self.input_neurons
-        for layer in self.layers:
-            neurons_before = layer.init(neurons_before, copy(self.optimizer))
+        if cost not in self._costs.keys():
+            raise ValueError("{} must be one of these costs: {}".format(cost, self._costs.keys()))
+
+        self._optimizer = optimizer
+        self.cost = self._costs[cost]
+        self._init()
+
+    def _init(self):
+        if self._input_neurons is None:
+            raise AttributeError("input() must be called before regression()")
+
+        neurons_before = self._input_neurons
+        for layer in self._layers:
+            neurons_before = layer.init(neurons_before, copy(self._optimizer))
 
     def feedforward(self, a):
-        # Input is in Matrixform. Each row represents one datapoint
-        for layer in self.layers:
+        for layer in self._layers:
             a = layer.forward(a)
         return a
 
@@ -80,7 +83,7 @@ class Network(object):
 
             for index, mini_batch in enumerate(mini_batches):
                 counter += 1
-                self.update_weights(mini_batch, mini_batch_size)
+                self._update_parameters(mini_batch, mini_batch_size)
                 self.analysis.validate(validation_data_x, validation_data_y, mini_batch_size)
 
                 if counter >= snapshot_step:
@@ -96,26 +99,26 @@ class Network(object):
             self.plotter.plot_accuracy(epochs)
             self.plotter.plot_loss(epochs)
 
-    def update_weights(self, mini_batch, mini_batch_size):
+    def _update_parameters(self, mini_batch, mini_batch_size):
         x, y = mini_batch
-        self.backprop(x, y)
-        # Uses the error and adjusts the weights for each layer
-        for layer in self.layers:
+
+        self._backprop(x, y)
+
+        for layer in self._layers:
             layer.adjust_weights(mini_batch_size)
 
-    def backprop(self, activation, y):
-        for layer in self.layers:
+    def _backprop(self, activation, y):
+        for layer in self._layers:
             activation = layer.forward_backpropagation(activation)
-        # https://sudeepraja.github.io/Neural/
+
         loss = self.cost.function(activation, y)
         self.train_loss.append(loss)
 
         accuracy = self.analysis.accuracy(activation, y)
         self.train_accuracy.append(accuracy)
 
-        # calculates delta and saves it in each layer
         delta = self.cost.delta(activation, y)
-        for layer in reversed(self.layers):
+        for layer in reversed(self._layers):
             delta = layer.make_delta(delta)
 
     def evaluate(self, x, y):
@@ -125,20 +128,21 @@ class Network(object):
 if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
     net = Network()
-    net.addInputLayer(28 * 28)
 
-    net.addFullyConnectedLayer(200)
-    net.addBatchNorm()
-    net.addActivation(ReLU())
-    net.addDropout(0.8)
+    net.input(28 * 28)
 
-    net.addFullyConnectedLayer(200)
-    net.addBatchNorm()
-    net.addActivation(ReLU())
-    net.addDropout(0.8)
+    net.add(FullyConnectedLayer(200))
+    net.add(BatchNorm())
+    net.add(ReLU())
+    net.add(Dropout(0.8))
 
-    net.addFullyConnectedLayer(10)
-    net.addActivation(Sigmoid())
+    net.add(FullyConnectedLayer(200))
+    net.add(BatchNorm())
+    net.add(ReLU())
+    net.add(Dropout(0.8))
+
+    net.add(FullyConnectedLayer(10))
+    net.add(Sigmoid())
 
     optimizer = Adam(learning_rate=0.1)
     net.regression(optimizer=optimizer, cost="quadratic")
