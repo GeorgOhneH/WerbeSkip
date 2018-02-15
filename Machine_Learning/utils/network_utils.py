@@ -22,7 +22,6 @@ def make_mini_batches(x, y, size):
     """
     x, y = shuffle(x, y)
     mini_batches = []
-    length = x.shape[1]
-    for i in range(0, length, size):
+    for i in range(0, x.shape[1], size):
         mini_batches.append((x[:, i:size + i], y[:, i:size + i]))
     return mini_batches
