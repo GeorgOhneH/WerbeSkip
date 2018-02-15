@@ -9,18 +9,18 @@ def shuffle(x, y):
     return x[:, indexes], y[:, indexes]
 
 
-def img_to_matrix(imgs):
+def img_to_array(imgs):
     num_imgs = [list(x.getdata()) for x in imgs]
-    imgs_matrix = np.matrix(num_imgs).T / 255
+    imgs_matrix = np.array(num_imgs).T / 255
     return imgs_matrix
 
 
 def loader(func):
-    image_logo = img_to_matrix(func(True))
-    label_logo = np.matrix([[0, 1] for _ in range(image_logo.shape[1])]).T
+    image_logo = img_to_array(func(True))
+    label_logo = np.array([[0, 1] for _ in range(image_logo.shape[1])]).T
 
-    image_no_logo = img_to_matrix(func(False))
-    label_no_logo = np.matrix([[1, 0] for _ in range(image_no_logo.shape[1])]).T
+    image_no_logo = img_to_array(func(False))
+    label_no_logo = np.array([[1, 0] for _ in range(image_no_logo.shape[1])]).T
 
     train_image = np.c_[image_logo, image_no_logo]  # appends the matrix
     train_label = np.c_[label_logo, label_no_logo]

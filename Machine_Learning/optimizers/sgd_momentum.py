@@ -1,6 +1,4 @@
-from .optimizer import Optimizer
-
-import numpy as np
+from optimizers.optimizer import Optimizer
 
 
 class SGDMomentum(Optimizer):

@@ -7,12 +7,9 @@ plt.style.use('ggplot')  # for nicer looking plotting
 
 class Plotter(object):
     """The Plotter class is responsible to plot """
-    def __init__(self, train_loss, validate_loss, train_accuracy, validate_accuracy):
-        """init the needed references"""
-        self.train_loss = train_loss
-        self.validate_loss = validate_loss
-        self.train_accuracy = train_accuracy
-        self.validate_accuracy = validate_accuracy
+    def __init__(self, network):
+        """links the network"""
+        self.network = network
 
     def plot_loss(self, epochs):
         """
@@ -22,8 +19,8 @@ class Plotter(object):
         :param epochs: int
         :return: None
         """
-        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_loss, epochs)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_loss, epochs)
+        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.network.train_loss, epochs)
+        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.network.validate_loss, epochs)
 
         plt.semilogy(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
         plt.semilogy(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
@@ -43,8 +40,8 @@ class Plotter(object):
         :param epochs: unsigned int
         :return: None
         """
-        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.train_accuracy, epochs)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.validate_accuracy, epochs, )
+        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.network.train_accuracy, epochs)
+        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.network.validate_accuracy, epochs, )
 
         plt.plot(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
         plt.plot(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")

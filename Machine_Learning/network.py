@@ -33,12 +33,28 @@ class Network(object):
         self._costs = {
             "quadratic": QuadraticCost,
         }
-        self._plotter = Plotter(self._train_loss, self._validate_loss, self._train_accuracy, self._validate_accuracy)
+        self._plotter = Plotter(self)
         self._analysis = Analysis(self)
 
     @property
     def cost(self):
         return self._cost
+
+    @property
+    def train_loss(self):
+        return self._train_loss
+
+    @property
+    def train_accuracy(self):
+        return self._train_accuracy
+
+    @property
+    def validate_loss(self):
+        return self._validate_loss
+
+    @property
+    def validate_accuracy(self):
+        return self._validate_accuracy
 
     def input(self, neurons):
         if not isinstance(neurons, int):
@@ -48,16 +64,16 @@ class Network(object):
 
     def add(self, layer):
         if not issubclass(type(layer), Layer):
-            raise ValueError("{} must be a subclass of Layer".format(layer))
+            raise ValueError("Must be a subclass of Layer not {}".format(type(layer)))
 
         self._layers.append(layer)
 
     def regression(self, optimizer, cost="quadratic"):
         if not issubclass(type(optimizer), Optimizer):
-            raise ValueError("{} must be a subclass of Optimizer".format(optimizer))
+            raise ValueError("Must be a subclass of Optimizer not {}".format(type(optimizer)))
 
         if cost not in self._costs.keys():
-            raise ValueError("{} must be one of these costs: {}".format(cost, list(self._costs.keys())))
+            raise ValueError("Must be one of these costs: {}".format(list(self._costs.keys())))
 
         self._optimizer = optimizer
         self._cost = self._costs[cost]
@@ -152,5 +168,5 @@ if __name__ == "__main__":
 
     optimizer = Adam(learning_rate=0.1)
     net.regression(optimizer=optimizer, cost="quadratic")
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=20, mini_batch_size=128, plot=True)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=3, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)
