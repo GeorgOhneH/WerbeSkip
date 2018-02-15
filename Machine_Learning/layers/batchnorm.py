@@ -53,8 +53,8 @@ class BatchNorm(Layer):
         self.var = np.var(a, axis=1, keepdims=True)
         self.norm = (a - self.mu)/np.sqrt(self.var + 1e-8)
 
-        self.mu_avg = 0.9*self.mu_avg + self.mu
-        self.var_avg = 0.9*self.var_avg + self.var
+        self.mu_avg = 0.9*self.mu_avg + 0.1*self.mu
+        self.var_avg = 0.9*self.var_avg + 0.1*self.var
 
         return self.gamma * self.norm + self.beta
 
