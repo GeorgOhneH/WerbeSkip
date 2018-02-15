@@ -18,6 +18,8 @@ class BatchNorm(Layer):
     """
     def __init__(self):
         """Takes no arguments"""
+        self.mu_avg = 0
+        self.var_avg = 1
         self.beta = None
         self.gamma = None
         self.nabla_g = None
@@ -36,18 +38,24 @@ class BatchNorm(Layer):
         return neurons_before
 
     def forward(self, a):
-        """Normalises the values"""
-        mu = np.mean(a, axis=1, keepdims=True)
-        var = np.var(a, axis=1, keepdims=True)
-        norm = (a - mu)/np.sqrt(var + 1e-8)
+        """
+        Normalises the values
+        with the average of the mean of the variance while training
+        because the network uses SGD
+        """
+        norm = (a - self.mu_avg)/np.sqrt(self.var_avg + 1e-8)
         return np.multiply(self.gamma, norm) + self.beta
 
     def forward_backpropagation(self, a):
-        """Normalises the values"""
+        """Normalises the values and saves the averages"""
         self.a = a
         self.mu = np.mean(a, axis=1, keepdims=True)
         self.var = np.var(a, axis=1, keepdims=True)
         self.norm = (a - self.mu)/np.sqrt(self.var + 1e-8)
+
+        self.mu_avg = 0.9*self.mu_avg + self.mu
+        self.var_avg = 0.9*self.var_avg + self.var
+
         return self.gamma * self.norm + self.beta
 
     def make_delta(self, delta):

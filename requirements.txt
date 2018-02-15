@@ -5,3 +5,4 @@ scipy
 pillow
 tensorflow
 python-mnist
+pygame
