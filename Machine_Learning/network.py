@@ -1,7 +1,9 @@
 from mnist_loader import load_mnist
-from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid, TanH, BatchNorm, Layer
+from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid, TanH, BatchNorm
+from layers.layer import Layer
 from functions.costs import QuadraticCost
-from optimizers import SGD, SGDMomentum, AdaGrad, RMSprop, Adam, Optimizer
+from optimizers import SGD, SGDMomentum, AdaGrad, RMSprop, Adam
+from optimizers.optimizer import Optimizer
 from utils import make_mini_batches, Plotter, Analysis
 
 import time
@@ -22,17 +24,21 @@ class Network(object):
     def __init__(self):
         self._optimizer = None
         self._input_neurons = None
-        self.cost = None
+        self._cost = None
         self._layers = []
-        self.train_loss = []
-        self.train_accuracy = []
-        self.validate_loss = []
-        self.validate_accuracy = []
+        self._train_loss = []
+        self._train_accuracy = []
+        self._validate_loss = []
+        self._validate_accuracy = []
         self._costs = {
             "quadratic": QuadraticCost,
         }
-        self.plotter = Plotter(self.train_loss, self.validate_loss, self.train_accuracy, self.validate_accuracy)
-        self.analysis = Analysis(self)
+        self._plotter = Plotter(self._train_loss, self._validate_loss, self._train_accuracy, self._validate_accuracy)
+        self._analysis = Analysis(self)
+
+    @property
+    def cost(self):
+        return self._cost
 
     def input(self, neurons):
         if not isinstance(neurons, int):
@@ -51,10 +57,10 @@ class Network(object):
             raise ValueError("{} must be a subclass of Optimizer".format(optimizer))
 
         if cost not in self._costs.keys():
-            raise ValueError("{} must be one of these costs: {}".format(cost, self._costs.keys()))
+            raise ValueError("{} must be one of these costs: {}".format(cost, list(self._costs.keys())))
 
         self._optimizer = optimizer
-        self.cost = self._costs[cost]
+        self._cost = self._costs[cost]
         self._init()
 
     def _init(self):
@@ -84,20 +90,20 @@ class Network(object):
             for index, mini_batch in enumerate(mini_batches):
                 counter += 1
                 self._update_parameters(mini_batch, mini_batch_size)
-                self.analysis.validate(validation_data_x, validation_data_y, mini_batch_size)
+                self._analysis.validate(validation_data_x, validation_data_y, mini_batch_size)
 
                 if counter >= snapshot_step:
                     counter = 0
                     print(
                         "Epoch {} of {} | train_loss: {:.5f} | train_accuracy: {:.5f} | time {:.3f}\n"
                         "progress: {:.5f} | validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
-                            j + 1, epochs, np.mean(self.train_loss[-100:]), np.mean(self.train_accuracy[-100:]), time.time() - start_time,
-                            index / len(mini_batches), np.mean(self.validate_loss[-100:]), np.mean(self.validate_accuracy[-100:])),
+                            j + 1, epochs, np.mean(self._train_loss[-100:]), np.mean(self._train_accuracy[-100:]), time.time() - start_time,
+                            index / len(mini_batches), np.mean(self._validate_loss[-100:]), np.mean(self._validate_accuracy[-100:])),
                         sep='', end='\n', flush=True)
 
         if plot:
-            self.plotter.plot_accuracy(epochs)
-            self.plotter.plot_loss(epochs)
+            self._plotter.plot_accuracy(epochs)
+            self._plotter.plot_loss(epochs)
 
     def _update_parameters(self, mini_batch, mini_batch_size):
         x, y = mini_batch
@@ -111,18 +117,18 @@ class Network(object):
         for layer in self._layers:
             activation = layer.forward_backpropagation(activation)
 
-        loss = self.cost.function(activation, y)
-        self.train_loss.append(loss)
+        loss = self._cost.function(activation, y)
+        self._train_loss.append(loss)
 
-        accuracy = self.analysis.accuracy(activation, y)
-        self.train_accuracy.append(accuracy)
+        accuracy = self._analysis.accuracy(activation, y)
+        self._train_accuracy.append(accuracy)
 
-        delta = self.cost.delta(activation, y)
+        delta = self._cost.delta(activation, y)
         for layer in reversed(self._layers):
             delta = layer.make_delta(delta)
 
     def evaluate(self, x, y):
-        self.analysis.evaluate(x, y)
+        self._analysis.evaluate(x, y)
 
 
 if __name__ == "__main__":

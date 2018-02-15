@@ -1,18 +1,22 @@
 from Machine_Learning.network import Network
 from image_processing.image_loader import load_imgs
-from PIL import Image
-import numpy as np
+from Machine_Learning.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, Sigmoid
+from Machine_Learning.optimizers import Adam
 
 
-train_data, train_labels, validation_data, validation_labels, test_data, test_labels = load_imgs()
+train_data, train_labels, v_x, v_y, t_x, t_y = load_imgs()
 net = Network()
-net.addInputLayer(52 * 52)
-net.addFullyConnectedLayer(100, activation="relu")
-net.addDropout(0.8)
-net.addFullyConnectedLayer(2, activation="sigmoid")
-net.regression(learning_rate=0.01, cost="quadratic")
-net.fit(train_data, train_labels, validation_data, validation_labels, epochs=40, mini_batch_size=20, plot=True, snapshot_step=100)
-img_dataer = net.evaluate(test_data, test_labels)
+net.input(52 * 52)
+net.add(FullyConnectedLayer(100))
+net.add(BatchNorm())
+net.add(ReLU())
+net.add(Dropout(0.8))
+net.add(FullyConnectedLayer(2))
+net.add(Sigmoid())
+optimizer = Adam(learning_rate=0.01)
+net.regression(optimizer=optimizer, cost="quadratic")
+net.fit(train_data, train_labels, v_x, v_y, epochs=50, mini_batch_size=20, plot=True)
+net.evaluate(t_x, t_y)
 
 # print(len(img_dataer))
 # for index, data in enumerate(img_dataer):
