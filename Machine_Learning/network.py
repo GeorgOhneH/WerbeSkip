@@ -8,6 +8,7 @@ from utils import make_mini_batches, Plotter, Analysis
 
 import time
 from copy import copy
+import pickle
 
 import numpy as np
 
@@ -147,6 +148,15 @@ class Network(object):
         a = self.feedforward(a)
         return np.argmax(a, axis=0)
 
+    def save(self, file_name):
+        with open(file_name, "wb") as f:
+            pickle.dump(self, f)
+
+    def load(self, file_name):
+        with open(file_name, "rb") as f:
+            net = pickle.load(f)
+        self.__dict__ = net.__dict__
+
 
 if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
@@ -154,12 +164,12 @@ if __name__ == "__main__":
 
     net.input(28 * 28)
 
-    net.add(FullyConnectedLayer(200))
+    net.add(FullyConnectedLayer(400))
     net.add(BatchNorm())
     net.add(ReLU())
     net.add(Dropout(0.8))
 
-    net.add(FullyConnectedLayer(200))
+    net.add(FullyConnectedLayer(400))
     net.add(BatchNorm())
     net.add(ReLU())
     net.add(Dropout(0.8))
@@ -167,8 +177,8 @@ if __name__ == "__main__":
     net.add(FullyConnectedLayer(10))
     net.add(SoftMax())
 
-    optimizer = Adam(learning_rate=0.05)
+    optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=30, mini_batch_size=128, plot=True)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=5, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)
