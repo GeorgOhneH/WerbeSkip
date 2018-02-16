@@ -75,7 +75,7 @@ class Network(object):
             raise ValueError("Must be a subclass of Optimizer not {}".format(type(optimizer)))
 
         if cost not in self._costs.keys():
-            raise ValueError("Must be one of these costs: {}".format(list(self._costs.keys())))
+            raise AssertionError("Must be one of these costs: {}".format(list(self._costs.keys())))
 
         self._optimizer = optimizer
         self._cost = self._costs[cost]
@@ -83,32 +83,64 @@ class Network(object):
 
     def _init(self):
         if self._input_neurons is None:
-            raise AttributeError("input() must be called before regression()")
+            raise AttributeError("input() must be called first")
 
         neurons_before = self._input_neurons
         for layer in self._layers:
             neurons_before = layer.init(neurons_before, copy(self._optimizer))
 
-    def fit(self, training_data_x, training_data_y, validation_data_x, validation_data_y, epochs, mini_batch_size,
+    def fit(self, train_input, train_labels, validation_set=None, epochs=10, mini_batch_size=1,
             plot=False, snapshot_step=200):
+        if train_input.shape[0] != self._input_neurons:
+            raise ValueError("Wrong shape of the train input. Expected ({}, x)".format(self._input_neurons))
+
+        if validation_set is not None:
+            if validation_set[0].shape[0] != train_input.shape[0]:
+                raise ValueError("Wrong shape of the validation input. Expected ({}, x)".format(train_input.shape[0]))
+
+        if not isinstance(epochs, int):
+            raise ValueError("Wrong type for epoch. Expected {} not {}".format(int, type(epochs)))
+
+        if not isinstance(mini_batch_size, int):
+            raise ValueError("Wrong type for mini_batch_size. Expected {} not {}".format(int, type(mini_batch_size)))
+
+        if not isinstance(plot, bool):
+            raise ValueError("Wrong type for plot. Expected {} not {}".format(bool, type(plot)))
+
+        if not isinstance(snapshot_step, int):
+            raise ValueError("Wrong type for snapshot_step. Expected {} not {}".format(int, type(snapshot_step)))
+
+        self._fit(
+            train_input=train_input,
+            train_labels=train_labels,
+            validation_set=validation_set,
+            epochs=epochs,
+            mini_batch_size=mini_batch_size,
+            plot=plot,
+            snapshot_step=snapshot_step,
+        )
+
+    def _fit(self, train_input, train_labels, validation_set, epochs, mini_batch_size,
+            plot, snapshot_step):
         start_time = time.time()
         counter = 0
         for j in range(epochs):
-            mini_batches = make_mini_batches(training_data_x, training_data_y, mini_batch_size)
+            mini_batches = make_mini_batches(train_input, train_labels, mini_batch_size)
 
             for index, mini_batch in enumerate(mini_batches):
                 counter += 1
                 self._update_parameters(mini_batch, mini_batch_size)
-                self._analysis.validate(validation_data_x, validation_data_y, mini_batch_size)
+                self._analysis.validate(*validation_set, mini_batch_size)
 
                 if counter >= snapshot_step:
                     counter = 0
                     print(
                         "Epoch {} of {} | train_loss: {:.5f} | train_accuracy: {:.5f} | time {:.3f}\n"
                         "progress: {:.5f} | validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
-                            j + 1, epochs, np.mean(self._train_loss[-100:]), np.mean(self._train_accuracy[-100:]), time.time() - start_time,
-                            index / len(mini_batches), np.mean(self._validate_loss[-100:]), np.mean(self._validate_accuracy[-100:])),
-                        sep='', end='\n', flush=True)
+                            j + 1, epochs, np.mean(self._train_loss[-100:]), np.mean(self._train_accuracy[-100:]),
+                            time.time() - start_time,
+                            index / len(mini_batches), np.mean(self._validate_loss[-100:]),
+                            np.mean(self._validate_accuracy[-100:])))
 
         if plot:
             self._plotter.plot_accuracy(epochs)
@@ -137,6 +169,8 @@ class Network(object):
             delta = layer.make_delta(delta)
 
     def evaluate(self, x, y):
+        if self._cost is None:
+            raise AssertionError("regression() must be called first")
         self._analysis.evaluate(x, y)
 
     def feedforward(self, a):
@@ -164,15 +198,11 @@ if __name__ == "__main__":
 
     net.input(28 * 28)
 
-    net.add(FullyConnectedLayer(400))
-    net.add(BatchNorm())
+    net.add(FullyConnectedLayer(200))
     net.add(ReLU())
-    net.add(Dropout(0.8))
 
-    net.add(FullyConnectedLayer(400))
-    net.add(BatchNorm())
+    net.add(FullyConnectedLayer(200))
     net.add(ReLU())
-    net.add(Dropout(0.8))
 
     net.add(FullyConnectedLayer(10))
     net.add(SoftMax())
@@ -180,5 +210,5 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=5, mini_batch_size=128, plot=True)
+    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=5, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)

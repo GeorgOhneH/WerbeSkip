@@ -70,7 +70,7 @@ class Plotter(object):
         if window % 2 == 0:
             window -= 1
 
-        smooth_y_axis = savgol_filter(data, window, 0)
+        smooth_y_axis = savgol_filter(data, window, 1)
         smooth_x_axis = np.arange(0, epochs, epochs / len(smooth_y_axis))
 
         return smooth_x_axis, smooth_y_axis
