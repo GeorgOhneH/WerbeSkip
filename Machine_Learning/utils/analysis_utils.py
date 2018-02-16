@@ -24,6 +24,19 @@ class Analysis(object):
         """
         return np.mean(np.argmax(x, axis=0) == np.argmax(y, axis=0))
 
+    @staticmethod
+    def wrong_predictions(x, y):
+        """
+        Calculates all inputs that were not correctly predicted and
+        returns them as indexes in a ndarray
+
+        :param x: ndarray
+        :param y: ndarray
+        :return: indexes: ndarray
+        """
+        indexes = np.nonzero(np.argmax(x, axis=0) == np.argmax(y, axis=0) - 1)
+        return indexes
+
     def validate(self, x, y, size=None):
         """
         calculates loss and accuracy of the validation set

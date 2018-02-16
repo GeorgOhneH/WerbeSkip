@@ -9,8 +9,11 @@ from utils import make_mini_batches, Plotter, Analysis
 import time
 from copy import copy
 import pickle
+import os
+import shutil
 
 import numpy as np
+from PIL import Image
 
 
 class Network(object):
@@ -191,6 +194,19 @@ class Network(object):
             net = pickle.load(f)
         self.__dict__ = net.__dict__
 
+    def save_wrong_predictions(self, inputs, labels, directory, shape):
+        a = self.feedforward(inputs)
+
+        if os.path.exists(directory):
+            shutil.rmtree(directory)
+        os.mkdir(directory)
+        [os.mkdir("{}\\{}".format(directory, x)) for x in range(labels.shape[0])]
+
+        for index, (orig, result, label) in enumerate(zip(inputs.T, a.T, labels.T)):
+            if np.argmax(result) != np.argmax(label):
+                img_data = np.multiply(orig, 255).reshape(shape).astype('uint8')
+                Image.fromarray(img_data).save("{}\\{}\\{}.PNG".format(directory, np.argmax(result), index))
+
 
 if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
@@ -210,5 +226,6 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=5, mini_batch_size=128, plot=True)
+    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=1, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)
+    net.save_wrong_predictions(test_data, test_labels, directory="test", shape=(28, 28))
