@@ -1,7 +1,7 @@
 from mnist_loader import load_mnist
-from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid, TanH, BatchNorm
+from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid, TanH, BatchNorm, SoftMax
 from layers.layer import Layer
-from functions.costs import QuadraticCost
+from functions.costs import QuadraticCost, CrossEntropyCost
 from optimizers import SGD, SGDMomentum, AdaGrad, RMSprop, Adam
 from optimizers.optimizer import Optimizer
 from utils import make_mini_batches, Plotter, Analysis
@@ -32,6 +32,7 @@ class Network(object):
         self._validate_accuracy = []
         self._costs = {
             "quadratic": QuadraticCost,
+            "cross_entropy": CrossEntropyCost
         }
         self._plotter = Plotter(self)
         self._analysis = Analysis(self)
@@ -164,10 +165,10 @@ if __name__ == "__main__":
     net.add(Dropout(0.8))
 
     net.add(FullyConnectedLayer(10))
-    net.add(Sigmoid())
+    net.add(SoftMax())
 
-    optimizer = Adam(learning_rate=0.01)
-    net.regression(optimizer=optimizer, cost="quadratic")
+    optimizer = Adam(learning_rate=0.05)
+    net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit(train_data, train_labels, test_data, test_labels, epochs=3, mini_batch_size=128, plot=True)
+    net.fit(train_data, train_labels, test_data, test_labels, epochs=30, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)
