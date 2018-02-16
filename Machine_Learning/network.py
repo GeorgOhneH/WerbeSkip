@@ -87,15 +87,6 @@ class Network(object):
         for layer in self._layers:
             neurons_before = layer.init(neurons_before, copy(self._optimizer))
 
-    def feedforward(self, a):
-        for layer in self._layers:
-            a = layer.forward(a)
-        return a
-
-    def predict(self, a):
-        a = self.feedforward(a)
-        return np.argmax(a, axis=0)
-
     def fit(self, training_data_x, training_data_y, validation_data_x, validation_data_y, epochs, mini_batch_size,
             plot=False, snapshot_step=200):
         start_time = time.time()
@@ -127,7 +118,7 @@ class Network(object):
         self._backprop(x, y)
 
         for layer in self._layers:
-            layer.adjust_weights(mini_batch_size)
+            layer.adjust_parameters(mini_batch_size)
 
     def _backprop(self, activation, y):
         for layer in self._layers:
@@ -145,6 +136,15 @@ class Network(object):
 
     def evaluate(self, x, y):
         self._analysis.evaluate(x, y)
+
+    def feedforward(self, a):
+        for layer in self._layers:
+            a = layer.forward(a)
+        return a
+
+    def predict(self, a):
+        a = self.feedforward(a)
+        return np.argmax(a, axis=0)
 
 
 if __name__ == "__main__":
@@ -166,7 +166,8 @@ if __name__ == "__main__":
     net.add(FullyConnectedLayer(10))
     net.add(Sigmoid())
 
-    optimizer = Adam(learning_rate=0.1)
+    optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="quadratic")
+
     net.fit(train_data, train_labels, test_data, test_labels, epochs=3, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)

@@ -41,7 +41,7 @@ class Layer(object):
 
         return delta
 
-    def adjust_weights(self, mini_batch_size):
+    def adjust_parameters(self, mini_batch_size):
         """
         Adjust the parameters of the layer by using the optimizer
         :param mini_batch_size:

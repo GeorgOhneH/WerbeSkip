@@ -1,15 +1,15 @@
-from Machine_Learning.network import Network
+from Machine_Learning import Network
 from image_processing.image_loader import load_imgs
 from Machine_Learning.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, Sigmoid
-from Machine_Learning.optimizers import Adam
+from Machine_Learning.optimizers import Adam, SGD
 
 
 train_data, train_labels, v_x, v_y, t_x, t_y = load_imgs()
 net = Network()
 net.input(52 * 52)
 
-net.add(FullyConnectedLayer(100))
-net.add(BatchNorm)
+net.add(FullyConnectedLayer(500))
+net.add(BatchNorm())
 net.add(ReLU())
 net.add(Dropout(0.8))
 

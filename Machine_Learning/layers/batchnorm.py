@@ -76,7 +76,7 @@ class BatchNorm(Layer):
 
         return delta
 
-    def adjust_weights(self, mini_batch_size):
+    def adjust_parameters(self, mini_batch_size):
         """Adjust the param gamma and beta with the optimizer"""
         change_g, change_b = self.optimizer.calculate_change(self.nabla_g, self.nabla_b)
         self.gamma -= change_g/mini_batch_size

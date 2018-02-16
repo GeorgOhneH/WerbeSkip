@@ -56,7 +56,7 @@ class FullyConnectedLayer(Layer):
         self.nabla_w = delta @ self.a.T
         return self.weights.T @ delta
 
-    def adjust_weights(self, mini_batch_size):
+    def adjust_parameters(self, mini_batch_size):
         """Changes the weights and biases after the optimizer calculates the change"""
         change_w, change_b = self.optimizer.calculate_change(self.nabla_w, self.nabla_b)
         self.weights -= change_w/mini_batch_size
