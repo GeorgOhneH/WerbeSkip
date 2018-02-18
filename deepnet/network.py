@@ -18,11 +18,7 @@ from PIL import Image
 
 class Network(object):
     """
-    Is a deep neural network which uses stochastic gradient descent
-    and backpropagation to train the network
-    It can use dynamically different activation-function and different cost-functions
-    It supports only a FullyConnectedLayer
-    The inputform is a numpymatrix, where the rows of the matrix the single dataelements represent
+
     """
 
     def __init__(self):
@@ -43,37 +39,59 @@ class Network(object):
 
     @property
     def cost(self):
+        """read only"""
         return self._cost
 
     @property
     def train_loss(self):
+        """read only"""
         return self._train_loss
 
     @property
     def train_accuracy(self):
+        """read only"""
         return self._train_accuracy
 
     @property
     def validate_loss(self):
+        """read only"""
         return self._validate_loss
 
     @property
     def validate_accuracy(self):
+        """read only"""
         return self._validate_accuracy
 
     def input(self, neurons):
+        """
+        defines input size
+        :param neurons: int
+        :return: None
+        """
         if not isinstance(neurons, int):
             raise ValueError("Must be an integer")
 
         self._input_neurons = neurons
 
     def add(self, layer):
+        """
+        builds the network structure
+        :param layer: Layer class
+        :return:
+        """
         if not issubclass(type(layer), Layer):
             raise ValueError("Must be a subclass of Layer not {}".format(type(layer)))
 
         self._layers.append(layer)
 
     def regression(self, optimizer, cost="quadratic"):
+        """
+        sets optimizer and cost
+        init network
+        :param optimizer: Optimizer class
+        :param cost: string
+        :return: None
+        """
         if not issubclass(type(optimizer), Optimizer):
             raise ValueError("Must be a subclass of Optimizer not {}".format(type(optimizer)))
 
@@ -85,6 +103,10 @@ class Network(object):
         self._init()
 
     def _init(self):
+        """
+        init all layers
+        :return: None
+        """
         if self._input_neurons is None:
             raise AttributeError("input() must be called first")
 
@@ -94,6 +116,18 @@ class Network(object):
 
     def fit(self, train_input, train_labels, validation_set=None,
             epochs=10, mini_batch_size=1, plot=False, snapshot_step=200):
+        """
+        tests if the inputs are valid
+        :param train_input: ndarray
+        :param train_labels: ndarray
+        :param validation_set: (ndarray, ndarray)
+        :param epochs: unsigned int
+        :param mini_batch_size: unsigned int
+        :param plot: bool
+        :param snapshot_step: int
+            use negative number to deactivate the printing
+        :return: None
+        """
 
         if train_input.shape[0] != self._input_neurons:
             raise ValueError("Wrong shape of the train input. Expected ({}, x)"
@@ -141,6 +175,10 @@ class Network(object):
 
     def _fit(self, train_input, train_labels, validation_set, epochs, mini_batch_size,
             plot, snapshot_step):
+        """
+        trains the network with mini batches and print the progress.
+        it can plot the accuracy and te loss
+        """
         start_time = time.time()
         counter = 0
         for j in range(epochs):
@@ -166,6 +204,12 @@ class Network(object):
             self._plotter.plot_loss(epochs)
 
     def _update_parameters(self, mini_batch, mini_batch_size):
+        """
+        After the backpropagation it adjust all layer's parameters
+        :param mini_batch: list
+        :param mini_batch_size: unsigned int
+        :return: None
+        """
         x, y = mini_batch
 
         self._backprop(x, y)
@@ -174,6 +218,13 @@ class Network(object):
             layer.adjust_parameters(mini_batch_size)
 
     def _backprop(self, activation, y):
+        """
+        Computes the derivatives for each layer and
+        saves the loss and accuracy
+        :param activation: ndarray
+        :param y: ndarray
+        :return: None
+        """
         for layer in self._layers:
             activation = layer.forward_backpropagation(activation)
 
@@ -188,24 +239,44 @@ class Network(object):
             delta = layer.make_delta(delta)
 
     def evaluate(self, x, y):
+        """
+        evaluates the network
+        :param x: ndarray
+        :param y: ndarray
+        :return: None
+        """
         if self._cost is None:
             raise AssertionError("regression() must be called first")
+
         self._analysis.evaluate(x, y)
 
     def feedforward(self, a):
+        """
+        runs the input through the network and
+        and returns the output
+        :param a: ndarray
+        :return: ndarray
+        """
         for layer in self._layers:
             a = layer.forward(a)
         return a
 
     def predict(self, a):
+        """
+        runs the input through the network and
+        returns the index of the max value
+        :param a: ndarray: (N, D)
+        :return: ndarray: (N,)
+        """
         a = self.feedforward(a)
         return np.argmax(a, axis=0)
 
     def save(self, file_name):
         """
         saves the current network with all properties
+
         :param file_name:
-        :return:
+        :return: None
         """
         with open("{}.network".format(file_name), "wb") as f:
             pickle.dump(self, f)
@@ -213,6 +284,7 @@ class Network(object):
     def load(self, file_name):
         """
         Loads the network from a file
+
         :param file_name: string
         :return: None
         """
@@ -245,8 +317,8 @@ class Network(object):
         The wrongly predicted images will be saved in those subdirectories
 
         With this schema:
-            subdirectories = prediction from the network
-            filename = <index>-<real label>
+            subdirectories: prediction from the network
+            filename: <index>-<real label>
 
         :param inputs: ndarray
         :param labels: ndarray
@@ -277,7 +349,9 @@ if __name__ == "__main__":
     net.input(28 * 28)
 
     net.add(FullyConnectedLayer(200))
+    net.add(BatchNorm())
     net.add(ReLU())
+    net.add(Dropout(0.7))
 
     net.add(FullyConnectedLayer(200))
     net.add(ReLU())
