@@ -9,10 +9,10 @@ X = X.T.A
 Y = Y.T.A
 test_x = test_x.T.A
 test_y = test_y.T.A
-X = X.reshape([-1, 50, 50, 1])
-test_x = test_x.reshape([-1, 50, 50, 1])
+X = X.reshape([-1, 52, 52, 1])
+test_x = test_x.reshape([-1, 52, 52, 1])
 
-convnet = input_data(shape=[None, 50, 50, 1], name='input')
+convnet = input_data(shape=[None, 52, 52, 1], name='input')
 
 convnet = conv_2d(convnet, 32, 2, activation='relu')
 convnet = max_pool_2d(convnet, 2)

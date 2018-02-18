@@ -7,9 +7,9 @@ class BatchNorm(Layer):
     """
     BatchNorm is layer, which normalises the values
 
-    It normalises the values, so that the have a standard derivative of 1
+    It normalises the values, so that they have a standard derivative of 1
     and a mean of 0
-    exactly like the weights and biases are initialized
+    exactly like the weights and biases are normally initialized
 
     It has 2 learnable parameters, so the network can decide if needs normalisation
     or if it better works with out it
@@ -53,6 +53,7 @@ class BatchNorm(Layer):
         self.var = np.var(a, axis=1, keepdims=True)
         self.norm = (a - self.mu)/np.sqrt(self.var + 1e-8)
 
+        # saving the average with decay
         self.mu_avg = 0.9*self.mu_avg + 0.1*self.mu
         self.var_avg = 0.9*self.var_avg + 0.1*self.var
 

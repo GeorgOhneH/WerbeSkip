@@ -92,26 +92,42 @@ class Network(object):
         for layer in self._layers:
             neurons_before = layer.init(neurons_before, copy(self._optimizer))
 
-    def fit(self, train_input, train_labels, validation_set=None, epochs=10, mini_batch_size=1,
-            plot=False, snapshot_step=200):
+    def fit(self, train_input, train_labels, validation_set=None,
+            epochs=10, mini_batch_size=1, plot=False, snapshot_step=200):
+
         if train_input.shape[0] != self._input_neurons:
-            raise ValueError("Wrong shape of the train input. Expected ({}, x)".format(self._input_neurons))
+            raise ValueError("Wrong shape of the train input. Expected ({}, x)"
+                             .format(self._input_neurons))
 
         if validation_set is not None:
+
+            if not isinstance(validation_set, (tuple, list)):
+                return ValueError("Wrong type of validation set. Expected: {} not {}"
+                                  .format((tuple, list), type(validation_set)))
+
+            if len(validation_set) != 2:
+                raise ValueError("Wrong length of validation set. Expected 2 not {}"
+                                 .format(len(validation_set)))
+
             if validation_set[0].shape[0] != train_input.shape[0]:
-                raise ValueError("Wrong shape of the validation input. Expected ({}, x)".format(train_input.shape[0]))
+                raise ValueError("Wrong shape of the validation input. Expected ({}, x)"
+                                 .format(train_input.shape[0]))
 
         if not isinstance(epochs, int):
-            raise ValueError("Wrong type for epoch. Expected {} not {}".format(int, type(epochs)))
+            raise ValueError("Wrong type for epoch. Expected {} not {}"
+                             .format(int, type(epochs)))
 
         if not isinstance(mini_batch_size, int):
-            raise ValueError("Wrong type for mini_batch_size. Expected {} not {}".format(int, type(mini_batch_size)))
+            raise ValueError("Wrong type for mini_batch_size. Expected {} not {}"
+                             .format(int, type(mini_batch_size)))
 
         if not isinstance(plot, bool):
-            raise ValueError("Wrong type for plot. Expected {} not {}".format(bool, type(plot)))
+            raise ValueError("Wrong type for plot. Expected {} not {}"
+                             .format(bool, type(plot)))
 
         if not isinstance(snapshot_step, int):
-            raise ValueError("Wrong type for snapshot_step. Expected {} not {}".format(int, type(snapshot_step)))
+            raise ValueError("Wrong type for snapshot_step. Expected {} not {}"
+                             .format(int, type(snapshot_step)))
 
         self._fit(
             train_input=train_input,
@@ -205,7 +221,7 @@ class Network(object):
         for index, (orig, result, label) in enumerate(zip(inputs.T, a.T, labels.T)):
             if np.argmax(result) != np.argmax(label):
                 img_data = np.multiply(orig, 255).reshape(shape).astype('uint8')
-                Image.fromarray(img_data).save("{}\\{}\\{}.PNG".format(directory, np.argmax(result), index))
+                Image.fromarray(img_data).save("{}\\{}\\{}.png".format(directory, np.argmax(result), index))
 
 
 if __name__ == "__main__":
