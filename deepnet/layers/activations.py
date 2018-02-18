@@ -14,6 +14,7 @@ class SoftMax(Layer):
     the derivative/delta was already calculated in the
     CrossEntropyCost
     """
+
     def forward(self, z):
         exps = np.exp(z - np.max(z, axis=0))
         return exps / np.sum(exps, axis=0)

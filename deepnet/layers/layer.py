@@ -4,6 +4,9 @@ class Layer(object):
     network, so if layers don`t use all the methods the forward and backward path
      still works by giving the same values back it received
     """
+    def __str__(self):
+        return self.__class__.__name__
+
     def init(self, neurons_before, optimizer):
         """
         Initial the layer

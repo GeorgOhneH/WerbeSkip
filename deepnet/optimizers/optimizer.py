@@ -9,6 +9,9 @@ class Optimizer(object):
         """
         self.learning_rate = learning_rate
 
+    def __str__(self):
+        return self.__class__.__name__
+
     def calculate_change(self, *nablas):
         """
         Calculates the change by how much the parameter need to change

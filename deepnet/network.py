@@ -35,8 +35,8 @@ class Network(object):
         self._validate_loss = []
         self._validate_accuracy = []
         self._costs = {
-            "quadratic": QuadraticCost,
-            "cross_entropy": CrossEntropyCost
+            "quadratic": QuadraticCost(),
+            "cross_entropy": CrossEntropyCost()
         }
         self._plotter = Plotter(self)
         self._analysis = Analysis(self)
@@ -220,6 +220,13 @@ class Network(object):
             net = pickle.load(f)
         self.__dict__ = net.__dict__
 
+    def print_network_structure(self):
+        print("Network Input: {}".format(self._input_neurons))
+        for layer in self._layers:
+            print("Layer: {}".format(layer))
+        print("Cost function: {}".format(self._cost))
+        print("Optimizer: {}".format(self._optimizer))
+
     def save_wrong_predictions(self, inputs, labels, directory, shape):
         """
         WORKS ONLY FOR IMAGES!!!
@@ -276,8 +283,7 @@ if __name__ == "__main__":
 
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="cross_entropy")
+    net.print_network_structure()
 
     net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=1, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)
-    net.save_wrong_predictions(test_data, test_labels, directory="test", shape=(28, 28))
-    net.save("hallo")

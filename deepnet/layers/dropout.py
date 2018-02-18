@@ -12,15 +12,15 @@ class Dropout(Layer):
 
     It takes one argument
     :param dropout: flout
-    the number must be between 0 and 1
-    0 :deactivates all neurons
-    1: doesn't has an effect
-    0.5: deactivates neurons by a 50% chance
+        the number must be between 0 and 1
+        0 :deactivates all neurons
+        1: doesn't has an effect
+        0.5: deactivates neurons by a 50% chance
     """
     def __init__(self, dropout):
         """
         :param dropout: flout
-        must be number between 0 and 1
+            must be number between 0 and 1
         """
         self.dropout = dropout
         self.dropout_mask = None

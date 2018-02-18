@@ -1,7 +1,15 @@
 import numpy as np
 
 
-class QuadraticCost(object):
+class Cost(object):
+    """
+    Base class of the cost functions
+    """
+    def __str__(self):
+        return self.__class__.__name__
+
+
+class QuadraticCost(Cost):
     @staticmethod
     def function(a, y):
         """Computes the cost function"""
@@ -13,13 +21,14 @@ class QuadraticCost(object):
         return (a - y) / y.shape[1]
 
 
-class CrossEntropyCost(object):
+class CrossEntropyCost(Cost):
     """
     The cross entropy only works with the softmax and can't be used
     without it.
     The delta method is the derivative of the cross entropy AND the
     softmax combined
     """
+
     @staticmethod
     def function(a, y):
         """Computes the cost function"""
