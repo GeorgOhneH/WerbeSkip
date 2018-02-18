@@ -5,7 +5,7 @@ from mnist import MNIST
 
 
 def load_mnist():
-    mn = MNIST("deepnet\mnist")
+    mn = MNIST("mnist")
     train_images, train_labels = mn.load_training()
     test_images, test_labels = mn.load_testing()
 

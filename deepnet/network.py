@@ -202,26 +202,61 @@ class Network(object):
         return np.argmax(a, axis=0)
 
     def save(self, file_name):
-        with open(file_name, "wb") as f:
+        """
+        saves the current network with all properties
+        :param file_name:
+        :return:
+        """
+        with open("{}.network".format(file_name), "wb") as f:
             pickle.dump(self, f)
 
     def load(self, file_name):
+        """
+        Loads the network from a file
+        :param file_name: string
+        :return: None
+        """
         with open(file_name, "rb") as f:
             net = pickle.load(f)
         self.__dict__ = net.__dict__
 
     def save_wrong_predictions(self, inputs, labels, directory, shape):
+        """
+        WORKS ONLY FOR IMAGES!!!
+
+        Saves all images that were wrongly predicted in the directory
+
+        If the directory exist it will be overwritten and it will create subdirectories
+        that are labeled with numbers corresponding to the output of the network
+        this means if the network has 10 neurons as outputs. it will create 10 subdirectories
+        labeled from 0 to 9
+
+        The wrongly predicted images will be saved in those subdirectories
+
+        With this schema:
+            subdirectories = prediction from the network
+            filename = <index>-<real label>
+
+        :param inputs: ndarray
+        :param labels: ndarray
+        :param directory: string
+        :param shape: tuple: (N, D)
+        :return: None
+        """
         a = self.feedforward(inputs)
 
+        # makes directories
         if os.path.exists(directory):
             shutil.rmtree(directory)
         os.mkdir(directory)
         [os.mkdir("{}\\{}".format(directory, x)) for x in range(labels.shape[0])]
 
+        # saves images
         for index, (orig, result, label) in enumerate(zip(inputs.T, a.T, labels.T)):
             if np.argmax(result) != np.argmax(label):
                 img_data = np.multiply(orig, 255).reshape(shape).astype('uint8')
-                Image.fromarray(img_data).save("{}\\{}\\{}.png".format(directory, np.argmax(result), index))
+                Image.fromarray(img_data).save("{}\\{}\\{}-{}.png"
+                                               .format(directory, np.argmax(result), index, np.argmax(label)))
 
 
 if __name__ == "__main__":
@@ -245,3 +280,4 @@ if __name__ == "__main__":
     net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=1, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)
     net.save_wrong_predictions(test_data, test_labels, directory="test", shape=(28, 28))
+    net.save("hallo")
