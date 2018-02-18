@@ -17,7 +17,7 @@ class RMSprop(Optimizer):
         self.caches = None
 
     def __str__(self):
-        return "{}: decay_rate: {}".format(super(RMSprop, self).__str__(), self.decay_rate)
+        return "{} decay_rate: {}".format(super(RMSprop, self).__str__(), self.decay_rate)
 
     def calculate_change(self, *nablas):
         changes = []

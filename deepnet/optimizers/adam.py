@@ -19,7 +19,7 @@ class Adam(Optimizer):
         self.velocities = None
 
     def __str__(self):
-        return "{}: beta1: {} beta2: {}".format(super(Adam, self).__str__(), self.beta1, self.beta2)
+        return "{} beta1: {} beta2: {}".format(super(Adam, self).__str__(), self.beta1, self.beta2)
 
     def calculate_change(self, *nablas):
         change = []

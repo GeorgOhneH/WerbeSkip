@@ -10,7 +10,7 @@ class Optimizer(object):
         self.learning_rate = learning_rate
 
     def __str__(self):
-        return "{} learning rate: {}".format(self.__class__.__name__, self.learning_rate)
+        return "{}: learning rate: {}".format(self.__class__.__name__, self.learning_rate)
 
     def calculate_change(self, *nablas):
         """

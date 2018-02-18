@@ -17,7 +17,7 @@ class SGDMomentum(Optimizer):
         self.velocities = None
 
     def __str__(self):
-        return "{}: momentum: {}".format(super(SGDMomentum, self).__str__(), self.momentum)
+        return "{} momentum: {}".format(super(SGDMomentum, self).__str__(), self.momentum)
 
     def calculate_change(self, *nablas):
         nablas = list(nablas)
