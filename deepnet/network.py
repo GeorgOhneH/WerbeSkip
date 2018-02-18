@@ -221,6 +221,10 @@ class Network(object):
         self.__dict__ = net.__dict__
 
     def print_network_structure(self):
+        """
+        Print the network structure
+        Can be useful if you load a network from a file
+        """
         print("Network Input: {}".format(self._input_neurons))
         for layer in self._layers:
             print("Layer: {}".format(layer))

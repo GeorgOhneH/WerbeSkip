@@ -23,6 +23,9 @@ class FullyConnectedLayer(Layer):
         self.nabla_w = None
         self.a = None
 
+    def __str__(self):
+        return "{}: neurons: {}".format(super(FullyConnectedLayer, self).__str__(), self.neurons)
+
     def init(self, neurons_before, optimizer):
         """
         Initial the layer

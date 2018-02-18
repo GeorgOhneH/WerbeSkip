@@ -27,6 +27,9 @@ class Dropout(Layer):
         self.z = None
         self.a = None
 
+    def __str__(self):
+        return "{}: dropout: {}".format(super(Dropout, self).__str__(), self.dropout)
+
     def forward(self, a):
         """
         Multiples the activation by the dropout
