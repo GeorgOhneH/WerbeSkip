@@ -39,27 +39,27 @@ class Network(object):
 
     @property
     def cost(self):
-        """read only"""
+        """read access only"""
         return self._cost
 
     @property
     def train_loss(self):
-        """read only"""
+        """read access only"""
         return self._train_loss
 
     @property
     def train_accuracy(self):
-        """read only"""
+        """read access only"""
         return self._train_accuracy
 
     @property
     def validate_loss(self):
-        """read only"""
+        """read access only"""
         return self._validate_loss
 
     @property
     def validate_accuracy(self):
-        """read only"""
+        """read access only"""
         return self._validate_accuracy
 
     def input(self, neurons):
@@ -361,7 +361,6 @@ if __name__ == "__main__":
 
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="cross_entropy")
-    net.print_network_structure()
 
     net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=1, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)
