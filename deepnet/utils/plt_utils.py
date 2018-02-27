@@ -11,43 +11,41 @@ class Plotter(object):
         """links the network"""
         self.network = network
 
-    def plot_loss(self, epochs):
+    def plot_loss(self):
         """
         smooths the data and plots the loss of the validation data and
         the training data
         It uses a semilogy scale
-        :param epochs: int
         :return: None
         """
-        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.network.train_loss, epochs)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.network.validate_loss, epochs)
+        smooth_train_y_axis = self.smooth_data(self.network.train_loss)
+        smooth_validation_y_axis = self.smooth_data(self.network.validate_loss)
 
-        plt.semilogy(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
-        plt.semilogy(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
+        plt.semilogy(smooth_train_y_axis, color="blue", linewidth=1, label="train")
+        plt.semilogy(smooth_validation_y_axis, color="red", linewidth=1, label="validation")
 
         plt.title("model loss")
-        plt.xlabel("epochs")
+        plt.xlabel("training steps")
         plt.ylabel("loss")
         plt.legend()
 
         plt.ioff()
         plt.show()
 
-    def plot_accuracy(self, epochs):
+    def plot_accuracy(self):
         """
         smooths the data and plots the accuracy of the validation data and
         the training data
-        :param epochs: unsigned int
         :return: None
         """
-        smooth_train_x_axis, smooth_train_y_axis = self.smooth_data(self.network.train_accuracy, epochs)
-        smooth_validation_x_axis, smooth_validation_y_axis = self.smooth_data(self.network.validate_accuracy, epochs, )
+        smooth_train_y_axis = self.smooth_data(self.network.train_accuracy)
+        smooth_validation_y_axis = self.smooth_data(self.network.validate_accuracy)
 
-        plt.plot(smooth_train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
-        plt.plot(smooth_validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
+        plt.plot(smooth_train_y_axis, color="blue", linewidth=1, label="train")
+        plt.plot(smooth_validation_y_axis, color="red", linewidth=1, label="validation")
 
         plt.title("model accuracy")
-        plt.xlabel("epochs")
+        plt.xlabel("training steps")
         plt.ylabel("accuracy")
         plt.legend()
 
@@ -55,22 +53,20 @@ class Plotter(object):
         plt.show()
 
     @staticmethod
-    def smooth_data(data, epochs):
+    def smooth_data(data):
         """
         to smooth the data it uses the savgol filter
         this method is nice, because you can still see
         the variance of data after the smoothing
 
         :param data: array like
-        :param epochs: unsigned int
-        :return smooth_x_axis: ndarray
-        :return smooth_y_axis: ndarray
+        :return smooth_axis: ndarray
+            Smoothed array with the same dimensions
         """
         window = len(data) // 30
         if window % 2 == 0:
             window -= 1
 
-        smooth_y_axis = savgol_filter(data, window, 1)
-        smooth_x_axis = np.arange(0, epochs, epochs / len(smooth_y_axis))
+        smooth_axis = savgol_filter(data, window, 1)
 
-        return smooth_x_axis, smooth_y_axis
+        return smooth_axis

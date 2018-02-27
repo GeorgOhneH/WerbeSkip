@@ -1,4 +1,4 @@
-from image_processing.create_images import plane_background
+from image_processing.create_images import plane_background, random_background
 from image_processing.cropping_images import sample_imgs
 import numpy as np
 
@@ -10,16 +10,16 @@ def shuffle(x, y):
 
 
 def img_to_array(imgs):
-    num_imgs = [list(x.getdata()) for x in imgs]
-    imgs_matrix = np.array(num_imgs).T / 255
-    return imgs_matrix
+    imgs = [np.matrix.flatten(x) for x in imgs]
+    imgs = np.array(imgs).T
+    return imgs
 
 
 def loader(func):
-    image_logo = img_to_array(func(True))
+    image_logo = img_to_array(func(use_logo=True))
     label_logo = np.array([[0, 1] for _ in range(image_logo.shape[1])]).T
 
-    image_no_logo = img_to_array(func(False))
+    image_no_logo = img_to_array(func(use_logo=False))
     label_no_logo = np.array([[1, 0] for _ in range(image_no_logo.shape[1])]).T
 
     train_image = np.c_[image_logo, image_no_logo]  # appends the matrix
@@ -29,7 +29,7 @@ def loader(func):
 
 
 def load_imgs(split=0.8):
-    train_image, train_label = loader(plane_background)
+    train_image, train_label = loader(random_background)
     sample_images, sample_labels = loader(sample_imgs)
     split_data = int(sample_images.shape[1] * split)
 
@@ -39,4 +39,4 @@ def load_imgs(split=0.8):
 
 
 if __name__ == "__main__":
-    print(loader(sample_imgs)[0].shape, loader(plane_background)[0].shape)
+    print(loader(sample_imgs)[0].shape, loader(random_background)[0].shape)

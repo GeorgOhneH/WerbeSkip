@@ -1,8 +1,8 @@
 from mnist_loader import load_mnist
-from layers import FullyConnectedLayer, Dropout, ReLU, Sigmoid, TanH, BatchNorm, SoftMax
+from layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax
 from layers.layer import Layer
 from functions.costs import QuadraticCost, CrossEntropyCost
-from optimizers import SGD, SGDMomentum, AdaGrad, RMSprop, Adam
+from optimizers import Adam
 from optimizers.optimizer import Optimizer
 from utils import make_mini_batches, Plotter, Analysis
 
@@ -115,9 +115,9 @@ class Network(object):
             neurons_before = layer.init(neurons_before, copy(self._optimizer))
 
     def fit(self, train_input, train_labels, validation_set=None,
-            epochs=10, mini_batch_size=1, plot=False, snapshot_step=200):
+            epochs=10, mini_batch_size=1, plot=False, snapshot_step=100):
         """
-        tests if the inputs are valid
+        tests if the given parameters are valid for the network
         :param train_input: ndarray
         :param train_labels: ndarray
         :param validation_set: (ndarray, ndarray)
@@ -125,7 +125,7 @@ class Network(object):
         :param mini_batch_size: unsigned int
         :param plot: bool
         :param snapshot_step: int
-            use negative number to deactivate the printing
+            use negative number to deactivate the monitoring
         :return: None
         """
 
@@ -177,20 +177,19 @@ class Network(object):
             plot, snapshot_step):
         """
         trains the network with mini batches and print the progress.
-        it can plot the accuracy and te loss
+        it can plot the accuracy and the loss
         """
         start_time = time.time()
-        counter = 0
         for j in range(epochs):
             mini_batches = make_mini_batches(train_input, train_labels, mini_batch_size)
 
             for index, mini_batch in enumerate(mini_batches):
-                counter += 1
                 self._update_parameters(mini_batch, mini_batch_size)
-                self._analysis.validate(*validation_set, mini_batch_size)
 
-                if counter >= snapshot_step:
-                    counter = 0
+                if validation_set is not None:
+                    self._analysis.validate(*validation_set, mini_batch_size)
+
+                if len(self._train_loss) % snapshot_step == 0:
                     print(
                         "Epoch {} of {} | train_loss: {:.5f} | train_accuracy: {:.5f} | time {:.3f}\n"
                         "progress: {:.5f} | validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
@@ -200,8 +199,8 @@ class Network(object):
                             np.mean(self._validate_accuracy[-100:])))
 
         if plot:
-            self._plotter.plot_accuracy(epochs)
-            self._plotter.plot_loss(epochs)
+            self._plotter.plot_accuracy()
+            self._plotter.plot_loss()
 
     def _update_parameters(self, mini_batch, mini_batch_size):
         """
@@ -300,7 +299,7 @@ class Network(object):
         print("Network Input: {}".format(self._input_neurons))
         for layer in self._layers:
             print("Layer: {}".format(layer))
-        print("Cost function: {}".format(self._cost))
+        print("Cost: {}".format(self._cost))
         print("Optimizer: {}".format(self._optimizer))
 
     def save_wrong_predictions(self, inputs, labels, directory, shape):
@@ -318,7 +317,7 @@ class Network(object):
 
         With this schema:
             subdirectories: prediction from the network
-            filename: <index>-<real label>
+            filename: <index>-<real label>-<output>
 
         :param inputs: ndarray
         :param labels: ndarray
@@ -337,9 +336,9 @@ class Network(object):
         # saves images
         for index, (orig, result, label) in enumerate(zip(inputs.T, a.T, labels.T)):
             if np.argmax(result) != np.argmax(label):
-                img_data = np.multiply(orig, 255).reshape(shape).astype('uint8')
-                Image.fromarray(img_data).save("{}\\{}\\{}-{}.png"
-                                               .format(directory, np.argmax(result), index, np.argmax(label)))
+                img_data = (orig * 255).reshape(shape).astype('uint8')
+                Image.fromarray(img_data).save("{}\\{}\\{}-{}-{:.3f}.png"
+                                               .format(directory, np.argmax(result), index, np.argmax(label), np.max(result)))
 
 
 if __name__ == "__main__":
@@ -354,7 +353,14 @@ if __name__ == "__main__":
     net.add(Dropout(0.7))
 
     net.add(FullyConnectedLayer(200))
+    net.add(BatchNorm())
     net.add(ReLU())
+    net.add(Dropout(0.7))
+
+    net.add(FullyConnectedLayer(200))
+    net.add(BatchNorm())
+    net.add(ReLU())
+    net.add(Dropout(0.7))
 
     net.add(FullyConnectedLayer(10))
     net.add(SoftMax())
@@ -362,5 +368,5 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=1, mini_batch_size=128, plot=True)
+    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=200, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)

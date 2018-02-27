@@ -1,5 +1,6 @@
 from PIL import Image
 import os
+import numpy as np
 
 # Rations:
 # No Boarder: 16:9
@@ -28,17 +29,17 @@ PADDING = 26
 
 def get_logo(path_to_img, type):
     img = Image.open(path_to_img).convert(mode="L")
-    return img.crop(
+    return np.array(img.crop(
         (prosieben[type][0] - PADDING,
          prosieben[type][1] - PADDING,
          prosieben[type][0] + PADDING,
          prosieben[type][1] + PADDING)
-    )
+    )) / 255
 
 
-def sample_imgs(logo=True):
+def sample_imgs(use_logo=True):
     result = []
-    if logo:
+    if use_logo:
         paths = logo_paths
     else:
         paths = no_logo_paths

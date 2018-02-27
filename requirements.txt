@@ -6,3 +6,5 @@ pillow
 tensorflow
 python-mnist
 pygame
+opencv-python
+requests
