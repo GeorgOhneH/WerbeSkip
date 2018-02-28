@@ -14,15 +14,13 @@ class Sigmoid(Layer):
         self.z = None
 
     def forward(self, z):
-        a = expit(z)
-        return a
+        return expit(z)
 
     def forward_backpropagation(self, z):
         self.z = z
-        a = expit(z)
-        return a
+        return self.forward(z)
 
     def make_delta(self, delta):
-        z = np.multiply(self.forward(self.z), (1 - self.forward(self.z)))
+        z = self.forward(self.z) * (1 - self.forward(self.z))
         delta = delta * z
         return delta

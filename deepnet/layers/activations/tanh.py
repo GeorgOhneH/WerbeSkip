@@ -13,13 +13,11 @@ class TanH(Layer):
         self.z = None
 
     def forward(self, z):
-        a = np.tanh(z)
-        return a
+        return np.tanh(z)
 
     def forward_backpropagation(self, z):
         self.z = z
-        a = np.tanh(z)
-        return a
+        return self.forward(z)
 
     def make_delta(self, delta):
         z = 1 - self.forward(self.z) ** 2

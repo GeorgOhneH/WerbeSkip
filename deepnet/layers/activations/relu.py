@@ -13,13 +13,11 @@ class ReLU(Layer):
         self.z = None
 
     def forward(self, z):
-        a = np.maximum(z, 0.0)
-        return a
+        return np.maximum(z, 0.0)
 
     def forward_backpropagation(self, z):
         self.z = z
-        a = np.maximum(z, 0.0)
-        return a
+        return self.forward(z)
 
     def make_delta(self, delta):
         self.z[self.z <= 0] = 0
