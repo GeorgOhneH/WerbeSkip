@@ -24,5 +24,4 @@ class LReLU(Layer):
     def make_delta(self, delta):
         dz = np.ones_like(self.z)
         dz[self.z < 0] = self.alpha
-        delta = delta * dz
-        return delta
+        return delta * dz
