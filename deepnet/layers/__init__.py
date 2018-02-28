@@ -1,4 +1,3 @@
-from layers.core.fullyconnected import FullyConnectedLayer
-from layers.regularization.dropout import Dropout
+from layers.core import *
+from layers.regularization import *
 from layers.activations import *
-from layers.regularization.batchnorm import BatchNorm
