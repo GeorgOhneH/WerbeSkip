@@ -1,5 +1,5 @@
 from mnist_loader import load_mnist
-from layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax
+from layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, LReLU
 from layers.layer import Layer
 from functions.costs import QuadraticCost, CrossEntropyCost
 from optimizers import Adam
@@ -359,7 +359,7 @@ if __name__ == "__main__":
 
     net.add(FullyConnectedLayer(200))
     net.add(BatchNorm())
-    net.add(ReLU())
+    net.add(LReLU())
     net.add(Dropout(0.7))
 
     net.add(FullyConnectedLayer(10))
