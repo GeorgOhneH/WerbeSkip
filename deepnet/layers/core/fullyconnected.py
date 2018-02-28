@@ -41,8 +41,7 @@ class FullyConnectedLayer(Layer):
 
     def forward(self, a):
         """Applies a matrix multiplication of the weights and adds the biases """
-        z = self.weights @ a + self.biases
-        return z
+        return self.weights @ a + self.biases
 
     def forward_backpropagation(self, a):
         """
@@ -50,8 +49,7 @@ class FullyConnectedLayer(Layer):
         and saves the value for the backpropagation
         """
         self.a = a
-        z = self.weights @ a + self.biases
-        return z
+        return self.forward(a)
 
     def make_delta(self, delta):
         """Calculates error and the derivative"""

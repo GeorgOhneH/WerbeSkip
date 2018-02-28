@@ -36,17 +36,14 @@ class Dropout(Layer):
         This is need because so are the sum of the weights
         the same, as they were in training
         """
-        a *= self.dropout
-        return a
+        return a * self.dropout
 
     def forward_backpropagation(self, a):
         """Deactivates neurons by multiplying them by 0"""
         self.dropout_mask = np.random.binomial(1, self.dropout, size=a.shape)
-        a = a * self.dropout_mask
-        return a
+        return a * self.dropout_mask
 
     def make_delta(self, delta):
         """Applies the mask"""
-        delta = delta * self.dropout_mask
-        return delta
+        return delta * self.dropout_mask
 

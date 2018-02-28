@@ -44,7 +44,7 @@ class BatchNorm(Layer):
         because the network uses SGD
         """
         norm = (a - self.mu_avg)/np.sqrt(self.var_avg + 1e-8)
-        return np.multiply(self.gamma, norm) + self.beta
+        return self.gamma * norm + self.beta
 
     def forward_backpropagation(self, a):
         """Normalises the values and saves the averages"""
