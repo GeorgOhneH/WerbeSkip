@@ -5,7 +5,7 @@ import numpy as np
 
 class LReLU(Layer):
     """
-    ReLU is an activation function
+    Leaky ReLU is an activation function
     It behaves like a layer
     The shape of the input is the same as the output
     """
