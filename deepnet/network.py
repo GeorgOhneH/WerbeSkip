@@ -11,6 +11,8 @@ from copy import copy
 import pickle
 import os
 import shutil
+import types
+from itertools import tee
 
 import numpy as np
 from PIL import Image
@@ -114,12 +116,11 @@ class Network(object):
         for layer in self._layers:
             neurons_before = layer.init(neurons_before, copy(self._optimizer))
 
-    def fit(self, train_input, train_labels, validation_set=None,
+    def fit(self, train_set, validation_set=None,
             epochs=10, mini_batch_size=1, plot=False, snapshot_step=100):
         """
         tests if the given parameters are valid for the network
-        :param train_input: ndarray
-        :param train_labels: ndarray
+        :param train_set: (ndarray, ndarray) or generator
         :param validation_set: (ndarray, ndarray)
         :param epochs: unsigned int
         :param mini_batch_size: unsigned int
@@ -129,9 +130,9 @@ class Network(object):
         :return: None
         """
 
-        if train_input.shape[0] != self._input_neurons:
-            raise ValueError("Wrong shape of the train input. Expected ({}, x)"
-                             .format(self._input_neurons))
+        if not isinstance(train_set, (tuple, list, types.GeneratorType)):
+            raise ValueError("Wrong type of the train set. Expected Generator or array like obj not {}"
+                             .format(type(train_set)))
 
         if validation_set is not None:
 
@@ -142,10 +143,6 @@ class Network(object):
             if len(validation_set) != 2:
                 raise ValueError("Wrong length of validation set. Expected 2 not {}"
                                  .format(len(validation_set)))
-
-            if validation_set[0].shape[0] != train_input.shape[0]:
-                raise ValueError("Wrong shape of the validation input. Expected ({}, x)"
-                                 .format(train_input.shape[0]))
 
         if not isinstance(epochs, int):
             raise ValueError("Wrong type for epoch. Expected {} not {}"
@@ -164,8 +161,7 @@ class Network(object):
                              .format(int, type(snapshot_step)))
 
         self._fit(
-            train_input=train_input,
-            train_labels=train_labels,
+            train_set=train_set,
             validation_set=validation_set,
             epochs=epochs,
             mini_batch_size=mini_batch_size,
@@ -173,15 +169,23 @@ class Network(object):
             snapshot_step=snapshot_step,
         )
 
-    def _fit(self, train_input, train_labels, validation_set, epochs, mini_batch_size,
-            plot, snapshot_step):
+    def _fit(self,
+             train_set,
+             validation_set,
+             epochs,
+             mini_batch_size,
+             plot,
+             snapshot_step):
         """
         trains the network with mini batches and print the progress.
         it can plot the accuracy and the loss
         """
         start_time = time.time()
         for j in range(epochs):
-            mini_batches = make_mini_batches(train_input, train_labels, mini_batch_size)
+            if isinstance(train_set, types.GeneratorType):
+                mini_batches, train_set = tee(train_set)
+            else:
+                mini_batches = make_mini_batches(*train_set, mini_batch_size)
 
             for index, mini_batch in enumerate(mini_batches):
                 self._update_parameters(mini_batch, mini_batch_size)
@@ -195,7 +199,7 @@ class Network(object):
                         "progress: {:.5f} | validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
                             j + 1, epochs, np.mean(self._train_loss[-100:]), np.mean(self._train_accuracy[-100:]),
                             time.time() - start_time,
-                            index / len(mini_batches), np.mean(self._validate_loss[-100:]),
+                            1, np.mean(self._validate_loss[-100:]),
                             np.mean(self._validate_accuracy[-100:])))
 
         if plot:
@@ -277,7 +281,7 @@ class Network(object):
         :param file_name:
         :return: None
         """
-        with open("{}.network".format(file_name), "wb") as f:
+        with open("{}".format(file_name), "wb") as f:
             pickle.dump(self, f)
 
     def load(self, file_name):
@@ -368,5 +372,5 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=200, mini_batch_size=128, plot=True)
+    net.fit((train_data, train_labels), validation_set=(test_data, test_labels), epochs=60, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)

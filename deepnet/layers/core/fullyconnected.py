@@ -52,7 +52,7 @@ class FullyConnectedLayer(Layer):
         return self.forward(a)
 
     def make_delta(self, delta):
-        """Calculates error and the derivative"""
+        """Calculates error and the derivative of the parameters"""
         self.nabla_b = np.sum(delta, axis=1, keepdims=True)
         self.nabla_w = delta @ self.a.T
         return self.weights.T @ delta

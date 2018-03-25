@@ -46,8 +46,24 @@ def plane_background(padding=10, use_logo=True):
     return imgs
 
 
-def random_background(padding=10, use_logo=True, n_images=40000):
-    result = []
+def random_background(padding=10):
+    """
+    A Generator which return images with or without a logo on it,
+
+    Before it gives a value you need to send a value to the generator
+    with gen.send(value)
+    so it knows if it should use a logo
+
+    Example:
+    gen = random_background()
+    for _ in gen:
+        img = gen.send(True)
+
+
+    :param padding: int
+        The mean padding on each side
+    :return: A image in a numpy array
+    """
     logo = cv2.imread("../prosieben/images/important_images/logo32x32.png", 0)  # 0 is the mode for white/black
     # normalize image
     logo = logo.astype(float) / 255
@@ -82,6 +98,7 @@ def random_background(padding=10, use_logo=True, n_images=40000):
             image_parts = blockshaped(image, part_w, part_h)
 
             for image_part in image_parts:
+                use_logo = yield
                 if use_logo:
                     # sets logo in a random place of the image
                     pad_w = np.random.randint(0, padding * 2)
@@ -90,19 +107,16 @@ def random_background(padding=10, use_logo=True, n_images=40000):
                     # applies screen blend effect
                     image_part = 1. - (1. - logo_padding) * (1. - image_part)
 
-                result.append(image_part)
-                if len(result) >= n_images:
-                    return result
+                yield image_part
 
         except ConnectTimeout or ConnectionError or HTTPError as e:
             warnings.warn("A request wasn't successful, got {}".format(e))
 
-    return result
-
 
 if __name__ == "__main__":
-    imgs = random_background(padding=200, use_logo=True, n_images=40)
-    for img in imgs:
+    imgs = random_background(padding=200)
+    for _ in imgs:
+        img = imgs.send(True)
         cv2.imshow("test", img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
