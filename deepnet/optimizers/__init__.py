@@ -3,3 +3,4 @@ from .sgd_momentum import SGDMomentum
 from .adagrad import AdaGrad
 from .rmsprop import RMSprop
 from .adam import Adam
+from .optimizer import Optimizer

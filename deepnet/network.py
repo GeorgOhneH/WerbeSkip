@@ -1,10 +1,9 @@
 from mnist_loader import load_mnist
-from layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, LReLU
-from layers.layer import Layer
-from functions.costs import QuadraticCost, CrossEntropyCost
-from optimizers import Adam
-from optimizers.optimizer import Optimizer
-from utils import make_mini_batches, Plotter, Analysis
+from layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, LReLU, Layer
+from functions.costs import QuadraticCost, CrossEntropyCost, Cost
+from optimizers import Adam, Optimizer
+from utils import make_mini_batches, Plotter, Analysis, BaseGenerator
+from numpy import ndarray
 
 import time
 from copy import copy
@@ -51,60 +50,60 @@ class Network(object):
         self._analysis = Analysis(self)
 
     @property
-    def start_time(self):
+    def start_time(self) -> float:
         """read access only"""
         return self._start_time
 
     @property
-    def cost(self):
+    def cost(self) -> Cost:
         """read access only"""
         return self._cost
 
     @property
-    def train_loss(self):
+    def train_loss(self) -> list:
         """read access only"""
         return self._train_loss
 
     @property
-    def train_accuracy(self):
+    def train_accuracy(self) -> list:
         """read access only"""
         return self._train_accuracy
 
     @property
-    def validate_loss(self):
+    def validate_loss(self) -> list:
         """read access only"""
         return self._validate_loss
 
     @property
-    def validate_accuracy(self):
+    def validate_accuracy(self) -> list:
         """read access only"""
         return self._validate_accuracy
 
-    def _s_epoch(self):
+    def _s_epoch(self) -> str:
         return "epoch {} of {}".format(self._current_epoch, self._total_epoch)
 
-    def _s_progress(self):
+    def _s_progress(self) -> str:
         return "progress: {:.3f}".format(self._progress)
 
-    def _s_tl(self):
+    def _s_tl(self) -> str:
         return "train loss: {:.5f}".format(np.mean(self.train_loss[-100:]))
 
-    def _s_ta(self):
+    def _s_ta(self) -> str:
         return "train accuracy: {:.5f}".format(np.mean(self.train_accuracy[-100:]))
 
-    def _s_vl(self):
+    def _s_vl(self) -> str:
         return "validate loss: {:.5f}".format(np.mean(self.validate_loss[-100:]))
 
-    def _s_va(self):
+    def _s_va(self) -> str:
         return "validate accuracy: {:.5f}".format(np.mean(self.validate_accuracy[-100:]))
 
-    def _s_time(self):
-        return "time {:.3f}".format(time.time()-self.start_time)
+    def _s_time(self) -> str:
+        return "time {:.3f}".format(time.time() - self.start_time)
 
-    def input(self, neurons):
+    def input(self, neurons: int) -> None:
         """
         defines input size
-        :param neurons: int
+        :param neurons: number of neurons
         :return: None
         """
         if not isinstance(neurons, int):
@@ -112,24 +111,22 @@ class Network(object):
 
         self._input_neurons = neurons
 
-    def add(self, layer):
+    def add(self, layer: Layer) -> None:
         """
         builds the network structure
-        :param layer: Layer class
-        :return:
+        :param layer: Layer from the Layer class
         """
         if not issubclass(type(layer), Layer):
             raise ValueError("Must be a subclass of Layer not {}".format(type(layer)))
 
         self._layers.append(layer)
 
-    def regression(self, optimizer, cost="quadratic"):
+    def regression(self, optimizer: Optimizer, cost: str = "quadratic") -> None:
         """
         sets optimizer and cost
         init network
-        :param optimizer: Optimizer class
+        :param optimizer: optimizer from the Optimizer class
         :param cost: string
-        :return: None
         """
         if not issubclass(type(optimizer), Optimizer):
             raise ValueError("Must be a subclass of Optimizer not {}".format(type(optimizer)))
@@ -141,10 +138,9 @@ class Network(object):
         self._cost = self._costs[cost]
         self._init()
 
-    def _init(self):
+    def _init(self) -> None:
         """
         init all layers
-        :return: None
         """
         if self._input_neurons is None:
             raise AttributeError("input() must be called first")
@@ -154,33 +150,30 @@ class Network(object):
             neurons_before = layer.init(neurons_before, copy(self._optimizer))
 
     def fit(self,
-            train_inputs,
-            train_labels,
-            validation_set=None,
-            epochs=10, mini_batch_size=1,
-            plot=False,
-            snapshot_step=100,
-            metrics=None):
+            train_inputs: ndarray,
+            train_labels: ndarray,
+            validation_set: tuple or list = None,
+            epochs: int = 10, mini_batch_size: int = 1,
+            plot: bool = False,
+            snapshot_step: int = 100,
+            metrics: list = None) -> None:
         """
         tests if the given parameters are valid for the network
-        :param train_input: ndarray
-        :param train_label: ndarray
-        :param validation_set: (ndarray, ndarray)
-        :param epochs: unsigned int
-        :param mini_batch_size: unsigned int
-        :param plot: bool
-        :param snapshot_step: int
-            use negative number to deactivate the monitoring
-        :param metrics: list
-            define what metrics should be shown
-        :return: None
+        :param train_inputs: Data
+        :param train_labels: Rights result
+        :param validation_set: Set to see the performance
+        :param epochs: How often it goes through the train set
+        :param mini_batch_size: Size of the mini_batch
+        :param plot: plot the curve of the loss and the accuracy
+        :param snapshot_step: use negative number to deactivate the monitoring
+        :param metrics: define what metrics should be shown
         """
         if metrics is None:
             metrics = ["all"]
         if validation_set is not None:
 
             if not isinstance(validation_set, (tuple, list)):
-                return ValueError("Wrong type of validation set. Expected: {} not {}"
+                raise ValueError("Wrong type of validation set. Expected: {} not {}"
                                   .format((tuple, list), type(validation_set)))
 
             if len(validation_set) != 2:
@@ -219,14 +212,14 @@ class Network(object):
         )
 
     def _fit(self,
-             train_inputs,
-             train_labels,
-             validation_set,
-             epochs,
-             mini_batch_size,
-             plot,
-             snapshot_step,
-             metrics):
+             train_inputs: ndarray,
+             train_labels: ndarray,
+             validation_set: set or list,
+             epochs: int,
+             mini_batch_size: int,
+             plot: bool,
+             snapshot_step: int,
+             metrics: list) -> None:
         """
         trains the network with mini batches and print the progress.
         it can plot the accuracy and the loss
@@ -249,12 +242,15 @@ class Network(object):
         if plot:
             self._plot()
 
-    def _update_parameters(self, mini_batch, mini_batch_size):
+    def fit_generator(self, generator: BaseGenerator) -> None:
+        if not isinstance(generator, BaseGenerator):
+            raise ValueError("Wrong type for generator. Expected {} not {}."
+                             "Use the Base Class from utils"
+                             .format(int, type(generator)))
+
+    def _update_parameters(self, mini_batch: tuple or list, mini_batch_size: int) -> None:
         """
         After the backpropagation it adjust all layer's parameters
-        :param mini_batch: list
-        :param mini_batch_size: unsigned int
-        :return: None
         """
         x, y = mini_batch
 
@@ -263,34 +259,32 @@ class Network(object):
         for layer in self._layers:
             layer.adjust_parameters(mini_batch_size)
 
-    def _backprop(self, activation, y):
+    def _backprop(self, x: ndarray, y: ndarray) -> None:
         """
         Computes the derivatives for each layer and
         saves the loss and accuracy
-        :param activation: ndarray
-        :param y: ndarray
-        :return: None
+        :param x: data
+        :param y: labels
         """
         for layer in self._layers:
-            activation = layer.forward_backpropagation(activation)
+            x = layer.forward_backpropagation(x)
 
-        loss = self._cost.function(activation, y)
+        loss = self._cost.function(x, y)
         self._train_loss.append(loss)
 
-        accuracy = self._analysis.accuracy(activation, y)
+        accuracy = self._analysis.accuracy(x, y)
         self._train_accuracy.append(accuracy)
 
-        delta = self._cost.delta(activation, y)
+        delta = self._cost.delta(x, y)
         for layer in reversed(self._layers):
             delta = layer.make_delta(delta)
 
-    def _print_metrics(self, metrics):
+    def _print_metrics(self, metrics: tuple or list) -> None:
         """
         prints all metric which are in the list.
         If "all" is in the first position it will
         print every metric.
         :param metrics: list with metrics as string
-        :return:
         """
         if metrics[0] == "all":
             metrics = self._translate.keys()
@@ -298,75 +292,68 @@ class Network(object):
         result = ""
         for index, metric in enumerate(metrics):
             result += self._translate[metric]()
-            if index+1 < len(metrics):
+            if index + 1 < len(metrics):
                 if len(result.split("\n")[-1]) > 60:
                     result += "\n"
                 else:
                     result += " | "
         print(result)
 
-    def _plot(self):
+    def _plot(self) -> None:
         """
         starts the plotting
-        :return: None
         """
         self._plotter.plot_accuracy()
         self._plotter.plot_loss()
 
-    def evaluate(self, x, y):
+    def evaluate(self, x: ndarray, y: ndarray) -> None:
         """
         evaluates the network
-        :param x: ndarray
-        :param y: ndarray
-        :return: None
+        :param x: data
+        :param y: labels
         """
         if self._cost is None:
             raise AssertionError("regression() must be called first")
 
         self._analysis.evaluate(x, y)
 
-    def feedforward(self, a):
+    def feedforward(self, a: ndarray) -> ndarray:
         """
         runs the input through the network and
         and returns the output
-        :param a: ndarray
-        :return: ndarray
+        :param a: data
+        :return: processed data
         """
         for layer in self._layers:
             a = layer.forward(a)
         return a
 
-    def predict(self, a):
+    def predict(self, a: ndarray) -> ndarray:
         """
         runs the input through the network and
         returns the index of the max value
-        :param a: ndarray: (N, D)
-        :return: ndarray: (N,)
+        :param a: data
+        :return: 1-Dim list with the predictions
         """
         a = self.feedforward(a)
         return np.argmax(a, axis=0)
 
-    def save(self, file_name):
+    def save(self, file_name: str) -> None:
         """
         saves the current network with all properties
-
-        :param file_name:
-        :return: None
         """
         with open("{}".format(file_name), "wb") as f:
             pickle.dump(self, f)
 
-    def load(self, file_name):
+    def load(self, file_name: str) -> None:
         """
         Loads the network from a file
-        :param file_name: string
-        :return: None
         """
         with open(file_name, "rb") as f:
             net = pickle.load(f)
         self.__dict__ = net.__dict__
 
-    def print_network_structure(self):
+    def print_network_structure(self) -> None:
         """
         Print the network structure
         Can be useful if you load a network from a file
@@ -377,7 +364,7 @@ class Network(object):
         print("Cost: {}".format(self._cost))
         print("Optimizer: {}".format(self._optimizer))
 
-    def save_wrong_predictions(self, inputs, labels, directory, shape):
+    def save_wrong_predictions(self, inputs: ndarray, labels: ndarray, directory: str, shape: tuple or list) -> None:
         """
         WORKS ONLY FOR IMAGES!!!
 
@@ -394,11 +381,10 @@ class Network(object):
             subdirectories: prediction from the network
             filename: <index>-<real label>-<output>
 
-        :param inputs: ndarray
-        :param labels: ndarray
-        :param directory: string
-        :param shape: tuple: (N, D)
-        :return: None
+        :param inputs: data
+        :param labels: labels
+        :param directory: name of the directory
+        :param shape: The shape of the Image
         """
         a = self.feedforward(inputs)
 
@@ -413,11 +399,14 @@ class Network(object):
             if np.argmax(result) != np.argmax(label):
                 img_data = (orig * 255).reshape(shape).astype('uint8')
                 Image.fromarray(img_data).save("{}\\{}\\{}-{}-{:.3f}.png"
-                                               .format(directory, np.argmax(result), index, np.argmax(label), np.max(result)))
+                                               .format(directory, np.argmax(result), index, np.argmax(label),
+                                                       np.max(result)))
 
 
 if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
+    print(train_labels.shape)
+    print(train_data.shape)
     net = Network()
 
     net.input(28 * 28)
@@ -443,5 +432,6 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=60, mini_batch_size=128, plot=True)
+    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=60, mini_batch_size=128,
+            plot=True)
     net.evaluate(test_data, test_labels)
