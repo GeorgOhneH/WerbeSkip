@@ -35,6 +35,18 @@ class Network(object):
             "quadratic": QuadraticCost(),
             "cross_entropy": CrossEntropyCost()
         }
+        self._translate = {
+            "epoch": self._s_epoch,
+            "progress": self._s_progress,
+            "train_loss": self._s_tl,
+            "train_accuracy": self._s_ta,
+            "validate_loss": self._s_vl,
+            "validate_accuracy": self._s_va,
+            "time": self._s_time,
+        }
+        self._current_epoch = 0
+        self._total_epoch = 0
+        self._progress = 0
         self._plotter = Plotter(self)
         self._analysis = Analysis(self)
 
@@ -68,23 +80,23 @@ class Network(object):
         """read access only"""
         return self._validate_accuracy
 
-    def _s_epoch(self, current, total):
-        return "Epoch {} of {}".format(current, total)
+    def _s_epoch(self):
+        return "epoch {} of {}".format(self._current_epoch, self._total_epoch)
 
-    def _s_progress(self, percent):
-        return "Progress: {:.5f}".format(percent)
+    def _s_progress(self):
+        return "progress: {:.3f}".format(self._progress)
 
     def _s_tl(self):
-        return "Train Loss: {:.5f}".format(np.mean(self.train_loss[-100:]))
+        return "train loss: {:.5f}".format(np.mean(self.train_loss[-100:]))
 
     def _s_ta(self):
-        return "Train Accuracy: {:.5f}".format(np.mean(self.train_accuracy[-100:]))
+        return "train accuracy: {:.5f}".format(np.mean(self.train_accuracy[-100:]))
 
     def _s_vl(self):
-        return "Train Loss: {:.5f}".format(np.mean(self.validate_loss[-100:]))
+        return "validate loss: {:.5f}".format(np.mean(self.validate_loss[-100:]))
 
     def _s_va(self):
-        return "Train Accuracy: {:.5f}".format(np.mean(self.validate_accuracy[-100:]))
+        return "validate accuracy: {:.5f}".format(np.mean(self.validate_accuracy[-100:]))
 
     def _s_time(self):
         return "time {:.3f}".format(time.time()-self.start_time)
@@ -141,8 +153,14 @@ class Network(object):
         for layer in self._layers:
             neurons_before = layer.init(neurons_before, copy(self._optimizer))
 
-    def fit(self, train_inputs, train_labels, validation_set=None,
-            epochs=10, mini_batch_size=1, plot=False, snapshot_step=100):
+    def fit(self,
+            train_inputs,
+            train_labels,
+            validation_set=None,
+            epochs=10, mini_batch_size=1,
+            plot=False,
+            snapshot_step=100,
+            metrics=None):
         """
         tests if the given parameters are valid for the network
         :param train_input: ndarray
@@ -153,9 +171,12 @@ class Network(object):
         :param plot: bool
         :param snapshot_step: int
             use negative number to deactivate the monitoring
+        :param metrics: list
+            define what metrics should be shown
         :return: None
         """
-
+        if metrics is None:
+            metrics = ["all"]
         if validation_set is not None:
 
             if not isinstance(validation_set, (tuple, list)):
@@ -182,6 +203,10 @@ class Network(object):
             raise ValueError("Wrong type for snapshot_step. Expected {} not {}"
                              .format(int, type(snapshot_step)))
 
+        if not isinstance(metrics, list):
+            raise ValueError("Wrong type for metrics. Expected {} not {}"
+                             .format(list, type(metrics)))
+
         self._fit(
             train_inputs=train_inputs,
             train_labels=train_labels,
@@ -190,6 +215,7 @@ class Network(object):
             mini_batch_size=mini_batch_size,
             plot=plot,
             snapshot_step=snapshot_step,
+            metrics=metrics,
         )
 
     def _fit(self,
@@ -199,33 +225,29 @@ class Network(object):
              epochs,
              mini_batch_size,
              plot,
-             snapshot_step):
+             snapshot_step,
+             metrics):
         """
         trains the network with mini batches and print the progress.
         it can plot the accuracy and the loss
         """
-        start_time = time.time()
+        self._total_epoch = epochs
         for epoch in range(epochs):
+            self._current_epoch = epoch
             mini_batches = make_mini_batches(train_inputs, train_labels, mini_batch_size)
 
             for index, mini_batch in enumerate(mini_batches):
+                self._progress = index / len(mini_batches)
                 self._update_parameters(mini_batch, mini_batch_size)
 
                 if validation_set is not None:
                     self._analysis.validate(*validation_set, mini_batch_size)
 
-                if len(self.train_loss) % snapshot_step == 0:
-                    print(
-                        "Epoch {} of {} | train_loss: {:.5f} | train_accuracy: {:.5f} | time {:.3f}\n"
-                        "progress: {:.5f} | validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
-                            epoch + 1, epochs, np.mean(self._train_loss[-100:]), np.mean(self._train_accuracy[-100:]),
-                            time.time() - start_time,
-                            index / len(self._train_loss), np.mean(self._validate_loss[-100:]),
-                            np.mean(self._validate_accuracy[-100:])))
+                if metrics and len(self._train_loss) % snapshot_step == 0:
+                    self._print_metrics(metrics)
 
         if plot:
-            self._plotter.plot_accuracy()
-            self._plotter.plot_loss()
+            self._plot()
 
     def _update_parameters(self, mini_batch, mini_batch_size):
         """
@@ -261,6 +283,28 @@ class Network(object):
         delta = self._cost.delta(activation, y)
         for layer in reversed(self._layers):
             delta = layer.make_delta(delta)
+
+    def _print_metrics(self, metrics):
+        if metrics[0] == "all":
+            metrics = self._translate.keys()
+
+        result = ""
+        for index, metric in enumerate(metrics):
+            result += self._translate[metric]()
+            if index+1 < len(metrics):
+                if len(result.split("\n")[-1]) > 60:
+                    result += "\n"
+                else:
+                    result += " | "
+        print(result)
+
+    def _plot(self):
+        """
+        starts the plotting
+        :return: None
+        """
+        self._plotter.plot_accuracy()
+        self._plotter.plot_loss()
 
     def evaluate(self, x, y):
         """
@@ -392,5 +436,5 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit((train_data, train_labels), validation_set=(test_data, test_labels), epochs=60, mini_batch_size=128, plot=True)
+    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=60, mini_batch_size=128, plot=True)
     net.evaluate(test_data, test_labels)
