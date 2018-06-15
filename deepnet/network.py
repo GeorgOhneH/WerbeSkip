@@ -285,6 +285,13 @@ class Network(object):
             delta = layer.make_delta(delta)
 
     def _print_metrics(self, metrics):
+        """
+        prints all metric which are in the list.
+        If "all" is in the first position it will
+        print every metric.
+        :param metrics: list with metrics as string
+        :return:
+        """
         if metrics[0] == "all":
             metrics = self._translate.keys()
 
