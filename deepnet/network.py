@@ -2,7 +2,7 @@ from mnist_loader import load_mnist
 from layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, LReLU, Layer
 from functions.costs import QuadraticCost, CrossEntropyCost, Cost
 from optimizers import Adam, Optimizer
-from utils import make_mini_batches, Plotter, Analysis, BaseGenerator
+from utils import make_mini_batches, Plotter, Analysis, Generator
 from numpy import ndarray
 
 import time
@@ -174,7 +174,7 @@ class Network(object):
 
             if not isinstance(validation_set, (tuple, list)):
                 raise ValueError("Wrong type of validation set. Expected: {} not {}"
-                                  .format((tuple, list), type(validation_set)))
+                                 .format((tuple, list), type(validation_set)))
 
             if len(validation_set) != 2:
                 raise ValueError("Wrong length of validation set. Expected 2 not {}"
@@ -242,11 +242,48 @@ class Network(object):
         if plot:
             self._plot()
 
-    def fit_generator(self, generator: BaseGenerator) -> None:
-        if not isinstance(generator, BaseGenerator):
+    def fit_generator(self,
+                      generator: Generator,
+                      validation_set: tuple or list = None,
+                      plot: bool = False,
+                      snapshot_step: int = 100,
+                      metrics: list = None) -> None:
+        """checks values"""
+        if not isinstance(generator, Generator):
             raise ValueError("Wrong type for generator. Expected {} not {}."
                              "Use the Base Class from utils"
                              .format(int, type(generator)))
+
+        self._fit_generator(generator=generator,
+                            validation_set=validation_set,
+                            plot=plot,
+                            snapshot_step=snapshot_step,
+                            metrics=metrics,
+                            )
+
+    def _fit_generator(self,
+                       generator: Generator,
+                       validation_set: tuple or list = None,
+                       plot: bool = False,
+                       snapshot_step: int = 100,
+                       metrics: list = None) -> None:
+        """Same as fit but with a generator"""
+        self._total_epoch = generator.epochs
+        for epoch in range(generator.epochs):
+            self._current_epoch = epoch
+
+            for index, mini_batch in enumerate(generator):
+                self._progress = index / len(generator)
+                self._update_parameters(mini_batch, generator.mini_batch_size)
+
+                if validation_set is not None:
+                    self._analysis.validate(*validation_set, generator.mini_batch_size)
+
+                if metrics and len(self._train_loss) % snapshot_step == 0:
+                    self._print_metrics(metrics)
+
+        if plot:
+            self._plot()
 
     def _update_parameters(self, mini_batch: tuple or list, mini_batch_size: int) -> None:
         """
