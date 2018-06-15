@@ -11,8 +11,6 @@ from copy import copy
 import pickle
 import os
 import shutil
-import types
-from itertools import tee
 
 import numpy as np
 from PIL import Image
@@ -24,6 +22,7 @@ class Network(object):
     """
 
     def __init__(self):
+        self._start_time = time.time()
         self._optimizer = None
         self._input_neurons = None
         self._cost = None
@@ -38,6 +37,11 @@ class Network(object):
         }
         self._plotter = Plotter(self)
         self._analysis = Analysis(self)
+
+    @property
+    def start_time(self):
+        """read access only"""
+        return self._start_time
 
     @property
     def cost(self):
@@ -63,6 +67,27 @@ class Network(object):
     def validate_accuracy(self):
         """read access only"""
         return self._validate_accuracy
+
+    def _s_epoch(self, current, total):
+        return "Epoch {} of {}".format(current, total)
+
+    def _s_progress(self, percent):
+        return "Progress: {:.5f}".format(percent)
+
+    def _s_tl(self):
+        return "Train Loss: {:.5f}".format(np.mean(self.train_loss[-100:]))
+
+    def _s_ta(self):
+        return "Train Accuracy: {:.5f}".format(np.mean(self.train_accuracy[-100:]))
+
+    def _s_vl(self):
+        return "Train Loss: {:.5f}".format(np.mean(self.validate_loss[-100:]))
+
+    def _s_va(self):
+        return "Train Accuracy: {:.5f}".format(np.mean(self.validate_accuracy[-100:]))
+
+    def _s_time(self):
+        return "time {:.3f}".format(time.time()-self.start_time)
 
     def input(self, neurons):
         """
@@ -116,11 +141,12 @@ class Network(object):
         for layer in self._layers:
             neurons_before = layer.init(neurons_before, copy(self._optimizer))
 
-    def fit(self, train_set, validation_set=None,
+    def fit(self, train_inputs, train_labels, validation_set=None,
             epochs=10, mini_batch_size=1, plot=False, snapshot_step=100):
         """
         tests if the given parameters are valid for the network
-        :param train_set: (ndarray, ndarray) or generator
+        :param train_input: ndarray
+        :param train_label: ndarray
         :param validation_set: (ndarray, ndarray)
         :param epochs: unsigned int
         :param mini_batch_size: unsigned int
@@ -129,10 +155,6 @@ class Network(object):
             use negative number to deactivate the monitoring
         :return: None
         """
-
-        if not isinstance(train_set, (tuple, list, types.GeneratorType)):
-            raise ValueError("Wrong type of the train set. Expected Generator or array like obj not {}"
-                             .format(type(train_set)))
 
         if validation_set is not None:
 
@@ -161,7 +183,8 @@ class Network(object):
                              .format(int, type(snapshot_step)))
 
         self._fit(
-            train_set=train_set,
+            train_inputs=train_inputs,
+            train_labels=train_labels,
             validation_set=validation_set,
             epochs=epochs,
             mini_batch_size=mini_batch_size,
@@ -170,7 +193,8 @@ class Network(object):
         )
 
     def _fit(self,
-             train_set,
+             train_inputs,
+             train_labels,
              validation_set,
              epochs,
              mini_batch_size,
@@ -181,11 +205,8 @@ class Network(object):
         it can plot the accuracy and the loss
         """
         start_time = time.time()
-        for j in range(epochs):
-            if isinstance(train_set, types.GeneratorType):
-                mini_batches, train_set = tee(train_set)
-            else:
-                mini_batches = make_mini_batches(*train_set, mini_batch_size)
+        for epoch in range(epochs):
+            mini_batches = make_mini_batches(train_inputs, train_labels, mini_batch_size)
 
             for index, mini_batch in enumerate(mini_batches):
                 self._update_parameters(mini_batch, mini_batch_size)
@@ -193,13 +214,13 @@ class Network(object):
                 if validation_set is not None:
                     self._analysis.validate(*validation_set, mini_batch_size)
 
-                if len(self._train_loss) % snapshot_step == 0:
+                if len(self.train_loss) % snapshot_step == 0:
                     print(
                         "Epoch {} of {} | train_loss: {:.5f} | train_accuracy: {:.5f} | time {:.3f}\n"
                         "progress: {:.5f} | validation_loss: {:.5f} | validation_accuracy: {:.5f}".format(
-                            j + 1, epochs, np.mean(self._train_loss[-100:]), np.mean(self._train_accuracy[-100:]),
+                            epoch + 1, epochs, np.mean(self._train_loss[-100:]), np.mean(self._train_accuracy[-100:]),
                             time.time() - start_time,
-                            1, np.mean(self._validate_loss[-100:]),
+                            index / len(self._train_loss), np.mean(self._validate_loss[-100:]),
                             np.mean(self._validate_accuracy[-100:])))
 
         if plot:
@@ -287,7 +308,6 @@ class Network(object):
     def load(self, file_name):
         """
         Loads the network from a file
-
         :param file_name: string
         :return: None
         """
