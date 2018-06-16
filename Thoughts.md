@@ -38,5 +38,7 @@ anfangen obwohl das Netzwerk noch nicht initziliesiert ist und es
 desewgen ziemlich lange braucht um anzufangen.
 
 Muss noch den Generator richtig beenden(Threads schliessen etc) und
-auch wieder reiniliesieren
+auch wieder reiniliesieren. Bin mir nicht sicher ob ich die Threads
+noch joinen muss oder nicht, da alle schon nicht mehr "leben".
+ Glaub aber nicht das es schadet
 

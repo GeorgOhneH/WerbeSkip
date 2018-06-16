@@ -15,7 +15,6 @@ class Generator(object):
 
     def init_generator(self):
         """Split the work into different threads"""
-        self.items = []
         self.lock = Lock()
         self.cv_produce = Condition()
         self.cv_stop_produce = Condition()
@@ -25,7 +24,8 @@ class Generator(object):
             thread.start()
 
     def close(self):
-        pass
+        for thread in self.threads:
+            thread.join()
 
     def __iter__(self):
         """Tells Python the class is the Iterator and init the class"""
