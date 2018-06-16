@@ -42,3 +42,6 @@ auch wieder reiniliesieren. Bin mir nicht sicher ob ich die Threads
 noch joinen muss oder nicht, da alle schon nicht mehr "leben".
  Glaub aber nicht das es schadet
 
+Der Generator funktioniert nicht mit Multicoreprocesse, da
+die Liste nicht SharedMemory ist. Fürs Threadning war das egal, da
+dort alles SharedMemory ist.
