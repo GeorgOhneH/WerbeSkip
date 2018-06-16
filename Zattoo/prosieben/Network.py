@@ -2,10 +2,10 @@ from deepnet import Network
 from image_processing.image_loader import load_imgs
 from image_processing.generator import TrainGenerator
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax
-from deepnet.optimizers import Adam, SGD
+from deepnet.optimizers import Adam
 
 
-generator = TrainGenerator(3, 128, 10, 4)
+generator = TrainGenerator(epochs=1, mini_batch_size=128, padding=10, n_workers=1)
 
 _, v_x, v_y, t_x, t_y = load_imgs(0.8)
 net = Network()

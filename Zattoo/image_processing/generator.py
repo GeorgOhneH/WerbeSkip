@@ -35,7 +35,7 @@ class TrainGenerator(Generator):
         random.shuffle(self.urls)
 
     def __len__(self):
-        len(self.urls)
+        return len(self.urls)
 
     def get_mini_batches(self, index):
         url = self.urls[index]
