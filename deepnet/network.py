@@ -80,7 +80,7 @@ class Network(object):
         return self._validate_accuracy
 
     def _s_epoch(self) -> str:
-        return "epoch {} of {}".format(self._current_epoch, self._total_epoch)
+        return "epoch {} of {}".format(self._current_epoch+1, self._total_epoch)
 
     def _s_progress(self) -> str:
         return "progress: {:.3f}".format(self._progress)

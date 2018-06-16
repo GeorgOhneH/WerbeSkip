@@ -35,7 +35,7 @@ class TrainGenerator(Generator):
         random.shuffle(self.urls)
 
     def __len__(self):
-        return len(self.urls)
+        return 10
 
     def get_mini_batches(self, index):
         url = self.urls[index]
@@ -82,7 +82,12 @@ class TrainGenerator(Generator):
 
 if __name__ == "__main__":
     print("Start")
-    gen = TrainGenerator(20, 64, 10, n_workers=3)
+    gen = TrainGenerator(20, 64, 10, n_workers=4)
     print("Start iter")
-    for x in gen:
-        pass
+    x = 0
+    print(gen.epochs)
+    for epoch in range(gen.epochs):
+        print(epoch)
+        for _ in gen:
+            x += 1
+        print("Finished")
