@@ -14,6 +14,13 @@ und einer Queue.
 
 Implementiert. Probleme: Die Queue liste kann zu gross werden
 für den Speicher. Der Generator wird noch nicht
-beendet obwohl er schon fertig ist und landed in einem
-Deadlock
+beendet obwohl er schon fertig ist.
+### 16.06.2018
+Der Generator ist so implementiert, dass man 2 funktionen
+immer selber implementieren muss. `get_mini_batches` stellt die mini_batches
+her. Die return value von der funktion muss immer in einer liste sein, so dass
+man auch mehr als nur Item zurückgeben kann. Also `[Item]` oder `[Item, Item]`,
+aber nicht `Item`. Die zweite funktion ist die `__len__()`, damit ich weiss
+wie oft ich die `get_mini_batches` aufrufen muss.
+Das Multithreadning wird automatisch von der Base classe übernommen.
 

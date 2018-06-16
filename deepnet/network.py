@@ -442,8 +442,6 @@ class Network(object):
 
 if __name__ == "__main__":
     train_data, train_labels, test_data, test_labels = load_mnist()
-    print(train_labels.shape)
-    print(train_data.shape)
     net = Network()
 
     net.input(28 * 28)
