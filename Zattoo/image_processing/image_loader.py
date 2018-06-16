@@ -46,11 +46,11 @@ def load_generator(generator, mini_batch_size):
 
 
 def load_imgs(split=0.8, mini_batch_size=128, padding=10):
-    generator = load_generator(random_background(padding=padding), mini_batch_size)
+    # generator = load_generator(random_background(padding=padding), mini_batch_size)
     sample_images, sample_labels = loader(sample_imgs)
     split_data = int(sample_images.shape[1] * split)
 
-    return generator, \
+    return 1, \
            sample_images[..., :split_data], sample_labels[..., :split_data], \
            sample_images[..., -split_data:], sample_labels[..., -split_data:]
 

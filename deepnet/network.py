@@ -249,11 +249,12 @@ class Network(object):
                       snapshot_step: int = 100,
                       metrics: list = None) -> None:
         """checks values"""
-        if not isinstance(generator, Generator):
-            raise ValueError("Wrong type for generator. Expected {} not {}."
-                             "Use the Base Class from utils"
-                             .format(int, type(generator)))
+        # if not issubclass(type(generator), Generator):
+        #     raise ValueError("Must be a subclass of Generator. "
+        #                      "Use the Base Class from utils")
 
+        if metrics is None:
+            metrics = ["all"]
         self._fit_generator(generator=generator,
                             validation_set=validation_set,
                             plot=plot,
@@ -263,22 +264,20 @@ class Network(object):
 
     def _fit_generator(self,
                        generator: Generator,
-                       validation_set: tuple or list = None,
-                       plot: bool = False,
-                       snapshot_step: int = 100,
-                       metrics: list = None) -> None:
+                       validation_set: tuple or list,
+                       plot: bool,
+                       snapshot_step: int,
+                       metrics: list) -> None:
         """Same as fit but with a generator"""
         self._total_epoch = generator.epochs
         for epoch in range(generator.epochs):
             self._current_epoch = epoch
-
             for index, mini_batch in enumerate(generator):
                 self._progress = index / len(generator)
                 self._update_parameters(mini_batch, generator.mini_batch_size)
 
                 if validation_set is not None:
                     self._analysis.validate(*validation_set, generator.mini_batch_size)
-
                 if metrics and len(self._train_loss) % snapshot_step == 0:
                     self._print_metrics(metrics)
 

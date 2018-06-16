@@ -23,6 +23,7 @@ class Generator(object):
 
     def __iter__(self):
         """Tells Python the class is the Iterator"""
+        print("iter")
         return self
 
     def __next__(self):

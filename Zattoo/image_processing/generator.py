@@ -81,6 +81,8 @@ class TrainGenerator(Generator):
 
 
 if __name__ == "__main__":
+    print("Start")
     gen = TrainGenerator(20, 64, 10, n_workers=3)
+    print("Start iter")
     for x in gen:
-        print('f')
+        pass

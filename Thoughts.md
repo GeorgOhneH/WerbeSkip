@@ -33,3 +33,10 @@ ist löse ich am besten mit einem zweiten Condition Object. Wird es
 auch schneller machen, da dann die liste mit den Items nicht mehr die
 ganze Ziet von den Threads blockiert wird.
 
+Ein Problem könnte noch sein, dass die Threads vom Generator schon
+anfangen obwohl das Netzwerk noch nicht initziliesiert ist und es
+desewgen ziemlich lange braucht um anzufangen.
+
+Muss noch den Generator richtig beenden(Threads schliessen etc) und
+auch wieder reiniliesieren
+
