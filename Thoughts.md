@@ -24,3 +24,7 @@ aber nicht `Item`. Die zweite funktion ist die `__len__()`, damit ich weiss
 wie oft ich die `get_mini_batches` aufrufen muss.
 Das Multithreadning wird automatisch von der Base classe übernommen.
 
+Queue ist für meine Zwecke nicht geeignet, da ich mehr als ein
+Element jeweils aus der Liste haben muss. Eine Liste die ich slicen kann
+eignet sich einiges besser für diese Anwendung.
+

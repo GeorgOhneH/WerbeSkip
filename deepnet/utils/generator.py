@@ -1,5 +1,4 @@
-from queue import Queue
-from threading import Condition, Thread
+from threading import Condition, Thread, Lock
 import numpy as np
 
 
@@ -9,7 +8,8 @@ class Generator(object):
         self.mini_batch_size = mini_batch_size
         self.epochs = epochs
         self.threads = []
-        self.queue = Queue()
+        self.items = []
+        self.lock = Lock()
         self.cv = Condition()
         self.init_generator()
 
@@ -26,21 +26,23 @@ class Generator(object):
 
     def __next__(self):
         """Gets the items and makes the mini_batch"""
-        print(self.queue.qsize())
-        inputs, labels = [], []
-        for _ in range(self.mini_batch_size):
-            with self.cv:
-                while self.queue.empty():
-                    if not self.threads_alive():
-                        return StopIteration
-                    self.cv.wait()
-                item = self.queue.get()
-                inputs.append(item[0])
-                labels.append(item[1])
-                self.queue.task_done()
-        inputs = np.concatenate(inputs, axis=1)
-        labels = np.concatenate(labels, axis=1)
-        return inputs, labels
+        print("Get Mini batch")
+        with self.cv:
+            while self.items_len() < self.mini_batch_size:
+                if not self.threads_alive():
+                    return StopIteration
+                print("Wait")
+                self.cv.wait()
+            with self.lock:
+                items = self.items[:self.mini_batch_size]
+                del self.items[:self.mini_batch_size]
+            inputs = np.concatenate([item[0] for item in items], axis=1)
+            labels = np.concatenate([item[1] for item in items], axis=1)
+            return inputs, labels
+
+    def items_len(self):
+        with self.lock:
+            return len(self.items)
 
     def threads_alive(self):
         for thread in self.threads:
@@ -50,11 +52,13 @@ class Generator(object):
 
     def produce_item(self, indexes):
         for index in indexes:
+            print("Produce Item")
             with self.cv:
                 mini_batches = self.get_mini_batches(index)
-                for mini_batch in mini_batches:
-                    self.queue.put(mini_batch)
+                with self.lock:
+                    self.items += mini_batches
                 self.cv.notify_all()
+                print("Notify all")
 
     def __len__(self):
         raise NotImplemented
