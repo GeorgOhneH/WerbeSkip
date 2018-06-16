@@ -28,3 +28,8 @@ Queue ist für meine Zwecke nicht geeignet, da ich mehr als ein
 Element jeweils aus der Liste haben muss. Eine Liste die ich slicen kann
 eignet sich einiges besser für diese Anwendung.
 
+Das Problem, dass die Threads nicht aufhören wenn die liste schon lang genug
+ist löse ich am besten mit einem zweiten Condition Object. Wird es
+auch schneller machen, da dann die liste mit den Items nicht mehr die
+ganze Ziet von den Threads blockiert wird.
+

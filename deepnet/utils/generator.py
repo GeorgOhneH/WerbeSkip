@@ -10,7 +10,8 @@ class Generator(object):
         self.threads = []
         self.items = []
         self.lock = Lock()
-        self.cv = Condition()
+        self.cv_produce = Condition()
+        self.cv_stop_produce = Condition()
         self.init_generator()
 
     def init_generator(self):
@@ -26,19 +27,19 @@ class Generator(object):
 
     def __next__(self):
         """Gets the items and makes the mini_batch"""
-        print("Get Mini batch")
-        with self.cv:
+        with self.cv_produce:
             while self.items_len() < self.mini_batch_size:
                 if not self.threads_alive():
                     return StopIteration
-                print("Wait")
-                self.cv.wait()
+                self.cv_produce.wait()
             with self.lock:
                 items = self.items[:self.mini_batch_size]
                 del self.items[:self.mini_batch_size]
-            inputs = np.concatenate([item[0] for item in items], axis=1)
-            labels = np.concatenate([item[1] for item in items], axis=1)
-            return inputs, labels
+        with self.cv_stop_produce:
+            self.cv_stop_produce.notify_all()
+        inputs = np.concatenate([item[0] for item in items], axis=1)
+        labels = np.concatenate([item[1] for item in items], axis=1)
+        return inputs, labels
 
     def items_len(self):
         with self.lock:
@@ -52,13 +53,14 @@ class Generator(object):
 
     def produce_item(self, indexes):
         for index in indexes:
-            print("Produce Item")
-            with self.cv:
+            with self.cv_produce:
                 mini_batches = self.get_mini_batches(index)
                 with self.lock:
                     self.items += mini_batches
-                self.cv.notify_all()
-                print("Notify all")
+                self.cv_produce.notify_all()
+            with self.cv_stop_produce:
+                while self.items_len() > self.mini_batch_size*10:
+                    self.cv_stop_produce.wait()
 
     def __len__(self):
         raise NotImplemented

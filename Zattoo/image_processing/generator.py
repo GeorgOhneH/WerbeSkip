@@ -10,7 +10,7 @@ from deepnet.utils import Generator, blockshaped
 
 
 class TrainGenerator(Generator):
-    def __init__(self, epochs, mini_batch_size, padding):
+    def __init__(self, epochs, mini_batch_size, padding, n_workers):
         self.logo = None
         self.part_w = None
         self.part_h = None
@@ -18,7 +18,7 @@ class TrainGenerator(Generator):
         self.dict_labels = {0: [[1], [0]], 1: [[0], [1]]}
         self.padding = padding
         self.init()
-        super().__init__(epochs, mini_batch_size)
+        super().__init__(epochs, mini_batch_size, n_workers)
 
     def init(self):
         logo = cv2.imread("../prosieben/images/important_images/logo32x32.png", 0)  # 0 is the mode for white/black
@@ -81,6 +81,6 @@ class TrainGenerator(Generator):
 
 
 if __name__ == "__main__":
-    gen = TrainGenerator(20, 64, 10)
+    gen = TrainGenerator(20, 64, 10, n_workers=3)
     for x in gen:
         print('f')
