@@ -78,7 +78,13 @@ mini_batch num: 1000 | time: 181.12
 mini_batch num: 0 | time: 7.64
 
 mini_batch num: 1000 | time: 231.46
-<br><br><br>
+<br><br>
 Der Multicore Generator ist besser als der Alte. Aber mehr workers
 macht ihn nicht viel schneller, was wahrscheinlich darin liegt das ich viele
 Locks benutze, die sich gegenseitig blockieren.
+
+#### Parallelizing
+Ich hab mir verschiedene Arten von Parralelitierung von einem
+Neuronalen Netzwek angeschaut. Darunter waren Pipline, large scale distributed und
+anderes. Am meisten hat mir der [Hogwild Alogrithmus](https://arxiv.org/abs/1106.5730)
+gefallen, da einfach zu implementieren ist und auch gut zu funktioniren scheint
