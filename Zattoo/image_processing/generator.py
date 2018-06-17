@@ -6,8 +6,6 @@ import requests
 from requests.exceptions import ConnectTimeout, ConnectionError, HTTPError
 import warnings
 from deepnet.utils import Generator, blockshaped
-import time
-from multiprocessing import Manager
 
 
 class TrainGenerator(Generator):
@@ -36,7 +34,7 @@ class TrainGenerator(Generator):
         random.shuffle(self.urls)
 
     def __len__(self):
-        return 100
+        return len(self.urls)
 
     def get_mini_batches(self, index):
         url = self.urls[index]
@@ -80,14 +78,3 @@ class TrainGenerator(Generator):
             warnings.warn("A request wasn't successful, got {}".format(e))
         return mini_batches
 
-
-if __name__ == "__main__":
-    start = time.time()
-    print("Start {:.2f}".format(time.time()-start))
-    gen = TrainGenerator(3, 128, 10, 5)
-    for epoch in range(gen.epochs):
-        x = 0
-        print("Start iter {:.2f}".format(time.time()-start))
-        for y in gen:
-            print("{}. mini_batch {:.2f}".format(x, time.time()-start))
-            x += 1
