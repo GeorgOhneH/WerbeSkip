@@ -11,7 +11,7 @@ from multiprocessing import Manager
 
 
 class TrainGenerator(Generator):
-    def __init__(self, epochs, mini_batch_size, padding, list, lock, cond1, cond2, n_workers):
+    def __init__(self, epochs, mini_batch_size, padding, n_workers):
         self.logo = None
         self.part_w = None
         self.part_h = None
@@ -19,7 +19,7 @@ class TrainGenerator(Generator):
         self.dict_labels = {0: [[1], [0]], 1: [[0], [1]]}
         self.padding = padding
         self.init()
-        super().__init__(epochs, mini_batch_size, list, lock, cond1, cond2, n_workers)
+        super().__init__(epochs, mini_batch_size, n_workers)
 
     def init(self):
         logo = cv2.imread("../prosieben/images/important_images/logo32x32.png", 0)  # 0 is the mode for white/black
@@ -36,7 +36,7 @@ class TrainGenerator(Generator):
         random.shuffle(self.urls)
 
     def __len__(self):
-        return len(self.urls)
+        return 100
 
     def get_mini_batches(self, index):
         url = self.urls[index]
@@ -83,16 +83,11 @@ class TrainGenerator(Generator):
 
 if __name__ == "__main__":
     start = time.time()
-    manager = Manager()
     print("Start {:.2f}".format(time.time()-start))
-    gen = TrainGenerator(1, 10, 10, manager.list([]), manager.Lock(), manager.Condition(), manager.Condition(), 2)
+    gen = TrainGenerator(3, 128, 10, 5)
     for epoch in range(gen.epochs):
         x = 0
         print("Start iter {:.2f}".format(time.time()-start))
-        for _ in gen:
-            if x % 100 == 0:
-                print("{}. mini_batch {:.2f}".format(x, time.time()-start))
-            if x == 1000:
-                print("Finished {:.2f}".format(time.time()-start))
-                exit()
+        for y in gen:
+            print("{}. mini_batch {:.2f}".format(x, time.time()-start))
             x += 1

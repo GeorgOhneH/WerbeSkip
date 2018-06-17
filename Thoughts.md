@@ -54,3 +54,8 @@ alles was es braucht pickelt und wenn man den Manager pickelt gibt
 es eine Fehlermeldung, d.h. der Manager darf nicht in der Klasse sein
 oder muss man irgenwie Unsichtbar machen vom Processe. Muss noch schauen
 wie ich das am besten Löse.
+
+Ich lösch einach die referenz des Manager aus dem dict der Klasse, so
+dass es nicht gepickelt werden kann. Aber dadurch habe ich keinen Zugriff
+auf den Manager. Was im Moment kein Problem ist. Sonst funktioniert der
+Generator ziemlich gut.
