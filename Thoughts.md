@@ -59,3 +59,26 @@ Ich lösch einach die referenz des Manager aus dem dict der Klasse, so
 dass es nicht gepickelt werden kann. Aber dadurch habe ich keinen Zugriff
 auf den Manager. Was im Moment kein Problem ist. Sonst funktioniert der
 Generator ziemlich gut.
+
+#### Generator Vergleich
+mini_batch_size = 128
+##### Multicore 1 worker
+mini_batch num: 0 | time: 5.13
+
+mini_batch num: 1000 | time: 181.22
+##### Multicore 2 worker
+mini_batch num: 0 | time: 8.62
+
+mini_batch num: 1000 | time: 177.53
+##### Multicore 3 worker
+mini_batch num: 0 | time: 15.46
+
+mini_batch num: 1000 | time: 181.12
+##### Old Generator
+mini_batch num: 0 | time: 7.64
+
+mini_batch num: 1000 | time: 231.46
+<br><br><br>
+Der Multicore Generator ist besser als der Alte. Aber mehr workers
+macht ihn nicht viel schneller, was wahrscheinlich darin liegt das ich viele
+Locks benutze, die sich gegenseitig blockieren.

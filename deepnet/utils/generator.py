@@ -3,7 +3,7 @@ import numpy as np
 
 
 class Generator(object):
-    def __init__(self, epochs, mini_batch_size, n_workers=2):
+    def __init__(self, epochs, mini_batch_size, n_workers=1):
         self.manager = Manager()
         self.n_workers = n_workers
         self.mini_batch_size = mini_batch_size
