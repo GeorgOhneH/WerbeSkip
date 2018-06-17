@@ -45,3 +45,12 @@ noch joinen muss oder nicht, da alle schon nicht mehr "leben".
 Der Generator funktioniert nicht mit Multicoreprocesse, da
 die Liste nicht SharedMemory ist. Fürs Threadning war das egal, da
 dort alles SharedMemory ist.
+
+### 17.06.2018
+
+Mithilfe des Managers kann man ziemlich einfach SharedMemory
+implementieren, dabei muss man aber sehr aufpassen, da der Processe
+alles was es braucht pickelt und wenn man den Manager pickelt gibt
+es eine Fehlermeldung, d.h. der Manager darf nicht in der Klasse sein
+oder muss man irgenwie Unsichtbar machen vom Processe. Muss noch schauen
+wie ich das am besten Löse.

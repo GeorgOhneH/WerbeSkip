@@ -1,25 +1,25 @@
 from multiprocessing import Condition, Process, Lock
-from multiprocessing import Manager
+from multiprocessing import Manager, freeze_support
 import numpy as np
+import pickle
 
 
 class Generator(object):
-    def __init__(self, epochs, mini_batch_size, n_workers=2):
-        self.manager = Manager()
+    def __init__(self, epochs, mini_batch_size, list, lock, condition1, condition2, n_workers=2):
         self.n_workers = n_workers
         self.mini_batch_size = mini_batch_size
         self.epochs = epochs
         self.threads = None
-        self.items = self.manager.list([])
-        self.lock = None
-        self.cv_produce = None
-        self.cv_stop_produce = None
+        self.items = list
+        self.lock = lock
+        self.cv_produce = condition1
+        self.cv_stop_produce = condition2
 
     def init_generator(self):
         """Split the work into different threads"""
-        self.lock = self.manager.Lock()
-        self.cv_produce = self.manager.Condition()
-        self.cv_stop_produce = self.manager.Condition()
+        # self.lock = self.manager.Lock()
+        # self.cv_produce = self.manager.Condition()
+        # self.cv_stop_produce = self.manager.Condition()
         indexes = [range(x, self.__len__(), self.n_workers) for x in range(self.n_workers)]
         self.threads = [Process(target=self.produce_item, args=(index,)) for index in indexes]
         for thread in self.threads:
@@ -38,7 +38,6 @@ class Generator(object):
         """Gets the items and makes the mini_batch"""
         with self.cv_produce:
             while self.items_len() < self.mini_batch_size:
-                print(self.items_len())
                 if not self.threads_alive():
                     self.close()
                     raise StopIteration
@@ -68,11 +67,9 @@ class Generator(object):
                 mini_batches = self.get_mini_batches(index)
                 with self.lock:
                     self.items += mini_batches
-                print("notify")
                 self.cv_produce.notify_all()
             with self.cv_stop_produce:
                 while self.items_len() > self.mini_batch_size*100:
-                    print("Wait")
                     self.cv_stop_produce.wait()
 
     def __len__(self):
@@ -81,3 +78,9 @@ class Generator(object):
     def get_mini_batches(self, index) -> list:
         raise NotImplemented
 
+
+if __name__=="__main__":
+    manager = Manager()
+    gen = Generator(1, 10, manager.list([]), manager.Lock(), manager.Condition(), manager.Condition(), 1)
+    for x in gen:
+        print(x)

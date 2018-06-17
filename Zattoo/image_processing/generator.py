@@ -1,24 +1,25 @@
 import cv2
 import zipfile
 import random
-import io
 import numpy as np
 import requests
 from requests.exceptions import ConnectTimeout, ConnectionError, HTTPError
 import warnings
 from deepnet.utils import Generator, blockshaped
+import time
+from multiprocessing import Manager
 
 
 class TrainGenerator(Generator):
-    def __init__(self, epochs, mini_batch_size, padding, n_workers):
+    def __init__(self, epochs, mini_batch_size, padding, list, lock, cond1, cond2, n_workers):
         self.logo = None
         self.part_w = None
         self.part_h = None
-        self.urls = None
+        self.urls = []
         self.dict_labels = {0: [[1], [0]], 1: [[0], [1]]}
         self.padding = padding
         self.init()
-        super().__init__(epochs, mini_batch_size, n_workers)
+        super().__init__(epochs, mini_batch_size, list, lock, cond1, cond2, n_workers)
 
     def init(self):
         logo = cv2.imread("../prosieben/images/important_images/logo32x32.png", 0)  # 0 is the mode for white/black
@@ -30,7 +31,7 @@ class TrainGenerator(Generator):
 
         with zipfile.ZipFile("../image_processing/urls.zip", "r") as archive:
             data = archive.read("urls.txt")
-        self.urls = list(io.BytesIO(data))
+        self.urls = data.decode('UTF-8').split("\n")
 
         random.shuffle(self.urls)
 
@@ -81,15 +82,17 @@ class TrainGenerator(Generator):
 
 
 if __name__ == "__main__":
-    print("Start")
-    gen = TrainGenerator(20, 64, 10, n_workers=4)
-    print("Start iter")
-    x = 0
-    print(gen.epochs)
+    start = time.time()
+    manager = Manager()
+    print("Start {:.2f}".format(time.time()-start))
+    gen = TrainGenerator(1, 10, 10, manager.list([]), manager.Lock(), manager.Condition(), manager.Condition(), 2)
     for epoch in range(gen.epochs):
         x = 0
-        print(epoch)
+        print("Start iter {:.2f}".format(time.time()-start))
         for _ in gen:
+            if x % 100 == 0:
+                print("{}. mini_batch {:.2f}".format(x, time.time()-start))
+            if x == 1000:
+                print("Finished {:.2f}".format(time.time()-start))
+                exit()
             x += 1
-            print(x)
-        print("Finished")
