@@ -104,4 +104,7 @@ werden es vielleicht später nochmal probieren
 
 Hab den Convolution Layer implementiert. Hab viel Code von Websiten.
 
+Implementierung von MaxPoolLayer mit einer BasePool Layer Klasse für
+einfache implementierung einer weitern Pool Klasse
+
 

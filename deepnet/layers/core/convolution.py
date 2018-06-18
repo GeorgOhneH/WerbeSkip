@@ -41,7 +41,7 @@ class ConvolutionLayer(Layer):
         :param optimizer: optimiser of the Optimizer class
         :return: neurons of layer: unsigned int
         """
-        self.width, self.height, self.depth = neurons_before
+        self.depth, self.height, self.width = neurons_before
         self.biases = np.random.randn(self.n_filter, 1)
         self.weights = np.random.randn(self.n_filter, self.depth, self.height_filter, self.width_filter) / np.sqrt(neurons_before)
         self.optimizer = optimizer
@@ -51,7 +51,7 @@ class ConvolutionLayer(Layer):
         if not self.height_out.is_integer() or not self.width_out.is_integer():
             raise ValueError("Doesn't work with theses Values.")
 
-        return int(self.width_out), int(self.height_out), self.n_filter
+        return self.n_filter, int(self.height_out), int(self.width_out)
 
     def forward(self, a):
         self.mini_batch_size = a.shape[0]
