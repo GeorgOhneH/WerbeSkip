@@ -100,4 +100,8 @@ hin und herschicken mit Pipes basiert, aber für Hogwild  bräuchte ich
 eine atomi funktion, die es so nicht in Python gibt. Ich weiss gar nicht
 ob es sich üperhaupt lohnen kann, das Netzwerk zu parallelisieren, da Python
 einfach nicht dafür gemacht worden ist. Ich gebe das Parallelisieren auf und
-werden es vielleicht später nochmal probiren
+werden es vielleicht später nochmal probieren
+
+Hab den Convolution Layer implementiert. Hab viel Code von Websiten.
+
+
