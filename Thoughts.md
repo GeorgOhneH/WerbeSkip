@@ -107,4 +107,11 @@ Hab den Convolution Layer implementiert. Hab viel Code von Websiten.
 Implementierung von MaxPoolLayer mit einer BasePool Layer Klasse für
 einfache implementierung einer weitern Pool Klasse
 
+Flatten Layer hinzugefügt um von einem Convlayer zu einem FullyConnected
+zu kommen. Ausserdem hab ich den ndarray vom "alten" Netzwerk umgedreht, d.h
+von `[daten, mini_batch_size]` zu `[mini_batch_size, daten]`, da es so
+allgemein gültiger ist und mit dem convlayer übereinstimmt, da bei dem `daten`
+mehrere Werte sind und durch die Umdrehung bleibt `mini_batch_size`  immer
+an der ersten Stelle.(Umstellung noch nicht am Generator und am Batchnormlayer)
+
 

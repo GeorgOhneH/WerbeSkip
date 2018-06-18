@@ -42,16 +42,19 @@ class ConvolutionLayer(Layer):
         :return: neurons of layer: unsigned int
         """
         self.depth, self.height, self.width = neurons_before
-        self.biases = np.random.randn(self.n_filter, 1)
-        self.weights = np.random.randn(self.n_filter, self.depth, self.height_filter, self.width_filter) / np.sqrt(neurons_before)
-        self.optimizer = optimizer
 
         self.width_out = (self.width - self.width_filter + 2 * self.zero_padding) / self.stride + 1
         self.height_out = (self.height - self.height_filter + 2 * self.zero_padding) / self.stride + 1
         if not self.height_out.is_integer() or not self.width_out.is_integer():
             raise ValueError("Doesn't work with theses Values.")
 
-        return self.n_filter, int(self.height_out), int(self.width_out)
+        self.height_out, self.width_out = int(self.height_out), int(self.width_out)
+
+        self.biases = np.random.randn(self.n_filter, 1)
+        self.weights = np.random.randn(self.n_filter, self.depth, self.height_filter, self.width_filter) / np.sqrt(self.n_filter)
+        self.optimizer = optimizer
+
+        return self.n_filter, self.height_out, self.width_out
 
     def forward(self, a):
         self.mini_batch_size = a.shape[0]

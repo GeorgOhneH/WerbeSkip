@@ -34,14 +34,14 @@ class FullyConnectedLayer(Layer):
         :param optimizer: optimiser of the Optimizer class
         :return: neurons of layer: unsigned int
         """
-        self.biases = np.random.randn(self.neurons, 1)
-        self.weights = np.random.randn(self.neurons, neurons_before) / np.sqrt(neurons_before)
+        self.biases = np.random.randn(1, self.neurons)
+        self.weights = np.random.randn(neurons_before, self.neurons) / np.sqrt(neurons_before)
         self.optimizer = optimizer
         return self.neurons
 
     def forward(self, a):
         """Applies a matrix multiplication of the weights and adds the biases """
-        return self.weights @ a + self.biases
+        return a @ self.weights + self.biases
 
     def forward_backpropagation(self, a):
         """
@@ -53,9 +53,9 @@ class FullyConnectedLayer(Layer):
 
     def make_delta(self, delta):
         """Calculates error and the derivative of the parameters"""
-        self.nabla_b = np.sum(delta, axis=1, keepdims=True)
-        self.nabla_w = delta @ self.a.T
-        return self.weights.T @ delta
+        self.nabla_b = np.sum(delta, axis=0)
+        self.nabla_w = self.a.T @ delta
+        return delta @ self.weights.T
 
     def adjust_parameters(self, mini_batch_size):
         """Changes the weights and biases after the optimizer calculates the change"""

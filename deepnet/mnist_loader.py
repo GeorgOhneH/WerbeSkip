@@ -21,6 +21,17 @@ def load_mnist():
     return np_train_images, np_train_labels, np_test_images, np_test_labels
 
 
+def load_conv():
+    X, Y, test_x, test_y = load_mnist()
+    X = X.T
+    Y = Y.T
+    test_x = test_x.T
+    test_y = test_y.T
+    X = X.reshape([-1, 1, 28, 28])
+    test_x = test_x.reshape([-1, 1, 28, 28])
+    return X, Y, test_x, test_y
+
+
 if __name__ == "__main__":
-    train_data, train_labels, test_data, test_labels = load_mnist()
+    train_data, train_labels, test_data, test_labels = load_conv()
     print(train_data.shape, train_labels.shape, test_data.shape, test_labels.shape)

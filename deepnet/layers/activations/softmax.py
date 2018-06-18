@@ -15,12 +15,5 @@ class SoftMax(Layer):
     """
 
     def forward(self, z):
-        exps = np.exp(z - np.max(z, axis=0))
-        return exps / np.sum(exps, axis=0)
-
-    def forward_backpropagation(self, z):
-        exps = np.exp(z - np.max(z, axis=0))
-        return exps / np.sum(exps, axis=0)
-
-    def make_delta(self, delta):
-        return delta
+        exps = np.exp(z - np.max(z, axis=1, keepdims=True))
+        return exps / np.sum(exps, axis=1, keepdims=True)

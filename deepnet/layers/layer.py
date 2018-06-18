@@ -32,7 +32,7 @@ class Layer(object):
         :param a: ndarray
         :return: ndarray
         """
-
+        a = self.forward(a)
         return a
 
     def make_delta(self, delta):

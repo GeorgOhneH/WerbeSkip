@@ -22,6 +22,16 @@ class PoolLayer(Layer):
         return "{}:  width_filter: {} height_filter: {} stride: {}" \
             .format(super(PoolLayer, self).__str__(), self.width_filter, self.height_filter, self.stride)
 
+    def init(self, neurons_before, optimizer):
+        depth, height, width = neurons_before
+        height_out = (height - self.height_filter) / self.stride + 1
+        width_out = (width - self.width_filter) / self.stride + 1
+
+        if not width_out.is_integer() or not height_out.is_integer():
+            raise ValueError("Doesn't work with theses Values")
+
+        return depth, int(height_out), int(width_out)
+
     def forward(self, a):
         mini_batch_size, depth, height, width = a.shape
         height_out = (height - self.height_filter) / self.stride + 1

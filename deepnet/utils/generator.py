@@ -44,8 +44,8 @@ class Generator(object):
                 del self.items[:self.mini_batch_size]
         with self.cv_stop_produce:
             self.cv_stop_produce.notify()
-        inputs = np.concatenate([item[0] for item in items], axis=1)
-        labels = np.concatenate([item[1] for item in items], axis=1)
+        inputs = np.concatenate([item[0] for item in items], axis=0)
+        labels = np.concatenate([item[1] for item in items], axis=0)
         return inputs, labels
 
     def items_len(self):

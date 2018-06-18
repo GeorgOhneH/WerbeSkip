@@ -13,12 +13,12 @@ class QuadraticCost(Cost):
     @staticmethod
     def function(a, y):
         """Computes the cost function"""
-        return np.sum(0.5 * np.linalg.norm(a - y, axis=0) ** 2) / y.shape[1]
+        return np.sum(0.5 * np.linalg.norm(a - y, axis=1) ** 2) / y.shape[0]
 
     @staticmethod
     def delta(a, y):
         """Calculates the derivative"""
-        return (a - y) / y.shape[1]
+        return (a - y) / y.shape[0]
 
 
 class CrossEntropyCost(Cost):
@@ -32,9 +32,9 @@ class CrossEntropyCost(Cost):
     @staticmethod
     def function(a, y):
         """Computes the cost function"""
-        return -np.sum(y * np.log(a)) / y.shape[1]
+        return -np.sum(y * np.log(a)) / y.shape[0]
 
     @staticmethod
     def delta(a, y):
         """Calculates the derivative and the derivative of the softmax"""
-        return (a - y) / y.shape[1]
+        return (a - y) / y.shape[0]

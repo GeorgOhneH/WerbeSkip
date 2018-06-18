@@ -8,8 +8,8 @@ def shuffle(x, y):
     :param y: ndarray
     :return x, y: ndarray
     """
-    indexes = np.random.permutation(x.shape[1])
-    return x[..., indexes], y[..., indexes]
+    indexes = np.random.permutation(x.shape[0])
+    return x[indexes], y[indexes]
 
 
 def make_mini_batches(x, y, size):
@@ -22,8 +22,8 @@ def make_mini_batches(x, y, size):
     """
     x, y = shuffle(x, y)
     mini_batches = []
-    for i in range(0, x.shape[1], size):
-        mini_batches.append((x[:, i:size + i], y[:, i:size + i]))
+    for i in range(0, x.shape[0], size):
+        mini_batches.append((x[i:size + i], y[i:size + i]))
     return mini_batches
 
 

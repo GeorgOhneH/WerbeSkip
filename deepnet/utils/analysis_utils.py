@@ -22,7 +22,7 @@ class Analysis(object):
         :param y: ndarray
         :return: accuracy: flout
         """
-        return np.mean(np.argmax(x, axis=0) == np.argmax(y, axis=0))
+        return np.mean(np.argmax(x, axis=1) == np.argmax(y, axis=1))
 
     @staticmethod
     def wrong_predictions(x, y):
@@ -34,7 +34,7 @@ class Analysis(object):
         :param y: ndarray
         :return: indexes: ndarray
         """
-        indexes = np.nonzero(np.argmax(x, axis=0) == np.argmax(y, axis=0) - 1)
+        indexes = np.nonzero(np.argmax(x, axis=1) == np.argmax(y, axis=1) - 1)
         return indexes
 
     def validate(self, x, y, size=None):
@@ -55,9 +55,9 @@ class Analysis(object):
         :return accuracy: flout
         """
         if size is not None:
-            rand = np.random.randint(0, x.shape[1] - size)
-            x = x[..., rand:rand + size]
-            y = y[..., rand:rand + size]
+            rand = np.random.randint(0, x.shape[0] - size)
+            x = x[rand:rand + size]
+            y = y[rand:rand + size]
 
         x = self.network.feedforward(x)
 
@@ -87,7 +87,7 @@ class Analysis(object):
         """
         x = self.network.feedforward(x)
         loss = self.network.cost.function(x, y)
-        if x.shape[0] != 2:
+        if x.shape[1] != 2:
             self.normal_evaluation(x, y, loss)
         else:
             self.binary_evaluation(x, y, loss)
@@ -105,7 +105,7 @@ class Analysis(object):
         accuracy = self.accuracy(x, y)
         print("Evaluation with {} data:\n"
               "loss: {:.5f} | accuracy: {:.5f}".format(
-            x.shape[1], loss, accuracy,
+            x.shape[0], loss, accuracy,
         ))
 
     @staticmethod
@@ -119,7 +119,7 @@ class Analysis(object):
         :param loss: flout
         :return: print: results
         """
-        a = np.argmax(x, axis=0) + np.argmax(y, axis=0) * 2
+        a = np.argmax(x, axis=1) + np.argmax(y, axis=1) * 2
         tp = np.count_nonzero(a == 3)  # True Positive
         tn = np.count_nonzero(a == 0)  # True Negative
         fp = np.count_nonzero(a == 1)  # False Positive
