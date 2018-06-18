@@ -1,6 +1,6 @@
 <!-- TODO Gedanken -->
 # Gedanken
-### 15.06.2018
+## 15.06.2018
 Die Generator Implantierung ist nicht so allgeimein Gültig und man müsste
 dann immer viel selber machen. Werde eine Hilfsklasse machen.
 
@@ -15,7 +15,7 @@ und einer Queue.
 Implementiert. Probleme: Die Queue liste kann zu gross werden
 für den Speicher. Der Generator wird noch nicht
 beendet obwohl er schon fertig ist.
-### 16.06.2018
+## 16.06.2018
 Der Generator ist so implementiert, dass man 2 funktionen
 immer selber implementieren muss. `get_mini_batches` stellt die mini_batches
 her. Die return value von der funktion muss immer in einer liste sein, so dass
@@ -46,7 +46,7 @@ Der Generator funktioniert nicht mit Multicoreprocesse, da
 die Liste nicht SharedMemory ist. Fürs Threadning war das egal, da
 dort alles SharedMemory ist.
 
-### 17.06.2018
+## 17.06.2018
 
 Mithilfe des Managers kann man ziemlich einfach SharedMemory
 implementieren, dabei muss man aber sehr aufpassen, da der Processe
@@ -88,3 +88,16 @@ Ich hab mir verschiedene Arten von Parralelitierung von einem
 Neuronalen Netzwek angeschaut. Darunter waren Pipline, large scale distributed und
 anderes. Am meisten hat mir der [Hogwild Alogrithmus](https://arxiv.org/abs/1106.5730)
 gefallen, da einfach zu implementieren ist und auch gut zu funktioniren scheint
+
+## 18.06.2018
+Nach Hogwild muss ich nur in den Layers SharedMemory bereit stellen.
+Der Optimizer speichert auch daten, aber ich glaub das ist ok wenn
+jeder Processe seinen eigenen Optimizer hat.
+
+Nach langem probieren ist mir aufgefallen, dass der Hogwild Alogrithmus
+nicht implementierbar ist in Python, da das SharedMemory auf picklen und
+hin und herschicken mit Pipes basiert, aber für Hogwild  bräuchte ich
+eine atomi funktion, die es so nicht in Python gibt. Ich weiss gar nicht
+ob es sich üperhaupt lohnen kann, das Netzwerk zu parallelisieren, da Python
+einfach nicht dafür gemacht worden ist. Ich gebe das Parallelisieren auf und
+werden es vielleicht später nochmal probiren
