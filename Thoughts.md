@@ -156,3 +156,5 @@ mithilfe von CUDA, d.h es funktiniert nur wenn CUDA installiert ist und
 man eine NVIDIA GPU hat. Ueber die GPU lernt das Netzwerk 10 Mal schneller, d.h
 es  braucht "nur" noch 1.6 Stunden. Im Moment geht es aber nur mit CUDA
 und nicht mehr über die CPU.
+
+Hab alles kompatible mit cupy gemacht.(Ausser Generator)

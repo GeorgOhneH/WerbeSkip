@@ -6,6 +6,7 @@ class Analysis(object):
     The class is responsible for the evaluation
     and the validation of the network
     """
+
     def __init__(self, network):
         """
         The class is linked with the network
@@ -34,7 +35,7 @@ class Analysis(object):
         :param y: ndarray
         :return: indexes: ndarray
         """
-        indexes = np.nonzero(np.argmax(x, axis=1) == np.argmax(y, axis=1) - 1)
+        indexes = np.nonzero(np.argmax(x) == np.argmax(y) - 1)
         return indexes
 
     def validate(self, x, y, size=None):
@@ -105,7 +106,7 @@ class Analysis(object):
         accuracy = self.accuracy(x, y)
         print("Evaluation with {} data:\n"
               "loss: {:.5f} | accuracy: {:.5f}".format(
-            x.shape[0], loss, accuracy,
+            int(x.shape[0]), float(loss), float(accuracy),
         ))
 
     @staticmethod
@@ -119,7 +120,7 @@ class Analysis(object):
         :param loss: flout
         :return: print: results
         """
-        a = np.argmax(x, axis=1) + np.argmax(y, axis=1) * 2
+        a = np.argmax(x) + np.argmax(y) * 2
         tp = np.count_nonzero(a == 3)  # True Positive
         tn = np.count_nonzero(a == 0)  # True Negative
         fp = np.count_nonzero(a == 1)  # False Positive
@@ -130,5 +131,5 @@ class Analysis(object):
         f1_score = 2 * (recall * precision) / (recall + precision)
         print("Evaluation with {} data:\n"
               "loss: {:.5f} | accuracy: {:.5f} | precision: {:.5f} | recall: {:.5f} | f1_score: {:.5f}".format(
-            x.shape[1], loss, accuracy, precision, recall, f1_score
+            int(x.shape[0]), float(loss), float(accuracy), float(precision), float(recall), float(f1_score)
         ))

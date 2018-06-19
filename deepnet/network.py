@@ -360,6 +360,16 @@ class Network(object):
         :param a: data
         :return: processed data
         """
+        size = 1000
+        if size >= a.shape[0]:
+            return self._feedforward(a)
+
+        batches = np.array_split(a, size)
+        results = [self._feedforward(batch) for batch in batches]
+        out = np.concatenate(results)
+        return out
+
+    def _feedforward(self, a):
         for layer in self._layers:
             a = layer.forward(a)
         return a
@@ -431,12 +441,12 @@ class Network(object):
         [os.mkdir("{}\\{}".format(directory, x)) for x in range(labels.shape[1])]
 
         # saves images
-        for index, (orig, result, label) in enumerate(zip(inputs.T, a.T, labels.T)):
+        for index, (orig, result, label) in enumerate(zip(inputs, a, labels)):
             if np.argmax(result) != np.argmax(label):
-                img_data = (orig * 255).reshape(shape).astype('uint8')
+                img_data = np.asnumpy(orig * 255).reshape(shape).astype('uint8')
                 Image.fromarray(img_data).save("{}\\{}\\{}-{}-{:.3f}.png"
-                                               .format(directory, np.argmax(result), index, np.argmax(label),
-                                                       np.max(result)))
+                                               .format(directory, int(np.argmax(result)), int(index), int(np.argmax(label)),
+                                                       float(np.max(result))))
 
 
 if __name__ == "__main__":
@@ -460,9 +470,10 @@ if __name__ == "__main__":
     net.add(FullyConnectedLayer(10))
     net.add(SoftMax())
 
-    optimizer = Adam(learning_rate=0.01)
+    optimizer = Adam(learning_rate=0.03)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=12, mini_batch_size=256,
-            plot=True, snapshot_step=2)
+    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=20, mini_batch_size=512,
+            plot=False, snapshot_step=10)
     net.evaluate(test_data, test_labels)
+    net.save_wrong_predictions(test_data, test_labels, "wrong_predictions", (28, 28))

@@ -7,6 +7,8 @@ https://www.tensorflow.org/api_docs/python/
 http://tflearn.org/
 
 https://keras.io/
+
+https://docs-cupy.chainer.org/en/stable/index.html
 ###### general
 http://neuralnetworksanddeeplearning.com/
 https://github.com/mnielsen/neural-networks-and-deep-learning

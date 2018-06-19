@@ -9,12 +9,12 @@ def load_mnist():
     train_images, train_labels = mn.load_training()
     test_images, test_labels = mn.load_testing()
 
-    np_train_images = np.array(train_images, dtype="float16").transpose() / 255
+    np_train_images = np.array(train_images, dtype="float32").transpose() / 255
     np_train_labels = np.asarray(np.zeros((10, len(train_labels)), dtype="int8"))
     for index, num in enumerate(train_labels):
         np_train_labels[num, index] = 1
 
-    np_test_images = np.array(test_images, dtype="float16").transpose() / 255
+    np_test_images = np.array(test_images, dtype="float32").transpose() / 255
     np_test_labels = np.asarray(np.zeros((10, len(test_labels)), dtype="int8"))
     for index, num in enumerate(test_labels):
         np_test_labels[num, index] = 1
