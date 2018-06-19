@@ -1,6 +1,6 @@
 from optimizers.optimizer import Optimizer
 
-import numpy as np
+import cupy as np
 
 
 class RMSprop(Optimizer):

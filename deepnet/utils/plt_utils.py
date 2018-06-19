@@ -1,5 +1,5 @@
 from scipy.signal import savgol_filter
-import numpy as np
+import cupy as np
 import matplotlib.pyplot as plt
 
 plt.style.use('ggplot')  # for nicer looking plotting

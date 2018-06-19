@@ -1,7 +1,7 @@
 from layers.layer import Layer
 from utils.network_utils import flatten, unflatten
 
-import numpy as np
+import cupy as np
 
 
 class BatchNorm(Layer):
@@ -36,10 +36,10 @@ class BatchNorm(Layer):
         self.optimizer = optimizer
 
         size = np.array(neurons_before)
-        size = np.prod(size)
+        size = int(np.prod(size))
 
-        self.gamma = np.ones((1, size))
-        self.beta = np.zeros((1, size))
+        self.gamma = np.ones((1, size), dtype="float32")
+        self.beta = np.zeros((1, size), dtype="float32")
         return neurons_before
 
     def forward(self, a):

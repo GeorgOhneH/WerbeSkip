@@ -1,7 +1,7 @@
 from layers.layer import Layer
 from utils.im2col import *
 
-import numpy as np
+import cupy as np
 
 
 class ConvolutionLayer(Layer):
@@ -50,8 +50,8 @@ class ConvolutionLayer(Layer):
 
         self.height_out, self.width_out = int(self.height_out), int(self.width_out)
 
-        self.biases = np.random.randn(self.n_filter, 1)
-        self.weights = np.random.randn(self.n_filter, self.depth, self.height_filter, self.width_filter) / np.sqrt(self.n_filter)
+        self.biases = np.random.randn(self.n_filter, 1, dtype="float32")
+        self.weights = np.random.randn(self.n_filter, self.depth, self.height_filter, self.width_filter, dtype="float32") / np.sqrt(self.n_filter).astype("float32")
         self.optimizer = optimizer
 
         return self.n_filter, self.height_out, self.width_out

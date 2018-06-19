@@ -1,7 +1,7 @@
 from layers.layer import Layer
 from utils.im2col import *
 
-import numpy as np
+import cupy as np
 
 
 class PoolLayer(Layer):
@@ -63,7 +63,7 @@ class PoolLayer(Layer):
         """Calculates error and the derivative of the parameters"""
         mini_batch_size, depth, height, width = self.a.shape
 
-        delta_a_col = np.zeros_like(self.a_col)
+        delta_a_col = np.zeros_like(self.a_col, dtype="float32")
         delta_out_col = delta.transpose(2, 3, 0, 1).ravel()
 
         delta_a_col = self.pool_delta(delta_a_col, delta_out_col)

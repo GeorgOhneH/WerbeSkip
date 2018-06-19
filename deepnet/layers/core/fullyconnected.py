@@ -1,6 +1,6 @@
 from layers.layer import Layer
 
-import numpy as np
+import cupy as np
 
 
 class FullyConnectedLayer(Layer):
@@ -34,8 +34,8 @@ class FullyConnectedLayer(Layer):
         :param optimizer: optimiser of the Optimizer class
         :return: neurons of layer: unsigned int
         """
-        self.biases = np.random.randn(1, self.neurons)
-        self.weights = np.random.randn(neurons_before, self.neurons) / np.sqrt(neurons_before)
+        self.biases = np.random.randn(1, self.neurons, dtype="float32")
+        self.weights = np.random.randn(int(neurons_before), self.neurons, dtype="float32") / np.sqrt(int(neurons_before))
         self.optimizer = optimizer
         return self.neurons
 

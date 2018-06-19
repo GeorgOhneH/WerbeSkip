@@ -1,6 +1,6 @@
 from layers.layer import Layer
 
-import numpy as np
+import cupy as np
 
 
 class ReLU(Layer):

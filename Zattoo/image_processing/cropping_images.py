@@ -1,6 +1,6 @@
 from PIL import Image
 import os
-import numpy as np
+import cupy as np
 
 # Rations:
 # No Boarder: 16:9

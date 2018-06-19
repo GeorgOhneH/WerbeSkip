@@ -1,5 +1,5 @@
 from multiprocessing import Manager, Process
-import numpy as np
+import cupy as np
 
 
 class Generator(object):

@@ -1,7 +1,7 @@
 from layers import Layer
 from utils.network_utils import flatten, unflatten
 
-import numpy as np
+import cupy as np
 
 
 class Flatten(Layer):

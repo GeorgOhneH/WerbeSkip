@@ -1,4 +1,4 @@
-import numpy as np
+import cupy as np
 
 # mnist loader from https://github.com/sorki/python-mnist
 from mnist import MNIST

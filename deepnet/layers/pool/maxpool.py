@@ -1,6 +1,6 @@
 from layers.pool.pool import PoolLayer
 
-import numpy as np
+import cupy as np
 
 
 class MaxPoolLayer(PoolLayer):
@@ -18,9 +18,9 @@ class MaxPoolLayer(PoolLayer):
 
     def pool(self, a_col):
         self.max_indexes = np.argmax(a_col, axis=0)
-        out = a_col[self.max_indexes, range(self.max_indexes.size)]
+        out = a_col[self.max_indexes, list(range(self.max_indexes.size))]
         return out
 
     def pool_delta(self, delta_a_col, delta_out_col):
-        delta_a_col[self.max_indexes, range(self.max_indexes.size)] = delta_out_col
+        delta_a_col[self.max_indexes, list(range(self.max_indexes.size))] = delta_out_col
         return delta_a_col

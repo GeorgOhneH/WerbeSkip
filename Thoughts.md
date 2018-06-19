@@ -114,4 +114,43 @@ allgemein gültiger ist und mit dem convlayer übereinstimmt, da bei dem `daten`
 mehrere Werte sind und durch die Umdrehung bleibt `mini_batch_size`  immer
 an der ersten Stelle.(Umstellung noch nicht am Generator und am Batchnormlayer)
 
+Batchnorm mit Convolution kompatibel
 
+Der Convoultion Layer funktiniert gut, aber es braucht ewig zum lernen
+mit dem Netzwerk:
+```
+train_data, train_labels, test_data, test_labels = load_conv()
+net = Network()
+
+net.input((1, 28, 28))
+
+net.add(ConvolutionLayer(n_filter=32, width_filter=3, height_filter=3, stride=1, zero_padding=0))
+net.add(BatchNorm())
+net.add(ReLU())
+net.add(ConvolutionLayer(n_filter=64, width_filter=3, height_filter=3, stride=1, zero_padding=0))
+net.add(BatchNorm())
+net.add(ReLU())
+net.add(MaxPoolLayer(width_filter=2, height_filter=2, stride=1))
+net.add(Dropout(0.75))
+net.add(Flatten())
+net.add(FullyConnectedLayer(128))
+net.add(ReLU())
+net.add(Dropout(0.5))
+net.add(FullyConnectedLayer(10))
+net.add(SoftMax())
+
+optimizer = Adam(learning_rate=0.01)
+net.regression(optimizer=optimizer, cost="cross_entropy")
+
+net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=12, mini_batch_size=256,
+        plot=True, snapshot_step=2)
+net.evaluate(test_data, test_labels)
+```
+bräuchte es 16 Stunden.
+
+Deswegen hab ich die numpy libary mit cupy ersetzt. Sie funktiniert
+genau gleich(bis auf kleine Ausnahmen), aber sie arbeitet mit der GPU
+mithilfe von CUDA, d.h es funktiniert nur wenn CUDA installiert ist und
+man eine NVIDIA GPU hat. Ueber die GPU lernt das Netzwerk 10 Mal schneller, d.h
+es  braucht "nur" noch 1.6 Stunden. Im Moment geht es aber nur mit CUDA
+und nicht mehr über die CPU.

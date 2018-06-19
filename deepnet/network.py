@@ -3,7 +3,8 @@ from layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, LReLU
 from functions.costs import QuadraticCost, CrossEntropyCost, Cost
 from optimizers import Adam, Optimizer, SGD
 from utils import make_mini_batches, Plotter, Analysis, Generator
-from numpy import ndarray
+from cupy import ndarray
+import numpy
 
 import time
 from copy import copy
@@ -11,7 +12,7 @@ import pickle
 import os
 import shutil
 
-import numpy as np
+import cupy as np
 from PIL import Image
 
 
@@ -86,16 +87,16 @@ class Network(object):
         return "progress: {:.3f}".format(self._progress)
 
     def _s_tl(self) -> str:
-        return "train loss: {:.5f}".format(np.mean(self.train_loss[-100:]))
+        return "train loss: {:.5f}".format(numpy.mean(self.train_loss[-100:]))
 
     def _s_ta(self) -> str:
-        return "train accuracy: {:.5f}".format(np.mean(self.train_accuracy[-100:]))
+        return "train accuracy: {:.5f}".format(numpy.mean(self.train_accuracy[-100:]))
 
     def _s_vl(self) -> str:
-        return "validate loss: {:.5f}".format(np.mean(self.validate_loss[-100:]))
+        return "validate loss: {:.5f}".format(numpy.mean(self.validate_loss[-100:]))
 
     def _s_va(self) -> str:
-        return "validate accuracy: {:.5f}".format(np.mean(self.validate_accuracy[-100:]))
+        return "validate accuracy: {:.5f}".format(numpy.mean(self.validate_accuracy[-100:]))
 
     def _s_time(self) -> str:
         return "time {:.3f}".format(time.time() - self.start_time)
@@ -444,10 +445,10 @@ if __name__ == "__main__":
 
     net.input((1, 28, 28))
 
-    net.add(ConvolutionLayer(n_filter=32, width_filter=3,height_filter=3, stride=1, zero_padding=0))
+    net.add(ConvolutionLayer(n_filter=32, width_filter=3, height_filter=3, stride=1, zero_padding=0))
     net.add(BatchNorm())
     net.add(ReLU())
-    net.add(ConvolutionLayer(n_filter=64, width_filter=3,height_filter=3, stride=1, zero_padding=0))
+    net.add(ConvolutionLayer(n_filter=64, width_filter=3, height_filter=3, stride=1, zero_padding=0))
     net.add(BatchNorm())
     net.add(ReLU())
     net.add(MaxPoolLayer(width_filter=2, height_filter=2, stride=1))
@@ -459,9 +460,9 @@ if __name__ == "__main__":
     net.add(FullyConnectedLayer(10))
     net.add(SoftMax())
 
-    optimizer = Adam(learning_rate=0.001)
+    optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit(train_data, train_labels, validation_set=None, epochs=12, mini_batch_size=256,
+    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=12, mini_batch_size=256,
             plot=True, snapshot_step=2)
     net.evaluate(test_data, test_labels)
