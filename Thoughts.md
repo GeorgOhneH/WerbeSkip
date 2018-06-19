@@ -114,6 +114,8 @@ allgemein gültiger ist und mit dem convlayer übereinstimmt, da bei dem `daten`
 mehrere Werte sind und durch die Umdrehung bleibt `mini_batch_size`  immer
 an der ersten Stelle.(Umstellung noch nicht am Generator und am Batchnormlayer)
 
+## 19.06.2018
+
 Batchnorm mit Convolution kompatibel
 
 Der Convoultion Layer funktiniert gut, aber es braucht ewig zum lernen
