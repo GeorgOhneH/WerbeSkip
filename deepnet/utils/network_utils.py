@@ -45,3 +45,14 @@ def blockshaped(arr, nrows, ncols):
         blocks = []
 
     return blocks
+
+
+def flatten(a):
+    mini_batch_size = a.shape[0]
+    out = a.ravel().reshape((mini_batch_size, -1))
+    return out
+
+
+def unflatten(a, shape):
+    out = a.reshape(shape)
+    return out

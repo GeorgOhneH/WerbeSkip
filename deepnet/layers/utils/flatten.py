@@ -1,4 +1,5 @@
 from layers import Layer
+from utils.network_utils import flatten, unflatten
 
 import numpy as np
 
@@ -12,14 +13,11 @@ class Flatten(Layer):
         return np.prod(x)
 
     def forward(self, a):
-        mini_batch_size = a.shape[0]
-        out = a.ravel().reshape((mini_batch_size, -1))
-        return out
+        return flatten(a)
 
     def forward_backpropagation(self, a):
         self.a = a
         return self.forward(a)
 
     def make_delta(self, delta):
-        out = delta.reshape(self.a.shape)
-        return out
+        return unflatten(delta, self.a.shape)

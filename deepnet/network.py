@@ -151,7 +151,8 @@ class Network(object):
             train_inputs: ndarray,
             train_labels: ndarray,
             validation_set: tuple or list = None,
-            epochs: int = 10, mini_batch_size: int = 1,
+            epochs: int = 10,
+            mini_batch_size: int = 1,
             plot: bool = False,
             snapshot_step: int = 100,
             metrics: list = None) -> None:
@@ -444,8 +445,10 @@ if __name__ == "__main__":
     net.input((1, 28, 28))
 
     net.add(ConvolutionLayer(n_filter=32, width_filter=3,height_filter=3, stride=1, zero_padding=0))
+    net.add(BatchNorm())
     net.add(ReLU())
     net.add(ConvolutionLayer(n_filter=64, width_filter=3,height_filter=3, stride=1, zero_padding=0))
+    net.add(BatchNorm())
     net.add(ReLU())
     net.add(MaxPoolLayer(width_filter=2, height_filter=2, stride=1))
     net.add(Dropout(0.75))
@@ -456,9 +459,9 @@ if __name__ == "__main__":
     net.add(FullyConnectedLayer(10))
     net.add(SoftMax())
 
-    optimizer = Adam(learning_rate=0.01)
+    optimizer = Adam(learning_rate=0.001)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=60, mini_batch_size=256,
+    net.fit(train_data, train_labels, validation_set=None, epochs=12, mini_batch_size=256,
             plot=True, snapshot_step=2)
     net.evaluate(test_data, test_labels)
