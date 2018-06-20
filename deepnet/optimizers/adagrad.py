@@ -1,4 +1,4 @@
-from optimizers.optimizer import Optimizer
+from deepnet.optimizers import Optimizer
 
 import numpywrapper as np
 

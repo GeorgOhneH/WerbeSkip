@@ -1,4 +1,4 @@
-from layers.pool.pool import PoolLayer
+from deepnet.layers.pool import PoolLayer
 
 import numpywrapper as np
 

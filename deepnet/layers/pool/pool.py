@@ -1,5 +1,5 @@
-from layers.layer import Layer
-from utils.im2col import *
+from deepnet.layers import Layer
+from deepnet.utils.im2col import *
 
 import numpywrapper as np
 

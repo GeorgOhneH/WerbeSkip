@@ -1,6 +1,8 @@
-from layers.core import *
-from layers.regularization import *
-from layers.activations import *
-from layers.layer import Layer
-from layers.pool import *
-from layers.utils import *
+from .layer import Layer
+from .core import *
+from .regularization import *
+from .activations import *
+from .layer import *
+from .pool import *
+from .utils import *
+

@@ -1,5 +1,5 @@
-from layers.layer import Layer
-from utils import flatten, unflatten
+from deepnet.layers import Layer
+from deepnet.utils import flatten, unflatten
 
 import numpywrapper as np
 

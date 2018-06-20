@@ -1,4 +1,4 @@
-from layers.layer import Layer
+from deepnet.layers import Layer
 
 import numpywrapper as np
 

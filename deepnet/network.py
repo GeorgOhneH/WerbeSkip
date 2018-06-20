@@ -1,8 +1,8 @@
-from mnist_loader import load_mnist, load_conv
-from layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, LReLU, Layer, ConvolutionLayer, MaxPoolLayer, Flatten
-from functions.costs import QuadraticCost, CrossEntropyCost, Cost
-from optimizers import Adam, Optimizer, SGD
-from utils import make_mini_batches, Plotter, Analysis, Generator
+from .datasets import load_conv
+from .layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, Layer, ConvolutionLayer, MaxPoolLayer, Flatten
+from .functions.costs import QuadraticCost, CrossEntropyCost, Cost
+from .optimizers import Adam, Optimizer
+from .utils import make_mini_batches, Plotter, Analysis, Generator
 from numpy import ndarray
 import numpy
 
