@@ -1,7 +1,7 @@
 from layers.layer import Layer
-from utils.network_utils import flatten, unflatten
+from utils import flatten, unflatten
 
-import cupy as np
+import numpywrapper as np
 
 
 class BatchNorm(Layer):

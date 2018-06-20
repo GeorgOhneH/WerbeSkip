@@ -1,6 +1,6 @@
 from PIL import Image
 import os
-import cupy as np
+import numpywrapper as np
 
 # Rations:
 # No Boarder: 16:9

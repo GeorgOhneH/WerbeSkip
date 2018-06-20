@@ -158,3 +158,10 @@ es  braucht "nur" noch 1.6 Stunden. Im Moment geht es aber nur mit CUDA
 und nicht mehr über die CPU.
 
 Hab alles kompatible mit cupy gemacht.(Ausser Generator)
+
+## 20.06.2018
+
+Um auch ohne GPU und Cupy das Netzwerk zu benutzen habe ich ein Wrapper-Module
+für numpy and cupy entwickelt, da beide die gleiche api benutzen. Mit dem
+Wrapper kann jeder Zeit von numpy auf cupy umstellen, sollte man aber
+am besten nur einmal am Anfang machne(default ist numpy).

@@ -3,16 +3,18 @@ from layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, LReLU
 from functions.costs import QuadraticCost, CrossEntropyCost, Cost
 from optimizers import Adam, Optimizer, SGD
 from utils import make_mini_batches, Plotter, Analysis, Generator
-from cupy import ndarray
+from numpy import ndarray
 import numpy
 
 import time
 from copy import copy
 import pickle
 import os
+import sys
 import shutil
+import importlib
 
-import cupy as np
+import numpywrapper as np
 from PIL import Image
 
 
@@ -22,6 +24,7 @@ class Network(object):
     """
 
     def __init__(self):
+        self._use_gpu = False
         self._start_time = time.time()
         self._optimizer = None
         self._input_neurons = None
@@ -49,6 +52,15 @@ class Network(object):
         self._progress = 0
         self._plotter = Plotter(self)
         self._analysis = Analysis(self)
+
+    @property
+    def use_gpu(self):
+        return np.get_use_gpu()
+
+    @use_gpu.setter
+    def use_gpu(self, value: bool):
+        np.set_use_gpu(value)
+        importlib.reload(np)
 
     @property
     def start_time(self) -> float:
@@ -224,6 +236,9 @@ class Network(object):
         trains the network with mini batches and print the progress.
         it can plot the accuracy and the loss
         """
+        train_inputs = np.ascupy(train_inputs)
+        train_labels = np.ascupy(train_labels)
+
         self._total_epoch = epochs
         for epoch in range(epochs):
             self._current_epoch = epoch
@@ -306,10 +321,10 @@ class Network(object):
             x = layer.forward_backpropagation(x)
 
         loss = self._cost.function(x, y)
-        self._train_loss.append(loss)
+        self._train_loss.append(float(loss))
 
         accuracy = self._analysis.accuracy(x, y)
-        self._train_accuracy.append(accuracy)
+        self._train_accuracy.append(float(accuracy))
 
         delta = self._cost.delta(x, y)
         for layer in reversed(self._layers):
@@ -432,6 +447,9 @@ class Network(object):
         :param directory: name of the directory
         :param shape: The shape of the Image
         """
+        inputs = np.ascupy(inputs)
+        labels = np.ascupy(labels)
+
         a = self.feedforward(inputs)
 
         # makes directories
@@ -450,8 +468,12 @@ class Network(object):
 
 
 if __name__ == "__main__":
+
     train_data, train_labels, test_data, test_labels = load_conv()
+
     net = Network()
+
+    net.use_gpu = True
 
     net.input((1, 28, 28))
 
@@ -474,6 +496,6 @@ if __name__ == "__main__":
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
     net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=20, mini_batch_size=512,
-            plot=False, snapshot_step=10)
+            plot=False, snapshot_step=1)
     net.evaluate(test_data, test_labels)
     net.save_wrong_predictions(test_data, test_labels, "wrong_predictions", (28, 28))

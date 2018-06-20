@@ -1,6 +1,6 @@
 from image_processing.create_images import plane_background, random_background
 from image_processing.cropping_images import sample_imgs
-import cupy as np
+import numpywrapper as np
 
 
 def shuffle(x, y):

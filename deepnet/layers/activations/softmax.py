@@ -1,6 +1,6 @@
 from layers.layer import Layer
 
-import cupy as np
+import numpywrapper as np
 
 
 class SoftMax(Layer):
@@ -15,5 +15,5 @@ class SoftMax(Layer):
     """
 
     def forward(self, z):
-        exps = np.exp(z - np.max(z, axis=1, keepdims=True))
+        exps = np.exp(z - np.amax(z, axis=1, keepdims=True))
         return exps / np.sum(exps, axis=1, keepdims=True)

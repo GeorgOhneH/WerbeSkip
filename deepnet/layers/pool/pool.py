@@ -1,7 +1,7 @@
 from layers.layer import Layer
 from utils.im2col import *
 
-import cupy as np
+import numpywrapper as np
 
 
 class PoolLayer(Layer):

@@ -1,7 +1,7 @@
 import cv2
 import zipfile
 import random
-import cupy as np
+import numpywrapper as np
 import requests
 from requests.exceptions import ConnectTimeout, ConnectionError, HTTPError
 import warnings

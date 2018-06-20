@@ -1,4 +1,4 @@
-import cupy as np
+import numpywrapper as np
 
 # mnist loader from https://github.com/sorki/python-mnist
 from mnist import MNIST

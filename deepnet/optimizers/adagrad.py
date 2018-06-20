@@ -1,6 +1,6 @@
 from optimizers.optimizer import Optimizer
 
-import cupy as np
+import numpywrapper as np
 
 
 class AdaGrad(Optimizer):

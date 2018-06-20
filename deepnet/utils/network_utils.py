@@ -1,4 +1,4 @@
-import cupy as np
+import numpywrapper as np
 
 
 def shuffle(x, y):

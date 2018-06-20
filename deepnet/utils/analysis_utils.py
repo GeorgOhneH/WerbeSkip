@@ -1,4 +1,4 @@
-import cupy as np
+import numpywrapper as np
 
 
 class Analysis(object):
@@ -55,6 +55,9 @@ class Analysis(object):
         :return loss: flout
         :return accuracy: flout
         """
+        x = np.ascupy(x)
+        y = np.ascupy(y)
+
         if size is not None:
             rand = np.random.randint(0, x.shape[0] - size)
             x = x[rand:rand + size]
@@ -65,8 +68,8 @@ class Analysis(object):
         loss = self.network.cost.function(x, y)
         accuracy = self.accuracy(x, y)
 
-        self.network.validate_accuracy.append(accuracy)
-        self.network.validate_loss.append(loss)
+        self.network.validate_accuracy.append(float(accuracy))
+        self.network.validate_loss.append(float(loss))
         return loss, accuracy
 
     def evaluate(self, x, y):
@@ -86,6 +89,9 @@ class Analysis(object):
         :param y: ndarray
         :return: None
         """
+        x = np.ascupy(x)
+        y = np.ascupy(y)
+
         x = self.network.feedforward(x)
         loss = self.network.cost.function(x, y)
         if x.shape[1] != 2:

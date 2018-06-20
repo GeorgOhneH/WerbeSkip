@@ -1,6 +1,6 @@
 from layers.pool.pool import PoolLayer
 
-import cupy as np
+import numpywrapper as np
 
 
 class MaxPoolLayer(PoolLayer):

@@ -2,7 +2,7 @@ from PIL import Image, ImageChops, ImageOps
 import cv2
 import requests
 from requests.exceptions import ConnectTimeout, ConnectionError, HTTPError
-import cupy as np
+import numpywrapper as np
 import zipfile
 import io
 import warnings
