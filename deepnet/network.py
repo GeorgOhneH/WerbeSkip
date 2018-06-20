@@ -1,8 +1,8 @@
-from .datasets import load_conv
-from .layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, Layer, ConvolutionLayer, MaxPoolLayer, Flatten
-from .functions.costs import QuadraticCost, CrossEntropyCost, Cost
-from .optimizers import Adam, Optimizer
-from .utils import make_mini_batches, Plotter, Analysis, Generator
+from deepnet.datasets import load_conv
+from deepnet.layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, Layer, ConvolutionLayer, MaxPoolLayer, Flatten
+from deepnet.functions.costs import QuadraticCost, CrossEntropyCost, Cost
+from deepnet.optimizers import Adam, Optimizer
+from deepnet.utils import make_mini_batches, Plotter, Analysis, Generator
 from numpy import ndarray
 import numpy
 
