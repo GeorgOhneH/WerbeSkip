@@ -1,4 +1,4 @@
-from deepnet.datasets.mnist_loader import load_mnist_fc
+from deepnet.datasets import load_mnist_fc
 from deepnet.layers import FullyConnectedLayer, ReLU, SoftMax, BatchNorm, Dropout
 from deepnet.optimizers import Adam
 from deepnet import Network
