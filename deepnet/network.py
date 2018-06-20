@@ -9,6 +9,8 @@ import pickle
 import os
 import shutil
 import importlib
+import ctypes
+import platform
 
 import numpywrapper as np
 from numpy import ndarray
@@ -50,6 +52,7 @@ class Network(object):
         self._progress = 0
         self._plotter = Plotter(self)
         self._analysis = Analysis(self)
+        self._activate_ansi()
 
     @property
     def use_gpu(self):
@@ -89,6 +92,11 @@ class Network(object):
     def validate_accuracy(self) -> list:
         """read access only"""
         return self._validate_accuracy
+
+    def _activate_ansi(self):
+        if platform.system() == "Windows" and platform.release() == "10":
+            kernel32 = ctypes.windll.kernel32
+            kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
     def _s_epoch(self) -> str:
         return "epoch {} of {}".format(self._current_epoch+1, self._total_epoch)
@@ -346,7 +354,7 @@ class Network(object):
                     result += "\n"
                 else:
                     result += " | "
-        print(result)
+        print("\033[F\033[F" + result)
 
     def _plot(self) -> None:
         """
