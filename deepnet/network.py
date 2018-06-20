@@ -1,10 +1,7 @@
-from deepnet.datasets import load_conv
-from deepnet.layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, Layer, ConvolutionLayer, MaxPoolLayer, Flatten
+from deepnet.layers import Layer
 from deepnet.functions.costs import QuadraticCost, CrossEntropyCost, Cost
-from deepnet.optimizers import Adam, Optimizer
+from deepnet.optimizers import Optimizer
 from deepnet.utils import make_mini_batches, Plotter, Analysis, Generator
-from numpy import ndarray
-import numpy
 
 import time
 from copy import copy
@@ -14,6 +11,8 @@ import shutil
 import importlib
 
 import numpywrapper as np
+from numpy import ndarray
+import numpy
 from PIL import Image
 
 
@@ -164,9 +163,9 @@ class Network(object):
             train_labels: ndarray,
             validation_set: tuple or list = None,
             epochs: int = 10,
-            mini_batch_size: int = 1,
+            mini_batch_size: int = 128,
             plot: bool = False,
-            snapshot_step: int = 100,
+            snapshot_step: int = 50,
             metrics: list = None) -> None:
         """
         tests if the given parameters are valid for the network
@@ -260,7 +259,7 @@ class Network(object):
                       generator: Generator,
                       validation_set: tuple or list = None,
                       plot: bool = False,
-                      snapshot_step: int = 100,
+                      snapshot_step: int = 50,
                       metrics: list = None) -> None:
         """checks values"""
         # if not issubclass(type(generator), Generator):
@@ -464,37 +463,3 @@ class Network(object):
                 Image.fromarray(img_data).save("{}\\{}\\{}-{}-{:.3f}.png"
                                                .format(directory, int(np.argmax(result)), int(index), int(np.argmax(label)),
                                                        float(np.max(result))))
-
-
-if __name__ == "__main__":
-
-    train_data, train_labels, test_data, test_labels = load_conv()
-
-    net = Network()
-
-    net.use_gpu = True
-
-    net.input((1, 28, 28))
-
-    net.add(ConvolutionLayer(n_filter=32, width_filter=3, height_filter=3, stride=1, zero_padding=0))
-    net.add(BatchNorm())
-    net.add(ReLU())
-    net.add(ConvolutionLayer(n_filter=64, width_filter=3, height_filter=3, stride=1, zero_padding=0))
-    net.add(BatchNorm())
-    net.add(ReLU())
-    net.add(MaxPoolLayer(width_filter=2, height_filter=2, stride=1))
-    net.add(Dropout(0.75))
-    net.add(Flatten())
-    net.add(FullyConnectedLayer(128))
-    net.add(ReLU())
-    net.add(Dropout(0.5))
-    net.add(FullyConnectedLayer(10))
-    net.add(SoftMax())
-
-    optimizer = Adam(learning_rate=0.03)
-    net.regression(optimizer=optimizer, cost="cross_entropy")
-
-    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=22, mini_batch_size=512,
-            plot=True, snapshot_step=10)
-    net.evaluate(test_data, test_labels)
-    net.save_wrong_predictions(test_data, test_labels, "wrong_predictions", (28, 28))

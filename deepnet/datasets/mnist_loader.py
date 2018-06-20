@@ -5,7 +5,7 @@ import os
 from mnist import MNIST
 
 
-def load_mnist():
+def load_mnist_fc():
     file_name = os.path.join(os.path.dirname(__file__), 'mnist')
     mn = MNIST(file_name)
     train_images, train_labels = mn.load_training()
@@ -23,13 +23,13 @@ def load_mnist():
     return np_train_images, np_train_labels, np_test_images, np_test_labels
 
 
-def load_conv():
-    x, y, test_x, test_y = load_mnist()
+def load_mnist_cnn():
+    x, y, test_x, test_y = load_mnist_fc()
     x = x.reshape([-1, 1, 28, 28])
     test_x = test_x.reshape([-1, 1, 28, 28])
     return x, y, test_x, test_y
 
 
 if __name__ == "__main__":
-    train_data, train_labels, test_data, test_labels = load_mnist()
+    train_data, train_labels, test_data, test_labels = load_mnist_fc()
     print(train_data.shape, train_labels.shape, test_data.shape, test_labels.shape)

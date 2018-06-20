@@ -212,3 +212,5 @@ ist. Vorallem aus dem Grund, das ich dann das [Colab](https://colab.research.goo
 einfacher benutzen kann. Tenserflow Ordner hab ich gelöscht, da er nicht
 wieklich reingepasst hat. Werde ihn vielleicht später wieder rein
 nehmen um Vergleiche anzustellen
+
+Hab ersten Colab versuch gemacht: [Mein Colab](https://colab.research.google.com/drive/1Uq9kIGxhfTSdy-aHziWgWcj2fLuT22oV)

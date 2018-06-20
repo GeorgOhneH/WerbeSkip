@@ -1,1 +1,1 @@
-from .mnist_loader import load_mnist, load_conv
+from .mnist_loader import load_mnist_fc, load_mnist_cnn
