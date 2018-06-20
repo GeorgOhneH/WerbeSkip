@@ -10,7 +10,6 @@ import time
 from copy import copy
 import pickle
 import os
-import sys
 import shutil
 import importlib
 
@@ -495,7 +494,7 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.03)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
-    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=20, mini_batch_size=512,
-            plot=False, snapshot_step=1)
+    net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=22, mini_batch_size=512,
+            plot=True, snapshot_step=10)
     net.evaluate(test_data, test_labels)
     net.save_wrong_predictions(test_data, test_labels, "wrong_predictions", (28, 28))

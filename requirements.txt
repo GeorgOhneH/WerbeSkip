@@ -1,6 +1,4 @@
-cupy
 numpy
-tflearn
 matplotlib
 scipy
 pillow
@@ -10,3 +8,5 @@ pygame
 opencv-python
 requests
 python-mnist
+tflearn
+cupy

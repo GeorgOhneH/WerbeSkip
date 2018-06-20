@@ -165,3 +165,44 @@ Um auch ohne GPU und Cupy das Netzwerk zu benutzen habe ich ein Wrapper-Module
 für numpy and cupy entwickelt, da beide die gleiche api benutzen. Mit dem
 Wrapper kann jeder Zeit von numpy auf cupy umstellen, sollte man aber
 am besten nur einmal am Anfang machne(default ist numpy).
+
+### Testlauf
+setup:
+```
+train_data, train_labels, test_data, test_labels = load_conv()
+
+net = Network()
+
+net.use_gpu = True
+
+net.input((1, 28, 28))
+
+net.add(ConvolutionLayer(n_filter=32, width_filter=3, height_filter=3, stride=1, zero_padding=0))
+net.add(BatchNorm())
+net.add(ReLU())
+net.add(ConvolutionLayer(n_filter=64, width_filter=3, height_filter=3, stride=1, zero_padding=0))
+net.add(BatchNorm())
+net.add(ReLU())
+net.add(MaxPoolLayer(width_filter=2, height_filter=2, stride=1))
+net.add(Dropout(0.75))
+net.add(Flatten())
+net.add(FullyConnectedLayer(128))
+net.add(ReLU())
+net.add(Dropout(0.5))
+net.add(FullyConnectedLayer(10))
+net.add(SoftMax())
+
+optimizer = Adam(learning_rate=0.03)
+net.regression(optimizer=optimizer, cost="cross_entropy")
+
+net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epochs=22, mini_batch_size=512,
+        plot=True, snapshot_step=10)
+net.evaluate(test_data, test_labels)
+```
+Für 22 Epochs hat meine GPU(780 GTX) 3.5 Stunden gebraucht
+
+```
+Evaluation with 10000 data:
+loss: 0.03619 | accuracy: 0.98700
+```
+
