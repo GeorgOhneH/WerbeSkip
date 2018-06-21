@@ -62,3 +62,9 @@ class FullyConnectedLayer(Layer):
         change_w, change_b = self.optimizer.calculate_change(self.nabla_w, self.nabla_b)
         self.weights -= change_w/mini_batch_size
         self.biases -= change_b/mini_batch_size
+
+    def save(self):
+        return [self.weights, self.biases]
+
+    def load(self, array):
+        self.weights, self.biases = [np.asarray(x) for x in array]

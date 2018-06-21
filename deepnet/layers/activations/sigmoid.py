@@ -1,4 +1,5 @@
 from deepnet.layers import Layer
+import numpywrapper as np
 
 from scipy.special import expit
 
@@ -13,7 +14,7 @@ class Sigmoid(Layer):
         self.z = None
 
     def forward(self, z):
-        return expit(z)
+        return np.asarray(expit(np.asnumpy(z)))
 
     def forward_backpropagation(self, z):
         self.z = z

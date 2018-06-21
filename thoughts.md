@@ -214,3 +214,9 @@ wieklich reingepasst hat. Werde ihn vielleicht später wieder rein
 nehmen um Vergleiche anzustellen
 
 Hab ersten Colab versuch gemacht: [Mein Colab](https://colab.research.google.com/drive/1Uq9kIGxhfTSdy-aHziWgWcj2fLuT22oV)
+
+## 21.06.2018
+Habe Colab gefixed und sollte jetzt
+
+Schneller save funktion, kann aber nicht mehr das ganze Netzwerk mit
+der Struktur sicheren, sondern nur noch die Parameter.

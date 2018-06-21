@@ -96,3 +96,9 @@ class BatchNorm(Layer):
         change_g, change_b = self.optimizer.calculate_change(self.nabla_g, self.nabla_b)
         self.gamma -= change_g/mini_batch_size
         self.beta -= change_b/mini_batch_size
+
+    def save(self):
+        return [self.gamma, self.beta, self.mu_avg, self.var_avg]
+
+    def load(self, array):
+        self.gamma, self.beta, self.mu_avg, self.var_avg = [np.asarray(x) for x in array]

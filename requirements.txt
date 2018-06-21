@@ -1,3 +1,4 @@
+deepdish
 numpy
 matplotlib
 scipy

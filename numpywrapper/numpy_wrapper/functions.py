@@ -1,4 +1,5 @@
 import numpy
+import cupy
 
 
 def asnumpy(a, stream=None):
@@ -7,6 +8,10 @@ def asnumpy(a, stream=None):
 
 def ascupy(a):
     return a
+
+
+def asarray(a, dtype=None):
+    return cupy.asnumpy(a).astype(dtype=dtype)
 
 
 def scatter_add(a, indices, b=None):

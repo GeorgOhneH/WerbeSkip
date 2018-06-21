@@ -16,6 +16,7 @@ import numpywrapper as np
 from numpy import ndarray
 import numpy
 from PIL import Image
+import deepdish as dd
 
 
 class Network(object):
@@ -405,20 +406,21 @@ class Network(object):
         a = self.feedforward(a)
         return np.argmax(a, axis=1)
 
-    def save(self, file_name: str) -> None:
+    def save(self, path: str) -> None:
         """
         saves the current network with all properties
         """
-        with open("{}".format(file_name), "wb") as f:
-            pickle.dump(self, f)
+        parameter = [layer.save() for layer in self._layers]
+        dd.io.save(path, parameter)
 
-    def load(self, file_name: str) -> None:
+    def load(self, path: str) -> None:
         """
         Loads the network from a file
         """
-        with open(file_name, "rb") as f:
-            net = pickle.load(f)
-        self.__dict__ = net.__dict__
+        parameters = dd.io.load(path)
+        self._init()
+        for layer, parameter in zip(self._layers, parameters):
+            layer.load(parameter)
 
     def print_network_structure(self) -> None:
         """
