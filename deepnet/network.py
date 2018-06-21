@@ -1,20 +1,16 @@
 from deepnet.layers import Layer
 from deepnet.functions.costs import QuadraticCost, CrossEntropyCost, Cost
 from deepnet.optimizers import Optimizer
-from deepnet.utils import make_mini_batches, Plotter, Analysis, Generator
+from deepnet.utils import make_mini_batches, Plotter, Analysis, Generator, IOHandler
 
 import time
 from copy import copy
-import pickle
 import os
 import shutil
 import importlib
-import ctypes
-import platform
 
 import numpywrapper as np
 from numpy import ndarray
-import numpy
 from PIL import Image
 import deepdish as dd
 
@@ -39,21 +35,12 @@ class Network(object):
             "quadratic": QuadraticCost(),
             "cross_entropy": CrossEntropyCost()
         }
-        self._translate = {
-            "epoch": self._s_epoch,
-            "progress": self._s_progress,
-            "train_loss": self._s_tl,
-            "train_accuracy": self._s_ta,
-            "validate_loss": self._s_vl,
-            "validate_accuracy": self._s_va,
-            "time": self._s_time,
-        }
-        self._current_epoch = 0
-        self._total_epoch = 0
-        self._progress = 0
+        self.current_epoch = 0
+        self.total_epoch = 0
+        self.progress = 0
         self._plotter = Plotter(self)
         self._analysis = Analysis(self)
-        self._activate_ansi()
+        self._iohandler = IOHandler(self)
 
     @property
     def use_gpu(self):
@@ -63,11 +50,6 @@ class Network(object):
     def use_gpu(self, value: bool):
         np.set_use_gpu(value)
         importlib.reload(np)
-
-    @property
-    def start_time(self) -> float:
-        """read access only"""
-        return self._start_time
 
     @property
     def cost(self) -> Cost:
@@ -93,32 +75,6 @@ class Network(object):
     def validate_accuracy(self) -> list:
         """read access only"""
         return self._validate_accuracy
-
-    def _activate_ansi(self):
-        if platform.system() == "Windows" and platform.release() == "10":
-            kernel32 = ctypes.windll.kernel32
-            kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
-
-    def _s_epoch(self) -> str:
-        return "epoch {} of {}".format(self._current_epoch+1, self._total_epoch)
-
-    def _s_progress(self) -> str:
-        return "progress: {:.3f}".format(self._progress)
-
-    def _s_tl(self) -> str:
-        return "train loss: {:.5f}".format(numpy.mean(self.train_loss[-100:]))
-
-    def _s_ta(self) -> str:
-        return "train accuracy: {:.5f}".format(numpy.mean(self.train_accuracy[-100:]))
-
-    def _s_vl(self) -> str:
-        return "validate loss: {:.5f}".format(numpy.mean(self.validate_loss[-100:]))
-
-    def _s_va(self) -> str:
-        return "validate accuracy: {:.5f}".format(numpy.mean(self.validate_accuracy[-100:]))
-
-    def _s_time(self) -> str:
-        return "time {:.3f}".format(time.time() - self.start_time)
 
     def input(self, neurons) -> None:
         """
@@ -174,7 +130,7 @@ class Network(object):
             epochs: int = 10,
             mini_batch_size: int = 128,
             plot: bool = False,
-            snapshot_step: int = 50,
+            snapshot_step: int = 1,
             metrics: list = None) -> None:
         """
         tests if the given parameters are valid for the network
@@ -184,7 +140,7 @@ class Network(object):
         :param epochs: How often it goes through the train set
         :param mini_batch_size: Size of the mini_batch
         :param plot: plot the curve of the loss and the accuracy
-        :param snapshot_step: use negative number to deactivate the monitoring
+        :param snapshot_step: time (in second) between each print
         :param metrics: define what metrics should be shown
         """
         if metrics is None:
@@ -246,20 +202,19 @@ class Network(object):
         train_inputs = np.ascupy(train_inputs)
         train_labels = np.ascupy(train_labels)
 
-        self._total_epoch = epochs
+        self.total_epoch = epochs
         for epoch in range(epochs):
-            self._current_epoch = epoch
+            self.current_epoch = epoch
             mini_batches = make_mini_batches(train_inputs, train_labels, mini_batch_size)
 
             for index, mini_batch in enumerate(mini_batches):
-                self._progress = index / len(mini_batches)
+                self.progress = index / len(mini_batches)
                 self._update_parameters(mini_batch, mini_batch_size)
 
                 if validation_set is not None:
                     self._analysis.validate(*validation_set, mini_batch_size)
 
-                if metrics and len(self._train_loss) % snapshot_step == 0:
-                    self._print_metrics(metrics)
+                self._iohandler.print_metrics(metrics, snapshot_step)
 
         if plot:
             self._plot()
@@ -268,7 +223,7 @@ class Network(object):
                       generator: Generator,
                       validation_set: tuple or list = None,
                       plot: bool = False,
-                      snapshot_step: int = 50,
+                      snapshot_step: int = 1,
                       metrics: list = None) -> None:
         """checks values"""
         # if not issubclass(type(generator), Generator):
@@ -291,17 +246,17 @@ class Network(object):
                        snapshot_step: int,
                        metrics: list) -> None:
         """Same as fit but with a generator"""
-        self._total_epoch = generator.epochs
+        self.total_epoch = generator.epochs
         for epoch in range(generator.epochs):
-            self._current_epoch = epoch
+            self.current_epoch = epoch
             for index, mini_batch in enumerate(generator):
-                self._progress = index / len(generator)
+                self.progress = index / len(generator)
                 self._update_parameters(mini_batch, generator.mini_batch_size)
 
                 if validation_set is not None:
                     self._analysis.validate(*validation_set, generator.mini_batch_size)
-                if metrics and len(self._train_loss) % snapshot_step == 0:
-                    self._print_metrics(metrics)
+
+                self._iohandler.print_metrics(metrics, snapshot_step)
 
         if plot:
             self._plot()
@@ -336,26 +291,6 @@ class Network(object):
         delta = self._cost.delta(x, y)
         for layer in reversed(self._layers):
             delta = layer.make_delta(delta)
-
-    def _print_metrics(self, metrics: tuple or list) -> None:
-        """
-        prints all metric which are in the list.
-        If "all" is in the first position it will
-        print every metric.
-        :param metrics: list with metrics as string
-        """
-        if metrics[0] == "all":
-            metrics = self._translate.keys()
-
-        result = ""
-        for index, metric in enumerate(metrics):
-            result += self._translate[metric]()
-            if index + 1 < len(metrics):
-                if len(result.split("\n")[-1]) > 60:
-                    result += "\n"
-                else:
-                    result += " | "
-        print("\033[F\033[F" + result)
 
     def _plot(self) -> None:
         """

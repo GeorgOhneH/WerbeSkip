@@ -1,4 +1,4 @@
-from .network_utils import *
-from .plt_utils import *
-from .analysis_utils import *
+from .utils import *
+from deepnet.utils.network import *
+from deepnet.utils.network import *
 from .generator import *
