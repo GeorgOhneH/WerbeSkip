@@ -131,7 +131,8 @@ class Network(object):
             mini_batch_size: int = 128,
             plot: bool = False,
             snapshot_step: int = 1,
-            metrics: list = None) -> None:
+            metrics: list = None,
+            save_step: None or int = None) -> None:
         """
         tests if the given parameters are valid for the network
         :param train_inputs: Data
@@ -140,7 +141,7 @@ class Network(object):
         :param epochs: How often it goes through the train set
         :param mini_batch_size: Size of the mini_batch
         :param plot: plot the curve of the loss and the accuracy
-        :param snapshot_step: time (in second) between each print
+        :param snapshot_step: time (in seconds) between each print
         :param metrics: define what metrics should be shown
         """
         if metrics is None:
@@ -184,6 +185,7 @@ class Network(object):
             plot=plot,
             snapshot_step=snapshot_step,
             metrics=metrics,
+            save_step=save_step,
         )
 
     def _fit(self,
@@ -194,7 +196,8 @@ class Network(object):
              mini_batch_size: int,
              plot: bool,
              snapshot_step: int,
-             metrics: list) -> None:
+             metrics: list,
+             save_step: None or int = None) -> None:
         """
         trains the network with mini batches and print the progress.
         it can plot the accuracy and the loss
@@ -214,7 +217,13 @@ class Network(object):
                 if validation_set is not None:
                     self._analysis.validate(*validation_set, mini_batch_size)
 
+                if save_step and len(self._train_loss) % save_step == 0:
+                    self.save("network.h5")
+
                 self._iohandler.print_metrics(metrics, snapshot_step)
+
+            if not save_step:
+                self.save("network.h5")
 
         if plot:
             self._plot()
@@ -223,8 +232,9 @@ class Network(object):
                       generator: Generator,
                       validation_set: tuple or list = None,
                       plot: bool = False,
-                      snapshot_step: int = 1,
-                      metrics: list = None) -> None:
+                      snapshot_step: int = 50,
+                      metrics: list = None,
+                      save_step: None or int = None) -> None:
         """checks values"""
         # if not issubclass(type(generator), Generator):
         #     raise ValueError("Must be a subclass of Generator. "
@@ -237,6 +247,7 @@ class Network(object):
                             plot=plot,
                             snapshot_step=snapshot_step,
                             metrics=metrics,
+                            save_step=save_step,
                             )
 
     def _fit_generator(self,
@@ -244,7 +255,8 @@ class Network(object):
                        validation_set: tuple or list,
                        plot: bool,
                        snapshot_step: int,
-                       metrics: list) -> None:
+                       metrics: list,
+                       save_step) -> None:
         """Same as fit but with a generator"""
         self.total_epoch = generator.epochs
         for epoch in range(generator.epochs):
@@ -255,6 +267,9 @@ class Network(object):
 
                 if validation_set is not None:
                     self._analysis.validate(*validation_set, generator.mini_batch_size)
+
+                if save_step and len(self._train_loss) % save_step == 0:
+                    self.save("network.h5")
 
                 self._iohandler.print_metrics(metrics, snapshot_step)
 
@@ -407,4 +422,4 @@ class Network(object):
                 img_data = np.asnumpy(orig * 255).reshape(shape).astype('uint8')
                 Image.fromarray(img_data).save("{}\\{}\\{}-{}-{:.3f}.png"
                                                .format(directory, int(np.argmax(result)), int(index), int(np.argmax(label)),
-                                                       float(np.max(result))))
+                                                       float(np.amax(result))))
