@@ -1,5 +1,5 @@
 from multiprocessing import Manager, Process
-import numpywrapper as np
+import numpy as np
 
 
 class Generator(object):

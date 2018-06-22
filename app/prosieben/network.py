@@ -9,6 +9,7 @@ if __name__ == "__main__":
     generator = TrainGenerator(epochs=1, mini_batch_size=128, padding=10, n_workers=1)
 
     _, v_x, v_y, t_x, t_y = load_imgs(0.8)
+    print(v_x.shape, v_y.shape)
     net = Network()
     net.use_gpu = True
     net.input(52 * 52)
@@ -28,6 +29,6 @@ if __name__ == "__main__":
 
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost="cross_entropy")
-    net.fit_generator(generator, validation_set=(v_x, v_y), plot=True)
+    net.fit_generator(generator, plot=False)
     net.evaluate(t_x, t_y)
     net.save_wrong_predictions(t_x, t_y, "wrong_predictions", shape=(52, 52))

@@ -24,7 +24,7 @@ no_logo_paths = [
     ("../prosieben/images/classified/no_logo", "no_boarder"),
 ]
 
-PADDING = 26
+PADDING = 29
 
 
 def get_logo(path_to_img, type):
@@ -34,7 +34,7 @@ def get_logo(path_to_img, type):
          prosieben[type][1] - PADDING,
          prosieben[type][0] + PADDING,
          prosieben[type][1] + PADDING)
-    )) / 255
+    ), dtype="float32") / 255
 
 
 def sample_imgs(use_logo=True):

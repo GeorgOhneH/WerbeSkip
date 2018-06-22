@@ -4,26 +4,31 @@ import numpywrapper as np
 
 
 def shuffle(x, y):
-    # shuffles data in unison with helping from indexing
-    indexes = np.random.permutation(x.shape[1])
-    return x[:, indexes], y[:, indexes]
+    """
+    Shuffles data in unison with helping from indexing
+    :param x: ndarray
+    :param y: ndarray
+    :return x, y: ndarray
+    """
+    indexes = np.random.permutation(x.shape[0])
+    return x[indexes], y[indexes]
 
 
 def img_to_array(imgs):
     imgs = [np.matrix.flatten(x) for x in imgs]
-    imgs = np.array(imgs).T
+    imgs = np.array(imgs)
     return imgs
 
 
 def loader(func):
     image_logo = img_to_array(func(use_logo=True))
-    label_logo = np.array([[0, 1] for _ in range(image_logo.shape[1])]).T
+    label_logo = np.array([[0, 1] for _ in range(image_logo.shape[0])])
 
     image_no_logo = img_to_array(func(use_logo=False))
-    label_no_logo = np.array([[1, 0] for _ in range(image_no_logo.shape[1])]).T
+    label_no_logo = np.array([[1, 0] for _ in range(image_no_logo.shape[0])])
 
-    train_image = np.c_[image_logo, image_no_logo]  # appends the matrix
-    train_label = np.c_[label_logo, label_no_logo]
+    train_image = np.concatenate([image_logo, image_no_logo], axis=0)  # appends the matrix
+    train_label = np.concatenate([label_logo, label_no_logo], axis=0)
 
     return shuffle(train_image, train_label)
 

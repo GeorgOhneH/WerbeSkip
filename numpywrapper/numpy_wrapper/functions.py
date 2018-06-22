@@ -7,7 +7,7 @@ def asnumpy(a, stream=None):
 
 
 def ascupy(a):
-    return a
+    return cupy.asarray(a)
 
 
 def asarray(a, dtype=None):

@@ -55,8 +55,9 @@ class Analysis(object):
         :return loss: flout
         :return accuracy: flout
         """
-        x = np.ascupy(x)
-        y = np.ascupy(y)
+        x = np.asarray(x)
+        y = np.asarray(y)
+        print(x.shape, y.shape)
 
         if size is not None:
             rand = np.random.randint(0, x.shape[0] - size)

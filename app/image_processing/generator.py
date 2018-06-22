@@ -1,7 +1,7 @@
 import cv2
 import zipfile
 import random
-import numpywrapper as np
+import numpy as np
 import requests
 from requests.exceptions import ConnectTimeout, ConnectionError, HTTPError
 import warnings
@@ -49,7 +49,7 @@ class TrainGenerator(Generator):
             image = cv2.imdecode(image, 0)
 
             # normalize image
-            image = image.astype(float) / 255
+            image = image.astype("float32") / 255
 
             # cuts the end of the image so it is even dividable
             w, h = image.shape
@@ -70,8 +70,8 @@ class TrainGenerator(Generator):
                     # applies screen blend effect
                     image_part = 1 - (1 - logo_padding) * (1 - image_part)
 
-                images = np.reshape(image_part, (-1, 1))
-                labels = np.array(self.dict_labels[use_logo])
+                images = np.reshape(image_part, (1, -1))
+                labels = np.array(self.dict_labels[use_logo]).reshape((1, -1))
                 mini_batches.append((images, labels))
 
         except ConnectTimeout or ConnectionError or HTTPError as e:

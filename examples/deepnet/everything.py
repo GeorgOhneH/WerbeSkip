@@ -31,6 +31,8 @@ net.add(SoftMax())
 optimizer = Adam(learning_rate=0.03)
 net.regression(optimizer=optimizer, cost="cross_entropy")
 
+net.print_network_structure()
+
 net.fit(train_data, train_labels, validation_set=(test_data, test_labels),
         epochs=2, mini_batch_size=512, snapshot_step=2)
 net.evaluate(test_data, test_labels)

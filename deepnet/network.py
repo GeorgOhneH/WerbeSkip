@@ -132,7 +132,8 @@ class Network(object):
             plot: bool = False,
             snapshot_step: int = 1,
             metrics: list = None,
-            save_step: None or int = None) -> None:
+            save_step: None or int = None,
+            path: str = "network.h5") -> None:
         """
         tests if the given parameters are valid for the network
         :param train_inputs: Data
@@ -186,6 +187,7 @@ class Network(object):
             snapshot_step=snapshot_step,
             metrics=metrics,
             save_step=save_step,
+            path=path
         )
 
     def _fit(self,
@@ -197,7 +199,8 @@ class Network(object):
              plot: bool,
              snapshot_step: int,
              metrics: list,
-             save_step: None or int = None) -> None:
+             save_step: None or int,
+             path) -> None:
         """
         trains the network with mini batches and print the progress.
         it can plot the accuracy and the loss
@@ -218,7 +221,7 @@ class Network(object):
                     self._analysis.validate(*validation_set, mini_batch_size)
 
                 if save_step and len(self._train_loss) % save_step == 0:
-                    self.save("network.h5")
+                    self.save(path)
 
                 self._iohandler.print_metrics(metrics, snapshot_step)
 
@@ -232,9 +235,10 @@ class Network(object):
                       generator: Generator,
                       validation_set: tuple or list = None,
                       plot: bool = False,
-                      snapshot_step: int = 50,
+                      snapshot_step: int = 1,
                       metrics: list = None,
-                      save_step: None or int = None) -> None:
+                      save_step: None or int = None,
+                      path: str = "network.h5") -> None:
         """checks values"""
         # if not issubclass(type(generator), Generator):
         #     raise ValueError("Must be a subclass of Generator. "
@@ -248,6 +252,7 @@ class Network(object):
                             snapshot_step=snapshot_step,
                             metrics=metrics,
                             save_step=save_step,
+                            path=path
                             )
 
     def _fit_generator(self,
@@ -256,7 +261,8 @@ class Network(object):
                        plot: bool,
                        snapshot_step: int,
                        metrics: list,
-                       save_step) -> None:
+                       save_step,
+                       path) -> None:
         """Same as fit but with a generator"""
         self.total_epoch = generator.epochs
         for epoch in range(generator.epochs):
@@ -269,7 +275,7 @@ class Network(object):
                     self._analysis.validate(*validation_set, generator.mini_batch_size)
 
                 if save_step and len(self._train_loss) % save_step == 0:
-                    self.save("network.h5")
+                    self.save(path)
 
                 self._iohandler.print_metrics(metrics, snapshot_step)
 
@@ -282,7 +288,7 @@ class Network(object):
         """
         x, y = mini_batch
 
-        self._backprop(x, y)
+        self._backprop(np.asarray(x, dtype="float32"), np.asarray(y, dtype="float32"))
 
         for layer in self._layers:
             layer.adjust_parameters(mini_batch_size)
