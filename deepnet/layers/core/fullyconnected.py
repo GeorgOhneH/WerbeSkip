@@ -67,4 +67,4 @@ class FullyConnectedLayer(Layer):
         return [self.weights, self.biases]
 
     def load(self, array):
-        self.weights, self.biases = [np.asarray(x) for x in array]
+        self.weights, self.biases = array

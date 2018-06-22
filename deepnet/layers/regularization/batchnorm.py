@@ -101,4 +101,4 @@ class BatchNorm(Layer):
         return [self.gamma, self.beta, self.mu_avg, self.var_avg]
 
     def load(self, array):
-        self.gamma, self.beta, self.mu_avg, self.var_avg = [np.asarray(x) for x in array]
+        self.gamma, self.beta, self.mu_avg, self.var_avg = array

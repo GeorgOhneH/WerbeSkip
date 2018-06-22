@@ -130,7 +130,7 @@ class Network(object):
             epochs: int = 10,
             mini_batch_size: int = 128,
             plot: bool = False,
-            snapshot_step: int = 1,
+            snapshot_step: float = 1,
             metrics: list = None,
             save_step: None or int = None,
             path: str = "network.h5") -> None:
@@ -197,7 +197,7 @@ class Network(object):
              epochs: int,
              mini_batch_size: int,
              plot: bool,
-             snapshot_step: int,
+             snapshot_step: float,
              metrics: list,
              save_step: None or int,
              path) -> None:
@@ -205,8 +205,8 @@ class Network(object):
         trains the network with mini batches and print the progress.
         it can plot the accuracy and the loss
         """
-        train_inputs = np.ascupy(train_inputs)
-        train_labels = np.ascupy(train_labels)
+        train_inputs = np.asarray(train_inputs)
+        train_labels = np.asarray(train_labels)
 
         self.total_epoch = epochs
         for epoch in range(epochs):
@@ -235,7 +235,7 @@ class Network(object):
                       generator: Generator,
                       validation_set: tuple or list = None,
                       plot: bool = False,
-                      snapshot_step: int = 1,
+                      snapshot_step: float = 1,
                       metrics: list = None,
                       save_step: None or int = None,
                       path: str = "network.h5") -> None:
@@ -259,7 +259,7 @@ class Network(object):
                        generator: Generator,
                        validation_set: tuple or list,
                        plot: bool,
-                       snapshot_step: int,
+                       snapshot_step: float,
                        metrics: list,
                        save_step,
                        path) -> None:
@@ -366,7 +366,7 @@ class Network(object):
         """
         saves the current network with all properties
         """
-        parameter = [layer.save() for layer in self._layers]
+        parameter = [[np.asnumpy(value) for value in layer.save()] for layer in self._layers]
         dd.io.save(path, parameter)
 
     def load(self, path: str) -> None:
@@ -376,7 +376,7 @@ class Network(object):
         parameters = dd.io.load(path)
         self._init()
         for layer, parameter in zip(self._layers, parameters):
-            layer.load(parameter)
+            layer.load([np.asarray(value) for value in parameter])
 
     def print_network_structure(self) -> None:
         """
@@ -411,8 +411,8 @@ class Network(object):
         :param directory: name of the directory
         :param shape: The shape of the Image
         """
-        inputs = np.ascupy(inputs)
-        labels = np.ascupy(labels)
+        inputs = np.asarray(inputs)
+        labels = np.asarray(labels)
 
         a = self.feedforward(inputs)
 

@@ -57,7 +57,6 @@ class Analysis(object):
         """
         x = np.asarray(x)
         y = np.asarray(y)
-        print(x.shape, y.shape)
 
         if size is not None:
             rand = np.random.randint(0, x.shape[0] - size)
@@ -90,8 +89,8 @@ class Analysis(object):
         :param y: ndarray
         :return: None
         """
-        x = np.ascupy(x)
-        y = np.ascupy(y)
+        x = np.asarray(x)
+        y = np.asarray(y)
 
         x = self.network.feedforward(x)
         loss = self.network.cost.function(x, y)

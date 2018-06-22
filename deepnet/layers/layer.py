@@ -1,6 +1,3 @@
-import numpywrapper as np
-
-
 class Layer(object):
     """
     The basic layer class. It is not functional but provides a base for the

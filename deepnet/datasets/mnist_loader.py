@@ -1,4 +1,4 @@
-import numpywrapper as np
+import numpy as np
 import os
 
 # mnist loader from https://github.com/sorki/python-mnist
