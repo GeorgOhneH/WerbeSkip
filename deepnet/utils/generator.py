@@ -9,6 +9,7 @@ class Generator(object):
         self.mini_batch_size = mini_batch_size
         self.epochs = epochs
         self.threads = None
+        self.progress = 0
         self.items = self.manager.list([])
         self.lock = self.manager.Lock()
         self.cv_produce = self.manager.Condition()
@@ -42,6 +43,7 @@ class Generator(object):
             with self.lock:
                 items = self.items[:self.mini_batch_size]
                 del self.items[:self.mini_batch_size]
+            self.progress += 1
         with self.cv_stop_produce:
             self.cv_stop_produce.notify()
         inputs = np.concatenate([item[0] for item in items], axis=0)

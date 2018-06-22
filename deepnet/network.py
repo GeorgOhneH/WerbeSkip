@@ -268,7 +268,7 @@ class Network(object):
         for epoch in range(generator.epochs):
             self.current_epoch = epoch
             for index, mini_batch in enumerate(generator):
-                self.progress = index / len(generator)
+                self.progress = generator.progress / len(generator)
                 self._update_parameters(mini_batch, generator.mini_batch_size)
 
                 if validation_set is not None:

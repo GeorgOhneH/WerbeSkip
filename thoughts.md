@@ -220,3 +220,15 @@ Habe Colab gefixed und sollte jetzt
 
 Schneller save funktion, kann aber nicht mehr das ganze Netzwerk mit
 der Struktur sicheren, sondern nur noch die Parameter.
+
+## 22.06.2018
+
+Habe die funktionen vom app Ordner aufgeräumt und ermöglicht, dass
+man das Bild Farbig trainieren kann.
+
+Jetzt ist das wichtigste implementier, damit ich anfangen kann, dass
+best mögliche netzwerk zu findem, dass das prosieben Logo erkennen kann.
+Das Logo kann an 3 Orten auf dem Bild sein. Die Frage ist ob ich ein Netzwerk
+trainiere, dass alle 3 Orten erkennt mit einem Bild oder ob ich dem
+Netzwerk 3 Bilder gebe und er soll schauen ob in einem der 3 Bilder das Logo ist.
+

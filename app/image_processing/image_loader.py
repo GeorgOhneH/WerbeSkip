@@ -1,66 +1,55 @@
-from app.image_processing.create_images import plane_background, random_background
-from app.image_processing.cropping_images import sample_imgs
-import numpywrapper as np
+import os
+import cv2
+import numpy as np
+from tqdm import tqdm
+from deepnet.utils import shuffle
+
+# Rations:
+# No Boarder: 16:9
+# Boarder left right: 8.5:11
+# Boarder above below: 2.25:1
+
+# coordinates of the position of the middle of the logo
+
+DICTIONARIES = [
+    ("../prosieben/images/classified/logo", (922, 49)),
+    ("../prosieben/images/classified/logo_boarder_above_below", (922, 87)),
+    ("../prosieben/images/classified/logo_boarder_left_right", (807, 49)),
+    ("../prosieben/images/classified/no_logo", None),
+]
 
 
-def shuffle(x, y):
-    """
-    Shuffles data in unison with helping from indexing
-    :param x: ndarray
-    :param y: ndarray
-    :return x, y: ndarray
-    """
-    indexes = np.random.permutation(x.shape[0])
-    return x[indexes], y[indexes]
+def _get_img(path_to_img, cords, padding):
+    padding += 16
+    img = cv2.imread(path_to_img)
+    if not cords:
+        cords = (922, 87)
+    x_middle, y_middle = cords
+    img = img[y_middle - padding:y_middle + padding, x_middle - padding:x_middle + padding]
+    img = np.transpose(img, (2, 0, 1)).astype(dtype="float32") / 255
+    return np.expand_dims(img, axis=0)
 
 
-def img_to_array(imgs):
-    imgs = [np.matrix.flatten(x) for x in imgs]
-    imgs = np.array(imgs)
-    return imgs
+def load_ads_cnn(split=0.8, padding=10):
+    inputs = []
+    labels = []
+    for dictionary in DICTIONARIES:
+        path, cords = dictionary
+        for img_name in tqdm(os.listdir(path)):
+            inputs.append(_get_img(os.path.join(path, img_name), cords, padding))
+            if cords:
+                labels.append([[0, 1]])
+            else:
+                labels.append([[1, 0]])
+    inputs = np.concatenate(inputs, axis=0)
+    labels = np.concatenate(labels, axis=0)
+    inputs, labels = shuffle(inputs, labels)
 
+    split = int(inputs.shape[0] * split)
 
-def loader(func):
-    image_logo = img_to_array(func(use_logo=True))
-    label_logo = np.array([[0, 1] for _ in range(image_logo.shape[0])])
-
-    image_no_logo = img_to_array(func(use_logo=False))
-    label_no_logo = np.array([[1, 0] for _ in range(image_no_logo.shape[0])])
-
-    train_image = np.concatenate([image_logo, image_no_logo], axis=0)  # appends the matrix
-    train_label = np.concatenate([label_logo, label_no_logo], axis=0)
-
-    return shuffle(train_image, train_label)
-
-
-def load_generator(generator, mini_batch_size):
-    dict_labels = {0: [[1], [0]], 1: [[0], [1]]}
-    images, labels = None, None
-    for _ in generator:
-        logo = np.random.randint(0, 2)
-        image = generator.send(logo)
-        if images is None:
-            images = np.reshape(image, (-1, 1))
-            labels = np.array(dict_labels[logo])
-        else:
-            images = np.concatenate((images, np.reshape(image, (-1, 1))), axis=1)
-            labels = np.concatenate((labels, dict_labels[logo]), axis=1)
-        if images.shape[1] >= mini_batch_size:
-            yield (images, labels)
-            images, labels = None, None
-
-
-def load_imgs(split=0.8, mini_batch_size=128, padding=10):
-    # generator = load_generator(random_background(padding=padding), mini_batch_size)
-    sample_images, sample_labels = loader(sample_imgs)
-    split_data = int(sample_images.shape[1] * split)
-
-    return 1, \
-           sample_images[..., :split_data], sample_labels[..., :split_data], \
-           sample_images[..., -split_data:], sample_labels[..., -split_data:]
+    return inputs[:split], labels[:split], inputs[split:], labels[split:]
 
 
 if __name__ == "__main__":
-    gen = load_generator(random_background(), 100)
-    for imgs, labels in gen:
-        print(labels.shape)
+    v_x, v_y, t_x, t_y = load_ads_cnn(split=0.8)
+    print(v_x.shape, v_y.shape, t_x.shape, t_y.shape)
