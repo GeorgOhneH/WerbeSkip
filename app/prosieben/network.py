@@ -6,21 +6,21 @@ from deepnet.optimizers import Adam
 
 
 if __name__ == "__main__":
-    generator = TrainGenerator(epochs=1, mini_batch_size=128, padding=10, n_workers=1)
+    generator = TrainGenerator(epochs=1, mini_batch_size=8, padding_w=67, padding_h=29, n_workers=1)
 
-    validation_data, validation_labels, test_data, test_labels = load_ads_cnn(split=0.8, padding=10)
+    validation_data, validation_labels, test_data, test_labels = load_ads_cnn(split=0.2, padding_w=67, padding_h=29, center=True)
 
     net = Network()
 
-    net.use_gpu = True
+    net.use_gpu = False
 
-    net.input((3, 52, 52))
+    net.input((3, 90, 166))
 
-    net.add(ConvolutionLayer(n_filter=32, width_filter=4, height_filter=4, stride=1, zero_padding=0))
+    net.add(ConvolutionLayer(n_filter=16, width_filter=4, height_filter=4, stride=1, zero_padding=1))
     net.add(BatchNorm())
     net.add(ReLU())
-    net.add(MaxPoolLayer(width_filter=2, height_filter=2, stride=1))
-    net.add(ConvolutionLayer(n_filter=64, width_filter=4, height_filter=4, stride=1, zero_padding=0))
+    net.add(MaxPoolLayer(width_filter=3, height_filter=3, stride=1))
+    net.add(ConvolutionLayer(n_filter=32, width_filter=4, height_filter=4, stride=1, zero_padding=1))
     net.add(BatchNorm())
     net.add(ReLU())
     net.add(MaxPoolLayer(width_filter=2, height_filter=2, stride=1))
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     net.add(FullyConnectedLayer(2))
     net.add(SoftMax())
 
-    optimizer = Adam(learning_rate=0.03)
+    optimizer = Adam(learning_rate=1)
     net.regression(optimizer=optimizer, cost="cross_entropy")
 
     net.fit_generator(generator, validation_set=(validation_data, validation_labels), snapshot_step=0.5, save_step=100)

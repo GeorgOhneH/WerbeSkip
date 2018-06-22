@@ -9,7 +9,7 @@ from deepnet.utils import Generator, cubify
 
 
 class TrainGenerator(Generator):
-    def __init__(self, epochs, mini_batch_size, padding, n_workers=1):
+    def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1):
         self.logo = None
         self.part_w = None
         self.part_h = None
@@ -17,7 +17,8 @@ class TrainGenerator(Generator):
         self.PATH_TO_URLS = "../image_processing/urls.zip"
         self.urls = []
         self.dict_labels = {0: [[1], [0]], 1: [[0], [1]]}
-        self.padding = padding
+        self.padding_h = padding_w
+        self.padding_w = padding_h
         self.init()
         super().__init__(epochs, mini_batch_size, n_workers)
 
@@ -27,7 +28,7 @@ class TrainGenerator(Generator):
         self.logo = logo.astype("float32") / 255
 
         logo_w, logo_h, logo_depth = logo.shape
-        self.part_w, self.part_h = logo_w + self.padding * 2, logo_h + self.padding * 2  # size of returning images
+        self.part_w, self.part_h = logo_w + self.padding_w * 2, logo_h + self.padding_h * 2  # size of returning images
 
         with zipfile.ZipFile(self.PATH_TO_URLS, "r") as archive:
             data = archive.read("urls.txt")
@@ -64,10 +65,10 @@ class TrainGenerator(Generator):
                 use_logo = np.random.randint(0, 2)
                 if use_logo:
                     # sets logo in a random place of the image
-                    pad_w = np.random.randint(0, self.padding * 2)
-                    pad_h = np.random.randint(0, self.padding * 2)
-                    logo_padding = np.pad(self.logo, [(pad_w, self.padding * 2 - pad_w),
-                                                      (pad_h, self.padding * 2 - pad_h),
+                    pad_w = np.random.randint(0, self.padding_w * 2)
+                    pad_h = np.random.randint(0, self.padding_h * 2)
+                    logo_padding = np.pad(self.logo, [(pad_w, self.padding_w * 2 - pad_w),
+                                                      (pad_h, self.padding_h * 2 - pad_h),
                                                       (0, 0)],
                                           "constant")
                     # applies screen blend effect

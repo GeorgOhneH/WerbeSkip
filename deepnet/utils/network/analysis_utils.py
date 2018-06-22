@@ -43,11 +43,11 @@ class Analysis(object):
         calculates loss and accuracy of the validation set
         and saves them in arrays
 
-        Normally the hole validation set  while run through the
+        Normally the hole validation set  runs through the
         network unless you set the size, then will run a random
-        portion of the size of size through the network
+        portion of the size through the network
 
-        size is normally the same  as the mini batch
+        size is normally the same as the mini batch while training
 
         :param x: ndarray
         :param y: ndarray

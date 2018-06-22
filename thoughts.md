@@ -232,3 +232,10 @@ Das Logo kann an 3 Orten auf dem Bild sein. Die Frage ist ob ich ein Netzwerk
 trainiere, dass alle 3 Orten erkennt mit einem Bild oder ob ich dem
 Netzwerk 3 Bilder gebe und er soll schauen ob in einem der 3 Bilder das Logo ist.
 
+Bei cv2 ist die erste Stelle nicht die Breite sondern die Höhe und die zweite
+Stelle die Breite und nicht die Höhe. Hat mich nur sehr verwirred.
+
+Ich hab probiert nur mit einem Bild alle 3 Stellen abzudecken, lauf aber
+in grosse Memory probleme hinein, da das Bild so gross wird.
+
+Im Output steht manchmal "nan", da `log(n)` mit `n=0` "nan ergibt

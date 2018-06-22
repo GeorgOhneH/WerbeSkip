@@ -68,7 +68,7 @@ class Generator(object):
                     self.items += mini_batches
                 self.cv_produce.notify_all()
             with self.cv_stop_produce:
-                while self.items_len() > self.mini_batch_size*100:
+                while self.items_len() > self.mini_batch_size*2:
                     self.cv_stop_produce.wait()
 
     def __len__(self):
