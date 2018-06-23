@@ -15,7 +15,7 @@ def save_img(path):
 if __name__ == "__main__":
     x = 0
     while True:
-        save_img("prosieben/images/unclassified")
+        save_img("app/prosieben/images/unclassified")
         print("image saved: %s" % x)
         x += 1
         time.sleep(15)

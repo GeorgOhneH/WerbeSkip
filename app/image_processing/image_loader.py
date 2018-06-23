@@ -12,16 +12,16 @@ from deepnet.utils import shuffle
 # coordinates of the position of the middle of the logo
 
 DICTIONARIES = [
-    {"path": "../prosieben/images/classified/logo",
+    {"path": "prosieben/images/classified/logo",
      "cords": (922, 49),
      "name": "logo", },
-    {"path": "../prosieben/images/classified/logo_boarder_above_below",
+    {"path": "prosieben/images/classified/logo_boarder_above_below",
      "cords": (922, 87),
      "name": "logo_boarder_above_below", },
-    {"path": "../prosieben/images/classified/logo_boarder_left_right",
+    {"path": "prosieben/images/classified/logo_boarder_left_right",
      "cords": (807, 49),
      "name": "logo_boarder_left_right", },
-    {"path": "../prosieben/images/classified/no_logo",
+    {"path": "prosieben/images/classified/no_logo",
      "cords": None,
      "name": "no_logo", },
 ]
@@ -46,6 +46,7 @@ def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False):
     print("Load Images. Total Directories: {}".format(len(DICTIONARIES)))
     for dictionary in DICTIONARIES:
         path = dictionary["path"]
+        path = os.path.join(os.path.split(os.path.dirname(__file__))[0], path)
         cords = dictionary["cords"]
         if center:
             cords = None

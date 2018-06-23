@@ -236,6 +236,7 @@ Bei cv2 ist die erste Stelle nicht die Breite sondern die Höhe und die zweite
 Stelle die Breite und nicht die Höhe. Hat mich nur sehr verwirred.
 
 Ich hab probiert nur mit einem Bild alle 3 Stellen abzudecken, lauf aber
-in grosse Memory probleme hinein, da das Bild so gross wird.
+in grosse Memory probleme hinein, da das Bild so gross wird. Ich hab 6GB Video
+Memory
 
 Im Output steht manchmal "nan", da `log(n)` mit `n=0` "nan ergibt

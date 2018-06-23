@@ -5,6 +5,7 @@ import numpy as np
 import requests
 from requests.exceptions import ConnectTimeout, ConnectionError, HTTPError
 import warnings
+import os
 from deepnet.utils import Generator, cubify
 
 
@@ -13,8 +14,8 @@ class TrainGenerator(Generator):
         self.logo = None
         self.part_w = None
         self.part_h = None
-        self.PATH_TO_LOGO = "../prosieben/images/important_images/logo32x32.png"
-        self.PATH_TO_URLS = "../image_processing/urls.zip"
+        self.PATH_TO_LOGO = os.path.join(os.path.split(os.path.dirname(__file__))[0], "prosieben/images/important_images/logo32x32.png")
+        self.PATH_TO_URLS = os.path.join(os.path.dirname(__file__), "urls.zip")
         self.urls = []
         self.dict_labels = {0: [[1], [0]], 1: [[0], [1]]}
         self.padding_h = padding_w
