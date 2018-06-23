@@ -27,17 +27,6 @@ def make_mini_batches(x, y, size):
     return mini_batches
 
 
-def cubify(arr, newshape):
-    """https://stackoverflow.com/questions/42297115/numpy-split-cube-into-cubes/42298440#42298440"""
-    oldshape = np.array(arr.shape)
-    repeats = (oldshape / newshape).astype(int)
-    tmpshape = np.column_stack([repeats, newshape]).ravel()
-    order = np.arange(len(tmpshape))
-    order = np.concatenate([order[::2], order[1::2]])
-    # newshape must divide oldshape evenly or else ValueError will be raised
-    return arr.reshape(tmpshape).transpose(order).reshape(-1, *newshape)
-
-
 def flatten(a):
     mini_batch_size = a.shape[0]
     out = a.ravel().reshape((mini_batch_size, -1))

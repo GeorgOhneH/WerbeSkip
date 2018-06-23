@@ -6,7 +6,7 @@ import requests
 from requests.exceptions import ConnectTimeout, ConnectionError, HTTPError
 import warnings
 import os
-from deepnet.utils import Generator, cubify
+from deepnet.utils import Generator
 
 
 class TrainGenerator(Generator):
@@ -14,7 +14,8 @@ class TrainGenerator(Generator):
         self.logo = None
         self.part_w = None
         self.part_h = None
-        self.PATH_TO_LOGO = os.path.join(os.path.split(os.path.dirname(__file__))[0], "prosieben/images/important_images/logo32x32.png")
+        self.PATH_TO_LOGO = os.path.join(os.path.split(os.path.dirname(__file__))[0],
+                                         "prosieben/images/important_images/logo32x32.png")
         self.PATH_TO_URLS = os.path.join(os.path.dirname(__file__), "urls.zip")
         self.urls = []
         self.dict_labels = {0: [[1], [0]], 1: [[0], [1]]}
@@ -40,6 +41,16 @@ class TrainGenerator(Generator):
     def __len__(self):
         return len(self.urls)
 
+    def cubify(self, arr, newshape):
+        """https://stackoverflow.com/questions/42297115/numpy-split-cube-into-cubes/42298440#42298440"""
+        oldshape = np.array(arr.shape)
+        repeats = (oldshape / newshape).astype(int)
+        tmpshape = np.column_stack([repeats, newshape]).ravel()
+        order = np.arange(len(tmpshape))
+        order = np.concatenate([order[::2], order[1::2]])
+        # newshape must divide oldshape evenly or else ValueError will be raised
+        return arr.reshape(tmpshape).transpose(order).reshape(-1, *newshape)
+
     def get_mini_batches(self, index):
         url = self.urls[index]
         mini_batches = []
@@ -60,7 +71,7 @@ class TrainGenerator(Generator):
             image = image[:w - w % self.part_w, :h - h % self.part_h]
 
             # cuts the image in smaller pieces
-            image_parts = cubify(image, (self.part_w, self.part_h, d))
+            image_parts = self.cubify(image, (self.part_w, self.part_h, d))
 
             for image_part in image_parts:
                 use_logo = np.random.randint(0, 2)
@@ -82,4 +93,3 @@ class TrainGenerator(Generator):
         except ConnectTimeout or ConnectionError or HTTPError as e:
             warnings.warn("A request wasn't successful, got {}".format(e))
         return mini_batches
-
