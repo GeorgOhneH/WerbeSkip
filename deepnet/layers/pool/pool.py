@@ -6,11 +6,11 @@ import numpywrapper as np
 
 class PoolLayer(Layer):
     """
+    None functional
     """
 
     def __init__(self, width_filter, height_filter, stride):
         """
-        None functional
         """
         self.width_filter = width_filter
         self.height_filter = height_filter

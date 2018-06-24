@@ -32,7 +32,7 @@ class CrossEntropyCost(Cost):
     @staticmethod
     def function(a, y):
         """Computes the cost function"""
-        return -np.sum(y * np.log(a)) / y.shape[0]
+        return -np.sum(y * np.log(a+1e-8)) / y.shape[0]
 
     @staticmethod
     def delta(a, y):

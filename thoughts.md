@@ -240,3 +240,9 @@ in grosse Memory probleme hinein, da das Bild so gross wird. Ich hab 6GB Video
 Memory
 
 Im Output steht manchmal "nan", da `log(n)` mit `n=0` "nan ergibt
+
+## 23.06.2018
+Trainiere das Netzwerk jetzt auf [colab](https://colab.research.google.com/drive/1Uq9kIGxhfTSdy-aHziWgWcj2fLuT22oV),
+da ich dort 12GB Ram habe.
+
+Habs

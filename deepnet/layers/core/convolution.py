@@ -45,6 +45,7 @@ class ConvolutionLayer(Layer):
 
         self.width_out = (self.width - self.width_filter + 2 * self.zero_padding) / self.stride + 1
         self.height_out = (self.height - self.height_filter + 2 * self.zero_padding) / self.stride + 1
+
         if not self.height_out.is_integer() or not self.width_out.is_integer():
             raise ValueError("Doesn't work with theses Values.")
 

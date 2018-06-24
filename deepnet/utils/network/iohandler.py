@@ -15,10 +15,12 @@ class IOHandler(object):
             "validate_loss": self._s_vl,
             "validate_accuracy": self._s_va,
             "time": self._s_time,
+            "mini_batch": self._s_updates,
         }
         self.start_time = time.time()
         self.network = network
         self.activate_ansi()
+        self._updates = 0
         self._metric_last_update = 0
 
     def _s_epoch(self) -> str:
@@ -42,6 +44,9 @@ class IOHandler(object):
     def _s_time(self) -> str:
         return "time {:.3f}".format(time.time() - self.start_time)
 
+    def _s_updates(self) -> str:
+        return "mini batch: {}".format(self._updates)
+
     @staticmethod
     def activate_ansi():
         if platform.system() == "Windows" and platform.release() == "10":
@@ -52,6 +57,7 @@ class IOHandler(object):
         if snapshot_step < time.time() - self._metric_last_update:
             self._print_metrics(metrics=metrics)
             self._metric_last_update = time.time()
+        self._updates += 1
 
     def _print_metrics(self, metrics: tuple or list) -> None:
         """
@@ -60,6 +66,7 @@ class IOHandler(object):
         print every metric.
         :param metrics: list with metrics as string
         """
+
         if metrics[0] == "all":
             metrics = self.DICTIONARY.keys()
 
@@ -67,7 +74,7 @@ class IOHandler(object):
         for index, metric in enumerate(metrics):
             result += self.DICTIONARY[metric]()
             if index + 1 < len(metrics):
-                if len(result.split("\n")[-1]) > 60:
+                if len(result.split("\n")[-1]) > 80:
                     result += "\n"
                 else:
                     result += " | "

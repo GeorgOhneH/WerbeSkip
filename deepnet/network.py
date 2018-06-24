@@ -220,7 +220,7 @@ class Network(object):
                 if validation_set is not None:
                     self._analysis.validate(*validation_set, mini_batch_size)
 
-                if save_step and len(self._train_loss) % save_step == 0:
+                if save_step and index % save_step == 0:
                     self.save(path)
 
                 self._iohandler.print_metrics(metrics, snapshot_step)
@@ -274,7 +274,7 @@ class Network(object):
                 if validation_set is not None:
                     self._analysis.validate(*validation_set, generator.mini_batch_size)
 
-                if save_step and len(self._train_loss) % save_step == 0:
+                if save_step and index % save_step == 0:
                     self.save(path)
 
                 self._iohandler.print_metrics(metrics, snapshot_step)
@@ -338,11 +338,12 @@ class Network(object):
         :param a: data
         :return: processed data
         """
-        size = 1000
-        if size >= a.shape[0]:
+        batch_size = 256
+        splits = int(a.shape[0] / batch_size)
+        if batch_size >= a.shape[0]:
             return self._feedforward(a)
 
-        batches = np.array_split(a, size)
+        batches = np.array_split(a, splits)
         results = [self._feedforward(batch) for batch in batches]
         out = np.concatenate(results)
         return out

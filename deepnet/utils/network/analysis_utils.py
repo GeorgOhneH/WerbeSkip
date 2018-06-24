@@ -126,7 +126,7 @@ class Analysis(object):
         :param loss: flout
         :return: print: results
         """
-        a = np.argmax(x) + np.argmax(y) * 2
+        a = np.argmax(x, axis=1) + np.argmax(y, axis=1) * 2
         tp = np.count_nonzero(a == 3)  # True Positive
         tn = np.count_nonzero(a == 0)  # True Negative
         fp = np.count_nonzero(a == 1)  # False Positive

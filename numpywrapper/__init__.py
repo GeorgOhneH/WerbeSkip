@@ -1,3 +1,15 @@
+"""
+A wrapper module for numpy and cupy
+
+numpywrapper can be used as normal numpy
+
+If you set numpywrapper.set_use_gpu = True
+and reload the module with importlib.reload(numpywrapper)
+it's going to switch numpy with cupy
+
+This works because cupy uses the same api as numpy
+"""
+
 import json
 import os
 

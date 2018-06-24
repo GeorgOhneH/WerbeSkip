@@ -41,7 +41,7 @@ class Dropout(Layer):
 
     def forward_backpropagation(self, a):
         """Deactivates neurons by multiplying them by 0"""
-        self.dropout_mask = np.asarray(numpy.random.binomial(1, self.dropout, size=a.shape))
+        self.dropout_mask = np.asarray(numpy.random.binomial(1, self.dropout, size=a.shape), dtype="float32")
         return a * self.dropout_mask
 
     def make_delta(self, delta):

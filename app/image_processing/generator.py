@@ -49,7 +49,8 @@ class TrainGenerator(Generator):
         order = np.arange(len(tmpshape))
         order = np.concatenate([order[::2], order[1::2]])
         # newshape must divide oldshape evenly or else ValueError will be raised
-        return arr.reshape(tmpshape).transpose(order).reshape(-1, *newshape)
+        out = arr.reshape(tmpshape).transpose(order).reshape(-1, *newshape)
+        return out
 
     def get_mini_batches(self, index):
         url = self.urls[index]
@@ -93,3 +94,11 @@ class TrainGenerator(Generator):
         except ConnectTimeout or ConnectionError or HTTPError as e:
             warnings.warn("A request wasn't successful, got {}".format(e))
         return mini_batches
+
+
+if __name__ == "__main__":
+    import time
+    generator = TrainGenerator(epochs=1, mini_batch_size=256, padding_w=1000, padding_h=1000, n_workers=1)
+    for mini_batch in generator:
+        print(mini_batch[0].shape)
+        time.sleep(1)

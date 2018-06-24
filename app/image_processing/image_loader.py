@@ -66,5 +66,5 @@ def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False):
 
 
 if __name__ == "__main__":
-    v_x, v_y, t_x, t_y = load_ads_cnn(split=0.8)
+    v_x, v_y, t_x, t_y = load_ads_cnn(split=0.2)
     print(v_x.shape, v_y.shape, t_x.shape, t_y.shape)
