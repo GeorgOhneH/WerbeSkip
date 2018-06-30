@@ -3,7 +3,6 @@ deepdish
 numpy
 matplotlib
 scipy
-pillow
 tensorflow
 python-mnist
 pygame

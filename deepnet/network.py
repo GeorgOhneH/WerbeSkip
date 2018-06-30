@@ -11,7 +11,7 @@ import importlib
 
 import numpywrapper as np
 from numpy import ndarray
-from PIL import Image
+import cv2
 import deepdish as dd
 
 
@@ -428,7 +428,7 @@ class Network(object):
         # saves images
         for index, (orig, result, label) in enumerate(zip(inputs, a, labels)):
             if np.argmax(result) != np.argmax(label):
-                img_data = np.asnumpy(orig * 255).reshape(shape).astype('uint8')
-                Image.fromarray(img_data).save("{}\\{}\\{}-{}-{:.3f}.png"
-                                               .format(directory, int(np.argmax(result)), int(index), int(np.argmax(label)),
-                                                       float(np.amax(result))))
+                img_data = np.asnumpy(orig * 255).reshape(shape).astype('uint8').transpose(1, 2, 0)
+                file_name = "{}\\{}\\{}-{}-{:.3f}.png".format(directory, int(np.argmax(result)), int(index),
+                                                              int(np.argmax(label)), float(np.amax(result)))
+                cv2.imwrite(file_name, img_data)
