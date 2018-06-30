@@ -338,12 +338,14 @@ class Network(object):
         :param a: data
         :return: processed data
         """
-        batch_size = 256
-        splits = int(a.shape[0] / batch_size)
+        batch_size = 32
         if batch_size >= a.shape[0]:
             return self._feedforward(a)
 
-        batches = np.array_split(a, splits)
+        batches = []
+        for i in range(0, a.shape[0], batch_size):
+            batches.append(a[i:batch_size + i])
+
         results = [self._feedforward(batch) for batch in batches]
         out = np.concatenate(results)
         return out
