@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 from tqdm import tqdm
+import deepdish as dd
 from deepnet.utils import shuffle
 
 # Rations:
@@ -40,7 +41,28 @@ def _get_img(path_to_img, cords, padding_w, padding_h):
     return np.expand_dims(img, axis=0)
 
 
-def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False):
+def _get_path_to_file(padding_w, padding_h, center):
+    path_to_cache = os.path.join(os.path.dirname(__file__), "cache")
+    file_name = "w{}_h{}_c{}.h5".format(padding_w, padding_h, center)
+    path_to_file = os.path.join(path_to_cache, file_name)
+    return path_to_file
+
+
+def _load_cache(path_to_file):
+    if os.path.exists(path_to_file):
+        inputs, labels = dd.io.load(path_to_file)
+        return inputs, labels
+    return np.array([]), np.array([])
+
+
+def _save_cache(path_to_file, inputs, labels):
+    if not os.path.exists(path_to_file):
+        dd.io.save(path_to_file, [inputs, labels])
+        return True
+    return False
+
+
+def _load_imgs(padding_w, padding_h, center):
     inputs = []
     labels = []
     print("Load Images. Total Directories: {}".format(len(DICTIONARIES)))
@@ -58,6 +80,17 @@ def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False):
                 labels.append([[1, 0]])
     inputs = np.concatenate(inputs, axis=0)
     labels = np.concatenate(labels, axis=0)
+    return inputs, labels
+
+
+def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False):
+    path_to_file = _get_path_to_file(padding_w, padding_h, center)
+
+    inputs, labels = _load_cache(path_to_file)
+    if len(inputs) == 0 and len(labels) == 0:
+        inputs, labels = _load_imgs(padding_w, padding_h, center)
+        _save_cache(path_to_file, inputs, labels)
+
     inputs, labels = shuffle(inputs, labels)
 
     split = int(inputs.shape[0] * split)
