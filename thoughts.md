@@ -239,10 +239,15 @@ Ich hab probiert nur mit einem Bild alle 3 Stellen abzudecken, lauf aber
 in grosse Memory probleme hinein, da das Bild so gross wird. Ich hab 6GB Video
 Memory
 
-Im Output steht manchmal "nan", da `log(n)` mit `n=0` "nan ergibt
+Im Output steht manchmal "nan", da `log(n)` mit `n=0` "nan" ergibt
 
 ## 23.06.2018
 Trainiere das Netzwerk jetzt auf [colab](https://colab.research.google.com/drive/1Uq9kIGxhfTSdy-aHziWgWcj2fLuT22oV),
 da ich dort 12GB Ram habe.
 
-Habs
+## 01.07.2018
+Habe ein Netzwerk trainiert mit einem f1_score von 0.988.
+
+Werde jetzt von Zatto auf Teleboy wechseln, da ich dort relative einfach
+den HD Stream anzapfen kann. Das heisst auch, dass ich das Logo neu
+"finden" muss.
