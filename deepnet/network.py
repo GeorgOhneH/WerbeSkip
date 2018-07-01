@@ -407,7 +407,7 @@ class Network(object):
 
         With this schema:
             subdirectories: prediction from the network
-            filename: <index>-<real label>-<output>
+            filename: <index>-<real label>-<prediction>
 
         :param inputs: data
         :param labels: labels
@@ -426,9 +426,9 @@ class Network(object):
         [os.mkdir("{}\\{}".format(directory, x)) for x in range(labels.shape[1])]
 
         # saves images
-        for index, (orig, result, label) in enumerate(zip(inputs, a, labels)):
-            if np.argmax(result) != np.argmax(label):
+        for index, (orig, prediction, label) in enumerate(zip(inputs, a, labels)):
+            if np.argmax(prediction) != np.argmax(label):
                 img_data = np.asnumpy(orig * 255).reshape(shape).astype('uint8').transpose(1, 2, 0)
-                file_name = "{}\\{}\\{}-{}-{:.3f}.png".format(directory, int(np.argmax(result)), int(index),
-                                                              int(np.argmax(label)), float(np.amax(result)))
+                file_name = "{}\\{}\\{}-{}-{:.3f}.png".format(directory, int(np.argmax(prediction)), int(index),
+                                                              int(np.argmax(label)), float(np.amax(prediction)))
                 cv2.imwrite(file_name, img_data)

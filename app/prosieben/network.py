@@ -5,7 +5,7 @@ from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMa
 from deepnet.optimizers import Adam, SGD
 
 if __name__ == "__main__":
-    v_x, v_y, t_x, t_y = load_ads_cnn(split=0.01)
+    v_x, v_y, t_x, t_y = load_ads_cnn(split=0)
 
     net = Network()
 
@@ -35,3 +35,4 @@ if __name__ == "__main__":
     net.regression(optimizer=optimizer, cost="cross_entropy")
     net.load("test2.h5")
     net.evaluate(t_x, t_y)
+    net.save_wrong_predictions(t_x, t_y, "wrong_predictions", (3, 52, 52))
