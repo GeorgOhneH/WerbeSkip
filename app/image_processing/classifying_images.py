@@ -91,13 +91,13 @@ class Window(object):
 
 
 if __name__ == "__main__":
-    path_to_images = "app/prosieben/images/unclassified"
+    path_to_images = "app/prosieben/zattoo/images/unclassified"
     paths_to_classes = [
-        "app/prosieben/images/classified/logo_boarder_left_right",
-        "app/prosieben/images/classified/logo_boarder_above_below",
-        "app/prosieben/images/classified/logo",
-        "app/prosieben/images/classified/no_logo",
-        "app/prosieben/images/classified/special",
+        "app/prosieben/images/zattoo/classified/logo_boarder_left_right",
+        "app/prosieben/images/zattoo/classified/logo_boarder_above_below",
+        "app/prosieben/images/zattoo/classified/logo",
+        "app/prosieben/images/zattoo/classified/no_logo",
+        "app/prosieben/images/zattoo/classified/special",
     ]
     window = Window(path_to_images, paths_to_classes)
     window.start()

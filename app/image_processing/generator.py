@@ -10,12 +10,15 @@ from deepnet.utils import Generator
 
 
 class TrainGenerator(Generator):
-    def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1):
+    def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1, channel="zattoo"):
+        CHANNELS = {
+            "zattoo": "prosieben/images/zattoo/important_images/logo32x32.png",
+            "teleboy": "prosieben/images/teleboy/important_images/logo65x39.png",
+        }
         self.logo = None
         self.part_w = None
         self.part_h = None
-        self.PATH_TO_LOGO = os.path.join(os.path.split(os.path.dirname(__file__))[0],
-                                         "prosieben/images/important_images/logo32x32.png")
+        self.PATH_TO_LOGO = os.path.join(os.path.split(os.path.dirname(__file__))[0], CHANNELS[channel])
         self.PATH_TO_URLS = os.path.join(os.path.dirname(__file__), "urls.zip")
         self.urls = []
         self.dict_labels = {0: [[1], [0]], 1: [[0], [1]]}

@@ -1,7 +1,7 @@
-import time
 import requests
 import json
 import cv2
+import numpy as np
 
 
 class VideoCapture(object):
@@ -44,10 +44,15 @@ class VideoCapture(object):
 
     def __next__(self):
         ret, frame = self.cap.read()
+        if not ret:
+            raise StopIteration
         return frame
 
 
 if __name__ == "__main__":
-    for frame in VideoCapture(channel=304):
-        cv2.imshow("frame", frame)
-        cv2.waitKey(1)
+    smallest_m = 100000000000
+    for frame in VideoCapture(channel=354):
+        m = np.mean(frame)
+        if m < smallest_m:
+            cv2.imwrite("black_img.png", frame)
+            smallest_m = m
