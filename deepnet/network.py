@@ -1,7 +1,7 @@
 from deepnet.layers import Layer
 from deepnet.functions.costs import QuadraticCost, CrossEntropyCost, Cost
 from deepnet.optimizers import Optimizer
-from deepnet.utils import make_mini_batches, Plotter, Analysis, Generator, IOHandler
+from deepnet.utils import make_mini_batches, Plotter, Analysis, Generator, IOHandler, make_batches
 
 import time
 from copy import copy
@@ -13,6 +13,7 @@ import numpywrapper as np
 from numpy import ndarray
 import cv2
 import deepdish as dd
+from tqdm import tqdm
 
 
 class Network(object):
@@ -22,7 +23,6 @@ class Network(object):
 
     def __init__(self):
         self._use_gpu = False
-        self._start_time = time.time()
         self._optimizer = None
         self._input_neurons = None
         self._cost = None
@@ -223,7 +223,7 @@ class Network(object):
                 if save_step and index % save_step == 0:
                     self.save(path)
 
-                self._iohandler.print_metrics(metrics, snapshot_step)
+                self._iohandler.print_metrics(metrics, snapshot_step, mini_batch_size)
 
             if not save_step:
                 self.save("network.h5")
@@ -277,7 +277,7 @@ class Network(object):
                 if save_step and index % save_step == 0:
                     self.save(path)
 
-                self._iohandler.print_metrics(metrics, snapshot_step)
+                self._iohandler.print_metrics(metrics, snapshot_step, generator.mini_batch_size)
 
         if plot:
             self._plot()
@@ -338,15 +338,9 @@ class Network(object):
         :param a: data
         :return: processed data
         """
-        batch_size = 32
-        if batch_size >= a.shape[0]:
-            return self._feedforward(a)
+        batches = make_batches(a, 32)
 
-        batches = []
-        for i in range(0, a.shape[0], batch_size):
-            batches.append(a[i:batch_size + i])
-
-        results = [self._feedforward(batch) for batch in batches]
+        results = [self._feedforward(np.array(batch)) for batch in batches]
         out = np.concatenate(results)
         return out
 
@@ -369,17 +363,24 @@ class Network(object):
         """
         saves the current network with all properties
         """
-        parameter = [[np.asnumpy(value) for value in layer.save()] for layer in self._layers]
-        dd.io.save(path, parameter)
+        meta = {"start_time": self._iohandler.start_time, "inputs": self._iohandler.inputs}
+        parameters = [[np.asnumpy(value) for value in layer.save()] for layer in self._layers]
+        dd.io.save(path, {"meta": meta, "parameters": parameters})
 
     def load(self, path: str) -> None:
         """
         Loads the network from a file
         """
-        parameters = dd.io.load(path)
+        network = dd.io.load(path)
+
+        parameters = network["parameters"]
         self._init()
         for layer, parameter in zip(self._layers, parameters):
             layer.load([np.asarray(value) for value in parameter])
+
+        meta = network["meta"]
+        self._iohandler.start_time = meta["start_time"]
+        self._iohandler.inputs = meta["inputs"]
 
     def print_network_structure(self) -> None:
         """

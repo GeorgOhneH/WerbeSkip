@@ -20,6 +20,7 @@ class IOHandler(object):
         self.start_time = time.time()
         self.network = network
         self.activate_ansi()
+        self.inputs = 0
         self._updates = 0
         self._metric_last_update = 0
 
@@ -53,11 +54,12 @@ class IOHandler(object):
             kernel32 = ctypes.windll.kernel32
             kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
-    def print_metrics(self, metrics: tuple or list, snapshot_step: float):
+    def print_metrics(self, metrics: tuple or list, snapshot_step: float, mini_batch_size: int):
         if snapshot_step < time.time() - self._metric_last_update:
             self._print_metrics(metrics=metrics)
             self._metric_last_update = time.time()
         self._updates += 1
+        self.inputs += mini_batch_size
 
     def _print_metrics(self, metrics: tuple or list) -> None:
         """
