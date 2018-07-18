@@ -35,7 +35,9 @@ def _get_img(path_to_img, cords, padding_w, padding_h):
     if not cords:
         cords = (865, 68)
     x_middle, y_middle = cords
-    img = img[y_middle - padding_h:y_middle + padding_h, x_middle - padding_w:x_middle + padding_w]
+
+    img = np.pad(img, [(padding_h, padding_h), (padding_w, padding_w), (0, 0)], mode="constant", constant_values=255)
+    img = img[y_middle:y_middle + 2*padding_h, x_middle:x_middle + 2*padding_w]
 
     img = np.transpose(img, (2, 0, 1)).astype(dtype="float32") / 255
     return np.expand_dims(img, axis=0)
@@ -83,13 +85,14 @@ def _load_imgs(padding_w, padding_h, center):
     return inputs, labels
 
 
-def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False):
+def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False, cache=False):
     path_to_file = _get_path_to_file(padding_w, padding_h, center)
 
     inputs, labels = _load_cache(path_to_file)
-    if len(inputs) == 0 and len(labels) == 0:
+    if inputs.shape[0] == 0 and labels.shape[0] == 0:
         inputs, labels = _load_imgs(padding_w, padding_h, center)
-        _save_cache(path_to_file, inputs, labels)
+        if cache:
+            _save_cache(path_to_file, inputs, labels)
 
     inputs, labels = shuffle(inputs, labels)
 
