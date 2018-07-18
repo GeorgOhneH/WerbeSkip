@@ -251,3 +251,13 @@ Habe ein Netzwerk trainiert mit einem f1_score von 0.988.
 Werde jetzt von Zatto auf Teleboy wechseln, da ich dort relative einfach
 den HD Stream anzapfen kann. Das heisst auch, dass ich das Logo neu
 "finden" muss.
+## 10.07.2018
+Um hervorzusagen ob ein Logo im Bild, ohne zu wissen wo es genau ist, lasse ich jeden Pixel
+durchs Netzwerk laufen und schau wie dieses Bild, dann ausschaut.
+
+Im moment kann man nur das Bild generieren.
+## 15.07.2018
+Ich habe ein paar Bilder generieren lassen und es braucht viel zu lange
+ca 14 min, was einfach viel zu lange ist. Und sobalt weisse Flächen im Bild
+sind wird es unvorhersehbar, da das Netzwerk nicht gut unterscheiden kann
+zwischen Logo und weisser Flächen. Sieht man gut am Bild in app/prosieben/networks/prediction1

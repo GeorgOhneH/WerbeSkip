@@ -37,7 +37,7 @@ net.fit(train_data, train_labels, validation_set=(test_data, test_labels),
         epochs=2, mini_batch_size=512, snapshot_step=2)
 net.evaluate(test_data, test_labels)
 path = "test"
-net.save_wrong_predictions(inputs=test_data[:10], labels=test_labels[:10], directory=path, shape=(28, 28))
+net.save_wrong_predictions(inputs=test_data[:10], labels=test_labels[:10], directory=path, shape=(1, 28, 28))
 shutil.rmtree(path)
 file = "test.h5"
 net.save(file)

@@ -60,7 +60,7 @@ class ConvolutionLayer(Layer):
     def forward(self, a):
         self.mini_batch_size = a.shape[0]
 
-        self.a_col = im2col_indices(a, self.height_filter, self.width_filter, stride=self.stride, padding=self.zero_padding)
+        self.a_col = im2col_indices(a, self.height_filter, self.width_filter, stride=self.stride, padding_w=self.zero_padding, padding_h=self.zero_padding)
         weights_row = self.weights.reshape(self.n_filter, -1)
 
         out = weights_row @ self.a_col + self.biases
@@ -84,7 +84,7 @@ class ConvolutionLayer(Layer):
 
         delta_col = weights_flat.T @ delta_flat
         shape = (self.mini_batch_size, self.depth, self.height, self.width)
-        delta = col2im_indices(delta_col, shape, self.height_filter, self.width_filter, self.zero_padding, self.stride)
+        delta = col2im_indices(delta_col, shape, self.height_filter, self.width_filter, self.zero_padding, self.zero_padding, self.stride)
 
         return delta
 

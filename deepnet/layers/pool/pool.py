@@ -43,7 +43,7 @@ class PoolLayer(Layer):
         height_out, width_out = int(height_out), int(width_out)
 
         a_reshaped = a.reshape(mini_batch_size * depth, 1, height, width)
-        self.a_col = im2col_indices(a_reshaped, self.height_filter, self.width_filter, padding=0, stride=self.stride)
+        self.a_col = im2col_indices(a_reshaped, self.height_filter, self.width_filter, padding_w=0, padding_h=0, stride=self.stride)
 
         out = self.pool(self.a_col)
 
@@ -69,7 +69,7 @@ class PoolLayer(Layer):
         delta_a_col = self.pool_delta(delta_a_col, delta_out_col)
 
         delta_out = col2im_indices(delta_a_col, (mini_batch_size * depth, 1, height, width),
-                                   self.height_filter, self.width_filter, padding=0, stride=self.stride)
+                                   self.height_filter, self.width_filter, padding_w=0, padding_h=0, stride=self.stride)
 
         delta_out = delta_out.reshape(self.a.shape)
         return delta_out

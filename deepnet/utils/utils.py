@@ -27,6 +27,16 @@ def make_mini_batches(x, y, size):
     return mini_batches
 
 
+def make_batches(a, batch_size):
+    if batch_size >= a.shape[0]:
+        return [a]
+
+    batches = []
+    for i in range(0, a.shape[0], batch_size):
+        batches.append(a[i:batch_size + i])
+    return batches
+
+
 def flatten(a):
     mini_batch_size = a.shape[0]
     out = a.ravel().reshape((mini_batch_size, -1))

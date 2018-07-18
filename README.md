@@ -51,3 +51,5 @@ https://wiseodd.github.io/techblog/2016/07/04/batchnorm/
 https://en.wikipedia.org/wiki/Activation_function
 ###### Teleboy
 https://github.com/reduzent/watchteleboy
+###### SWA
+https://arxiv.org/abs/1803.05407
