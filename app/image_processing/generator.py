@@ -3,7 +3,6 @@ import zipfile
 import random
 import numpy as np
 import requests
-from requests.exceptions import ConnectTimeout, ConnectionError, HTTPError
 import warnings
 import os
 from deepnet.utils import Generator
@@ -94,7 +93,7 @@ class TrainGenerator(Generator):
                 labels = np.array(self.dict_labels[use_logo]).reshape((1, -1))
                 mini_batches.append((images, labels))
 
-        except ConnectTimeout or ConnectionError or HTTPError as e:
+        except Exception as e:
             warnings.warn("A request wasn't successful, got {}".format(e))
         return mini_batches
 
