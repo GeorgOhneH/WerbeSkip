@@ -33,7 +33,7 @@ def _get_img(path_to_img, cords, padding_w, padding_h):
     padding_h += 16
     img = cv2.imread(path_to_img)
     if not cords:
-        cords = (865, 68)
+        cords = (865, 68)  # middle of all 3 possible positions
     x_middle, y_middle = cords
 
     img = np.pad(img, [(padding_h, padding_h), (padding_w, padding_w), (0, 0)], mode="constant", constant_values=255)

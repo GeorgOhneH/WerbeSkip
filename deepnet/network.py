@@ -221,7 +221,6 @@ class Network(object):
                     self._analysis.validate(*validation_set, mini_batch_size)
 
                 if save_step and index % save_step == 0:
-                    print(save_step, index % save_step == 0)
                     self.save(path)
 
                 self._iohandler.print_metrics(metrics, snapshot_step, mini_batch_size)
@@ -368,7 +367,7 @@ class Network(object):
         saves the current network with all properties
         """
         meta = {
-            "start_time": self._iohandler.start_time,
+            "start_time": self._iohandler.start_time-time.time(),
             "inputs": self._iohandler.inputs,
             "train_loss": self._train_loss,
             "train_accuracy": self._train_accuracy,
