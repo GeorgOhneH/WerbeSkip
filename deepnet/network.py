@@ -363,7 +363,14 @@ class Network(object):
         """
         saves the current network with all properties
         """
-        meta = {"start_time": self._iohandler.start_time, "inputs": self._iohandler.inputs}
+        meta = {
+            "start_time": self._iohandler.start_time,
+            "inputs": self._iohandler.inputs,
+            "train_loss": self._train_loss,
+            "train_accuracy": self._train_accuracy,
+            "validate_loss": self._validate_loss,
+            "validate_accuracy": self._validate_accuracy,
+        }
         parameters = [[np.asnumpy(value) for value in layer.save()] for layer in self._layers]
         dd.io.save(path, {"meta": meta, "parameters": parameters})
 
@@ -381,11 +388,14 @@ class Network(object):
         meta = network["meta"]
         self._iohandler.start_time = meta["start_time"]
         self._iohandler.inputs = meta["inputs"]
+        self._train_loss = meta["train_loss"]
+        self._train_accuracy = meta["train_accuracy"]
+        self._validate_loss = meta["validate_loss"]
+        self._validate_accuracy = meta["validate_accuracy"]
 
     def print_network_structure(self) -> None:
         """
         Print the network structure
-        Can be useful if you load a network from a file
         """
         print("Network Input: {}".format(self._input_neurons))
         for layer in self._layers:
