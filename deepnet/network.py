@@ -221,12 +221,13 @@ class Network(object):
                     self._analysis.validate(*validation_set, mini_batch_size)
 
                 if save_step and index % save_step == 0:
+                    print(save_step, index % save_step == 0)
                     self.save(path)
 
                 self._iohandler.print_metrics(metrics, snapshot_step, mini_batch_size)
 
-            if not save_step:
-                self.save("network.h5")
+            if save_step:
+                self.save(path)
 
         if plot:
             self._plot()
@@ -278,6 +279,9 @@ class Network(object):
                     self.save(path)
 
                 self._iohandler.print_metrics(metrics, snapshot_step, generator.mini_batch_size)
+
+            if save_step:
+                self.save(path)
 
         if plot:
             self._plot()
