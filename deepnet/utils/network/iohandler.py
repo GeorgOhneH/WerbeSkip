@@ -21,8 +21,9 @@ class IOHandler(object):
         self.network = network
         self.activate_ansi()
         self.inputs = 0
-        self._updates = 0
+        self._batches = 0
         self._metric_last_update = 0
+        self._last_print = 0
 
     def _s_epoch(self) -> str:
         return "epoch {} of {}".format(self.network.current_epoch + 1, self.network.total_epoch)
@@ -31,22 +32,22 @@ class IOHandler(object):
         return "progress: {:.3f}".format(self.network.progress)
 
     def _s_tl(self) -> str:
-        return "train loss: {:.5f}".format(numpy.mean(self.network.train_loss[-100:]))
+        return "train loss: {:.5f}".format(numpy.mean(self.network.train_loss[-self._last_print:]))
 
     def _s_ta(self) -> str:
-        return "train accuracy: {:.5f}".format(numpy.mean(self.network.train_accuracy[-100:]))
+        return "train accuracy: {:.5f}".format(numpy.mean(self.network.train_accuracy[-self._last_print:]))
 
     def _s_vl(self) -> str:
-        return "validate loss: {:.5f}".format(numpy.mean(self.network.validate_loss[-100:]))
+        return "validate loss: {:.5f}".format(numpy.mean(self.network.validate_loss[-self._last_print:]))
 
     def _s_va(self) -> str:
-        return "validate accuracy: {:.5f}".format(numpy.mean(self.network.validate_accuracy[-100:]))
+        return "validate accuracy: {:.5f}".format(numpy.mean(self.network.validate_accuracy[-self._last_print:]))
 
     def _s_time(self) -> str:
         return "time {:.3f}".format(time.time() - self.start_time)
 
     def _s_updates(self) -> str:
-        return "mini batch: {}".format(self._updates)
+        return "mini batch: {}".format(self._batches)
 
     @staticmethod
     def activate_ansi():
@@ -58,7 +59,7 @@ class IOHandler(object):
         if snapshot_step < time.time() - self._metric_last_update:
             self._print_metrics(metrics=metrics)
             self._metric_last_update = time.time()
-        self._updates += 1
+        self._batches += 1
         self.inputs += mini_batch_size
 
     def _print_metrics(self, metrics: tuple or list) -> None:
@@ -81,3 +82,4 @@ class IOHandler(object):
                 else:
                     result += " | "
         print("\033[F\033[F" + result)
+        self._last_print = self._batches
