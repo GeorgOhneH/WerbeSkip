@@ -30,9 +30,9 @@ def get_use_gpu():
 use_gpu = get_use_gpu()
 
 if use_gpu:
-    set_use_gpu(False)
     from .cupy_wrapper import *
 else:
-    set_use_gpu(False)
     from .numpy_wrapper import *
+
+set_use_gpu(False)
 
