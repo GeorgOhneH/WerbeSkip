@@ -389,7 +389,7 @@ class Network(object):
             layer.load([np.asarray(value) for value in parameter])
 
         meta = network["meta"]
-        self._iohandler.start_time = meta["start_time"]
+        self._iohandler.start_time = time.time() - meta["start_time"]
         self._iohandler.inputs = meta["inputs"]
         self._train_loss = meta["train_loss"]
         self._train_accuracy = meta["train_accuracy"]

@@ -36,7 +36,7 @@ class VideoCapture(object):
 
         response = self.session.get(master_url, verify=False, headers=header)
         data = response.content.decode("UTF-8")
-        cap_url = data.split("\n")[-4]
+        cap_url = data.split("\n")[2]
         return cap_url
 
     def __iter__(self):
@@ -51,7 +51,7 @@ class VideoCapture(object):
 
 if __name__ == "__main__":
     smallest_m = 100000000000
-    for frame in VideoCapture(channel=354):
+    for frame in VideoCapture(channel=303):
         m = np.mean(frame)
         if m < smallest_m:
             cv2.imwrite("black_img.png", frame)
