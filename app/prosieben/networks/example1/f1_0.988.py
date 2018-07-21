@@ -32,5 +32,5 @@ if __name__ == "__main__":
 
     optimizer = Adam(learning_rate=0.001)
     net.regression(optimizer=optimizer, cost="cross_entropy")
-    net.load("parameters.h5")
+    net.load("10padding.h5")
     net.evaluate(t_x, t_y)
