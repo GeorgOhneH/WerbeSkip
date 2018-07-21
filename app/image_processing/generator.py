@@ -9,7 +9,7 @@ from deepnet.utils import Generator
 
 
 class TrainGenerator(Generator):
-    def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1, channel="zattoo"):
+    def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1, channel="zattoo", colour=True):
         CHANNELS = {
             "zattoo": "prosieben/images/zattoo/important_images/logo32x32.png",
             "teleboy": "prosieben/images/teleboy/important_images/logo65x39.png",
@@ -23,11 +23,16 @@ class TrainGenerator(Generator):
         self.dict_labels = {0: [[1], [0]], 1: [[0], [1]]}
         self.padding_h = padding_w
         self.padding_w = padding_h
+        self.colour = colour
         self.init()
         super().__init__(epochs, mini_batch_size, n_workers)
 
     def init(self):
-        logo = cv2.imread(self.PATH_TO_LOGO)
+        if self.colour:
+            logo = cv2.imread(self.PATH_TO_LOGO)
+        else:
+            logo = np.expand_dims(cv2.imread(self.PATH_TO_LOGO, 0), axis=2)
+
         # normalize image
         self.logo = logo.astype("float32") / 255
 
@@ -64,7 +69,10 @@ class TrainGenerator(Generator):
             response = requests.get(url, timeout=10)
             response.raise_for_status()
             image = np.asarray(bytearray(response.content), dtype="uint8")
-            image = cv2.imdecode(image, 1)
+            if self.colour:
+                image = cv2.imdecode(image, 1)
+            else:
+                image = np.expand_dims(cv2.imdecode(image, 0), axis=2)
 
             # normalize image
             image = image.astype("float32") / 255

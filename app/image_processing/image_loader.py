@@ -28,10 +28,13 @@ DICTIONARIES = [
 ]
 
 
-def _get_img(path_to_img, cords, padding_w, padding_h):
+def _get_img(path_to_img, cords, padding_w, padding_h, colour):
     padding_w += 16
     padding_h += 16
-    img = cv2.imread(path_to_img)
+    if colour:
+        img = cv2.imread(path_to_img)
+    else:
+        img = np.expand_dims(cv2.imread(path_to_img, 0), axis=2)
     if not cords:
         cords = (865, 68)  # middle of all 3 possible positions
     x_middle, y_middle = cords
@@ -43,9 +46,9 @@ def _get_img(path_to_img, cords, padding_w, padding_h):
     return np.expand_dims(img, axis=0)
 
 
-def _get_path_to_file(padding_w, padding_h, center):
+def _get_path_to_file(padding_w, padding_h, center, colour):
     path_to_cache = os.path.join(os.path.dirname(__file__), "cache")
-    file_name = "w{}_h{}_c{}.h5".format(padding_w, padding_h, center)
+    file_name = "w{}_h{}_ce{}_co{}.h5".format(padding_w, padding_h, center, colour)
     path_to_file = os.path.join(path_to_cache, file_name)
     return path_to_file
 
@@ -64,7 +67,7 @@ def _save_cache(path_to_file, inputs, labels):
     return False
 
 
-def _load_imgs(padding_w, padding_h, center):
+def _load_imgs(padding_w, padding_h, center, colour):
     inputs = []
     labels = []
     print("Load Images. Total Directories: {}".format(len(DICTIONARIES)))
@@ -75,7 +78,7 @@ def _load_imgs(padding_w, padding_h, center):
         if center:
             cords = None
         for img_name in tqdm(os.listdir(path), desc=dictionary["name"]):
-            inputs.append(_get_img(os.path.join(path, img_name), cords, padding_w, padding_h))
+            inputs.append(_get_img(os.path.join(path, img_name), cords, padding_w, padding_h, colour))
             if dictionary["cords"]:
                 labels.append([[0, 1]])
             else:
@@ -85,12 +88,12 @@ def _load_imgs(padding_w, padding_h, center):
     return inputs, labels
 
 
-def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False, cache=False):
-    path_to_file = _get_path_to_file(padding_w, padding_h, center)
+def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False, cache=False, colour=True):
+    path_to_file = _get_path_to_file(padding_w, padding_h, center, colour)
 
     inputs, labels = _load_cache(path_to_file)
     if inputs.shape[0] == 0 and labels.shape[0] == 0:
-        inputs, labels = _load_imgs(padding_w, padding_h, center)
+        inputs, labels = _load_imgs(padding_w, padding_h, center, colour)
         if cache:
             _save_cache(path_to_file, inputs, labels)
 
