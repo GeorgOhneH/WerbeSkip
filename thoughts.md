@@ -261,3 +261,6 @@ Ich habe ein paar Bilder generieren lassen und es braucht viel zu lange
 ca 14 min, was einfach viel zu lange ist. Und sobalt weisse Flächen im Bild
 sind wird es unvorhersehbar, da das Netzwerk nicht gut unterscheiden kann
 zwischen Logo und weisser Flächen. Sieht man gut am Bild in app/prosieben/networks/prediction1
+## 22.07.2018
+Ein schwarz-weisses Bild lernt schneller und besser als ein
+farbiges

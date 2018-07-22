@@ -4,7 +4,7 @@ from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMa
 from deepnet.optimizers import Adam
 
 if __name__ == "__main__":
-    v_x, v_y, t_x, t_y = load_ads_cnn(split=0)
+    v_x, v_y, t_x, t_y = load_ads_cnn(split=0, colour=True)
 
     net = Network()
 
@@ -33,4 +33,6 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.001)
     net.regression(optimizer=optimizer, cost="cross_entropy")
     net.load("10padding.h5")
+    # Trained with 976000 images
     net.evaluate(t_x, t_y)
+    # loss: 0.05221 | accuracy: 0.98480 | precision: 0.99646 | recall: 0.98274 | f1_score: 0.98955
