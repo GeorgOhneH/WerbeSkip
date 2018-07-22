@@ -38,10 +38,20 @@ class IOHandler(object):
         return "train accuracy: {:.5f}".format(numpy.mean(self.network.train_accuracy[-self._last_print:]))
 
     def _s_vl(self) -> str:
-        return "validate loss: {:.5f}".format(numpy.mean(self.network.validate_loss[-self._last_print:]))
+        value = numpy.mean(self.network.validate_loss[-self._last_print:])
+
+        if numpy.isnan(value):
+            return ""
+
+        return "validate loss: {:.5f}".format(value)
 
     def _s_va(self) -> str:
-        return "validate accuracy: {:.5f}".format(numpy.mean(self.network.validate_accuracy[-self._last_print:]))
+        value = numpy.mean(self.network.validate_accuracy[-self._last_print:])
+
+        if numpy.isnan(value):
+            return ""
+
+        return "validate accuracy: {:.5f}".format(value)
 
     def _s_time(self) -> str:
         return "time {:.3f}".format(time.time() - self.start_time)
@@ -75,9 +85,12 @@ class IOHandler(object):
 
         result = ""
         for index, metric in enumerate(metrics):
-            result += self.DICTIONARY[metric]()
+            string = self.DICTIONARY[metric]()
+            if not string:
+                continue
+            result += string
             if index + 1 < len(metrics):
-                if len(result.split("\n")[-1]) > 80:
+                if len(result.split("\n")[-1]) > 60:
                     result += "\n"
                 else:
                     result += " | "

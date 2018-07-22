@@ -5,7 +5,7 @@ import numpywrapper as np
 
 def get_im2col_indices(x_shape, field_height, field_width, padding_h=1, padding_w=1, stride=1):
     # First figure out what the size of the output should be
-    N, C, W, H = x_shape
+    N, C, H, W = x_shape
     assert (H + 2 * padding_h - field_height) % stride == 0
     assert (W + 2 * padding_w - field_width) % stride == 0
     out_height = int((H + 2 * padding_h - field_height) / stride + 1)
@@ -31,7 +31,6 @@ def im2col_indices(x, field_height, field_width, padding_h=1, padding_w=1,  stri
 
     k, i, j = get_im2col_indices(x.shape, field_height, field_width, padding_h, padding_w,
                                  stride)
-
     cols = x_padded[:, k, i, j]
     C = x.shape[1]
     cols = cols.transpose(1, 2, 0).reshape(field_height * field_width * C, -1)
@@ -41,7 +40,7 @@ def im2col_indices(x, field_height, field_width, padding_h=1, padding_w=1,  stri
 def col2im_indices(cols, x_shape, field_height=3, field_width=3, padding_h=1, padding_w=1,
                    stride=1):
     """ An implementation of col2im based on fancy indexing and np.add.at """
-    N, C, W, H = x_shape
+    N, C, H, W = x_shape
     H_padded, W_padded = H + 2 * padding_h, W + 2 * padding_w
     x_padded = np.zeros((N, C, H_padded, W_padded), dtype=cols.dtype)
     k, i, j = get_im2col_indices(x_shape, field_height, field_width, padding_h, padding_w,
