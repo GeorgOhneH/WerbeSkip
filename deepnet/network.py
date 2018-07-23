@@ -367,7 +367,7 @@ class Network(object):
         saves the current network with all properties
         """
         meta = {
-            "start_time": self._iohandler.start_time-time.time(),
+            "start_time": time.time()-self._iohandler.start_time,
             "inputs": self._iohandler.inputs,
             "train_loss": self._train_loss,
             "train_accuracy": self._train_accuracy,
