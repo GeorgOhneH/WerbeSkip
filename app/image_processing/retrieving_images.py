@@ -5,7 +5,8 @@ import numpy as np
 
 
 class VideoCapture(object):
-    def __init__(self, channel: int):
+    def __init__(self, channel: int, colour=True):
+        self.colour = colour
         self.session = requests.session()
         self.setup_cookies()
         self.cap_url = self.get_cap_url(channel)
@@ -44,6 +45,8 @@ class VideoCapture(object):
 
     def __next__(self):
         ret, frame = self.cap.read()
+        if not self.colour:
+            frame = np.expand_dims(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), axis=2)
         if not ret:
             raise StopIteration
         return frame
