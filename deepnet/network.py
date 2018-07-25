@@ -283,7 +283,7 @@ class Network(object):
                 self.save(path)
 
         if plot:
-            self._plot()
+            self.plot()
 
     def _update_parameters(self, mini_batch: tuple or list, mini_batch_size: int) -> None:
         """
@@ -322,6 +322,9 @@ class Network(object):
         """
         self._plotter.plot_accuracy()
         self._plotter.plot_loss()
+
+    def plot(self):
+        self._plot()
 
     def evaluate(self, x: ndarray, y: ndarray) -> None:
         """

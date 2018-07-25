@@ -28,11 +28,16 @@ def make_mini_batches(x, y, size):
 
 
 def make_batches(a, batch_size):
-    if batch_size >= a.shape[0]:
+    try:
+        array_size = a.shape[0]
+    except:
+        array_size = len(a)
+
+    if batch_size >= array_size:
         return [a]
 
     batches = []
-    for i in range(0, a.shape[0], batch_size):
+    for i in range(0, array_size, batch_size):
         batches.append(a[i:batch_size + i])
     return batches
 
