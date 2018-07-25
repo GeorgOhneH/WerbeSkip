@@ -264,3 +264,33 @@ zwischen Logo und weisser Flächen. Sieht man gut am Bild in app/prosieben/netwo
 ## 22.07.2018
 Ein schwarz-weisses Bild lernt schneller und besser als ein
 farbiges
+## 25.07.2018
+Habe ein Netzwerk trainiert, dass das ganze Prosiebenbild als input
+nimmt. Die training_accuracy war auf ungefähr 95.7 %.
+
+1 beutedt Logo und 0 beteuted kein Logo
+
+![figure1](assets/mean_figure.png)
+
+Jeder Punkt ist der durchnittliche Output vom Netzwerk von  von einer sekunde (30 Bilder).
+
+![figure2](assets/frame_figure.png)
+
+Gleich wie der ander Graf, aber nur ein Bild anstatt 30.
+
+Das erste was einem direkt auffält sind die Punkte in der
+Mitte. Zu dem Zeitpunkt lief gerade MediaShop TV, wo kein
+Prosieben-Logo eingespielt worden ist und deswegen ist so
+lange "Werbung".
+
+Ansonsten sieht man schön, dass wenn ein Logo vorhanden ist, ist es
+sehr sicher und wenn es keinen findes ist es sehr unsicher. Dies ist verständlich,
+da es auf weissen Flächen unmöglich ist ein Logo zu erkennnen, da es gleich
+ausschauen würde, selbt wenn ein Logo dort wäre.
+
+Die heisst, wenn ich sagen will ob Webung läuft schau ich hauptsächlich
+ob es sicher ist das ein Logo ist, d.h die Werte zwischen 0.9 und 1
+sind die wichtigsten
+
+Die Frage ist ob ich Real-time eine gute classification machen, kann
+da es immer kleine fehler gibt.
