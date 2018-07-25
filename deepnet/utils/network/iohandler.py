@@ -23,7 +23,7 @@ class IOHandler(object):
         self.inputs = 0
         self._batches = 0
         self._metric_last_update = 0
-        self._last_print = 0
+        self._last_print = 1
 
     def _s_epoch(self) -> str:
         return "epoch {} of {}".format(self.network.current_epoch + 1, self.network.total_epoch)
