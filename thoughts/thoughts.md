@@ -294,3 +294,59 @@ sind die wichtigsten
 
 Die Frage ist ob ich Real-time eine gute classification machen, kann
 da es immer kleine fehler gibt.
+
+## 26.07.2018
+
+![figure2](assets/frame_result_figure.png)
+
+die roten Punkte sind die resultate vom netzwerk.
+Blau ist die verarbeitung der roten Punkte in eindeutige klassifikation
+
+#### Der Algorithmus
+```
+array = np.array(dd.io.load("thoughts/assets/frame_points.h5"))
+filters = []
+result = []
+
+filter_size = 10
+chain_size = 5
+
+for i in range(len(array)):
+    snippet = array[i-filter_size:i]
+    if np.any(snippet > 0.97):  # checks if network is sure that he found a logo
+        filters.append(1)
+    else:
+        filters.append(0)
+
+    last_filter = filters[-1]
+    if np.all(np.array(filters[-chain_size:]) == last_filter):  # checks if the last values are the same
+        if filters[-1] == 1:
+            if np.mean(array[i-chain_size:i]) > 0.8:
+                result.append(last_filter)
+            else:
+                result.append(result[-1])
+        else:
+            result.append(last_filter)
+    else:
+        result.append(result[-1])
+```
+
+Das Prinzip basiert darauf, dass das Netzwerk so sicher ist, wenn es
+ein Logo erkennt, d.h ich nehms als Logo nur wenn es zu 97% sicher ist.
+Im 2 Teil gehts ums umschalten zwischen "Logo" und "keinem Logo", d.h
+es wird erst Umgeschaltelt, wenn es vorher 5 mal das gleiche bekommen hat.
+Es schaltet auch nur zu Logo, wenn der Durschnitt mindestetens über 0.8 ist.
+
+##### Folgerungen
+Von Logo zu keinem Logo kann es erst nach minimal filter_size+chain_size
+in dem Fall nach 15 sekunden, dass heisst die klassifikation ist
+mindesten 15 sekunden zu spät.
+
+Von keinem Logo zu Logo braucht man aber nur minimal chain_size, da man
+im ersten Teil nur einer das Kriterium erfüllen muss.
+Es ist auch viel wichtiger, dass man von keinem Logo zu Logo schnell
+wechselt als andersrum, da man diesen Weschel als benutzer nicht
+selber sehen würde
+
+Note: Die Hyperparameter sind ganz genau an die Daten angepasst und
+man müsste noch schauen wie es mit neuen Daten klarkommt.
