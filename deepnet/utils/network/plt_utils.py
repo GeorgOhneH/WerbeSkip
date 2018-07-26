@@ -69,6 +69,6 @@ class Plotter(object):
         batch_size = len(data) // 80
 
         smooth_axis = [np.mean(batch) for batch in make_batches(data, batch_size)]
-        x_axis = np.arange(len(smooth_axis)) * batch_size
+        x_axis = np.arange(len(smooth_axis)) * len(data) / len(smooth_axis)
 
         return smooth_axis, x_axis
