@@ -19,12 +19,12 @@ class Plotter(object):
         It uses a semilogy scale
         :return: None
         """
-        smooth_train_y_axis = self.smooth_data(self.network.train_loss)
-        smooth_validation_y_axis = self.smooth_data(self.network.validate_loss)
+        smooth_train_y_axis, train_x_axis = self.smooth_data(self.network.train_loss)
+        smooth_validation_y_axis, validation_x_axis = self.smooth_data(self.network.validate_loss)
 
-        plt.semilogy(smooth_train_y_axis, color="blue", linewidth=1, label="train")
+        plt.semilogy(train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
         if smooth_validation_y_axis:
-            plt.semilogy(smooth_validation_y_axis, color="red", linewidth=1, label="validation")
+            plt.semilogy(validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
             plt.ylabel("loss")
 
         plt.title("model loss")
@@ -40,12 +40,12 @@ class Plotter(object):
         the training data
         :return: None
         """
-        smooth_train_y_axis = self.smooth_data(self.network.train_accuracy)
-        smooth_validation_y_axis = self.smooth_data(self.network.validate_accuracy)
+        smooth_train_y_axis, train_x_axis = self.smooth_data(self.network.train_accuracy)
+        smooth_validation_y_axis, validation_x_axis = self.smooth_data(self.network.validate_accuracy)
 
-        plt.plot(smooth_train_y_axis, color="blue", linewidth=1, label="train")
+        plt.plot(train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train")
         if smooth_validation_y_axis:
-            plt.plot(smooth_validation_y_axis, color="red", linewidth=1, label="validation")
+            plt.plot(validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
             plt.ylabel("accuracy")
 
         plt.title("model accuracy")
@@ -58,19 +58,17 @@ class Plotter(object):
     @staticmethod
     def smooth_data(data):
         """
-        to smooth the data it uses the savgol filter
-        this method is nice, because you can still see
-        the variance of data after the smoothing
-
+        means the data
         :param data: array like
         :return smooth_axis: ndarray
             Smoothed array with the same dimensions
         """
         if not data:
-            return data
+            return data, np.array([])
 
         batch_size = len(data) // 80
 
         smooth_axis = [np.mean(batch) for batch in make_batches(data, batch_size)]
+        x_axis = np.arange(len(smooth_axis)) * batch_size
 
-        return smooth_axis
+        return smooth_axis, x_axis
