@@ -352,3 +352,10 @@ Zu beachten ist das der Algorithmus in real-time laufen kann.
 
 Note: Die Hyperparameter sind ganz genau an die Daten angepasst und
 man müsste noch schauen wie man mit neuen Daten klarkommt.
+
+### Prosieben Teleboy Plots
+Zur Vollständigkeit.
+
+![figure2](assets/teleboy_accuracy.png)
+
+![figure2](assets/teleboy_loss.png)
