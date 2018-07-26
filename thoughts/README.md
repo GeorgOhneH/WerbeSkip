@@ -348,5 +348,7 @@ Es ist auch viel wichtiger, dass man von keinem Logo zu Logo schnell
 wechselt als andersrum, da man diesen Weschel als benutzer nicht
 selber sehen würde
 
+Zu beachten ist das der Algorithmus in real-time laufen kann.
+
 Note: Die Hyperparameter sind ganz genau an die Daten angepasst und
-man müsste noch schauen wie es mit neuen Daten klarkommt.
+man müsste noch schauen wie man mit neuen Daten klarkommt.
