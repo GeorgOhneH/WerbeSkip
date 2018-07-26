@@ -79,6 +79,16 @@ class Network(object):
     def input(self, neurons) -> None:
         """
         defines input size
+        if fullyconnected it's just a number
+        if convolution it's (D, H, W)
+        where D is the depth, H the height and W the width
+        note:
+        the input array must have the shape of (N, D, H, W)
+        where N is multiple inputs
+        example:
+        if you just have one input the shape must be (1, D, H, W)
+        if you have 10: (10, D, H, W)
+        etc.
         :param neurons: number of neurons
         :return: None
         """
