@@ -359,3 +359,18 @@ Zur Vollständigkeit.
 ![figure2](assets/teleboy_accuracy.png)
 
 ![figure2](assets/teleboy_loss.png)
+
+## 27.07.2018
+Mit denen Hyperparameter gehts besser:
+```
+filter_size = 25
+   if np.any(snippet > 0.9):
+   if np.mean(array[i-chain_size:i]) > 0.9):
+```
+
+Es gibt ab und zu noch fehler, da ich nicht die filter size zu extrem erhöhen
+will.
+
+![figure2](assets/result2_figure.png)
+
+note: Jeder rote Punkt ist ein einzelner Frame. Ein Frame pro Sekunde
