@@ -2,15 +2,21 @@ import requests
 import json
 import cv2
 import numpy as np
+import math
+import time
 
 
 class VideoCapture(object):
-    def __init__(self, channel: int, colour=True):
+
+    def __init__(self, channel: int, colour=True, rate_limit=None):
+        self.rate_limit = rate_limit  # images per second
         self.colour = colour
         self.session = requests.session()
         self.setup_cookies()
         self.cap_url = self.get_cap_url(channel)
         self.cap = cv2.VideoCapture(self.cap_url)
+        self.FRAME_RATE = self.cap.get(5)
+        self.last_read = time.time()
 
     def setup_cookies(self):
         url = "https://www.teleboy.ch/api/anonymous/verify"
@@ -44,12 +50,26 @@ class VideoCapture(object):
         return self
 
     def __next__(self):
+        if self.rate_limit:
+            delta_time = time.time() - self.last_read
+            time_out = 1 / self.rate_limit - delta_time
+            if time_out > 0:
+                time.sleep(time_out)
+
+            missed_frames = math.ceil(self.FRAME_RATE * max(1 / self.rate_limit, delta_time))
+            self.grab(missed_frames)
+            self.last_read = time.time()
+
         ret, frame = self.cap.read()
         if not self.colour:
             frame = np.expand_dims(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), axis=2)
         if not ret:
             raise StopIteration
         return frame
+
+    def grab(self, n):
+        for _ in range(n):
+            self.cap.grab()
 
 
 if __name__ == "__main__":
