@@ -313,7 +313,7 @@ chain_size = 5
 
 for i in range(len(array)):
     snippet = array[i-filter_size:i]
-    if np.any(snippet > 0.97):  # checks if network is sure that he found a logo
+    if np.any(snippet > 0.97):  # checks if network is sure that it found a logo
         filters.append(1)
     else:
         filters.append(0)
