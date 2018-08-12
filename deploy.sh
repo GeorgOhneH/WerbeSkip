@@ -29,4 +29,10 @@ echo 'Server runnning on port ' $PORT
 python manage.py runserver &
 
 echo 'Start update_handler.py'
-python update_handler.py
+python update_handler.py &
+
+read var1
+
+kill $(ps aux | grep '[r]edis-server' | awk '{print $2}')
+kill $(ps aux | grep '[p]ython manage.py' | awk '{print $2}')
+kill $(ps aux | grep '[p]ython update_handler.py' | awk '{print $2}')

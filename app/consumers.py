@@ -108,7 +108,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             room.group_name,
             {
                 "type": "chat.update",
-                "room_id": room_id,
+                "room_id": self.scope['user'].is_anonymous,
                 "channel": channel,
             }
         )

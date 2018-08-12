@@ -1,4 +1,3 @@
-"""
 # Gedanken
 ## 15.06.2018
 Die Generator Implementierung ist nicht so allgemein Gültig und man müsste
@@ -374,4 +373,4 @@ will.
 ![figure2](assets/result2_figure.png)
 
 note: Jeder rote Punkt ist ein einzelner Frame. Ein Frame pro Sekunde
-"""
+

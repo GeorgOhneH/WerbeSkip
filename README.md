@@ -1,55 +1,55 @@
-##### Sources
-###### docs
-https://docs.scipy.org/doc/
+# WerbeSkip
+A Webserver to recognize ads on TV
 
-https://www.tensorflow.org/api_docs/python/
+Build with Machine Learning, Django and Vue
 
-http://tflearn.org/
+## Installation
+Note: Cloning this repository may take a while, because it's very big
 
-https://keras.io/
+[Redis](https://redis.io/download) must be installed on your system
+``` bash
+# install dependencies
+npm install
 
-https://docs-cupy.chainer.org/en/stable/index.html
-###### general
-http://neuralnetworksanddeeplearning.com/
-https://github.com/mnielsen/neural-networks-and-deep-learning
+# serve with hot reload at localhost:8080
+# note that the websocket server won't function
+npm run dev
 
-https://deepnotes.io/implementing-cnn
-https://github.com/parasdahal/deepnet
+# build for production with minification
+npm run build
 
-https://github.com/wiseodd/hipsternet
+# build for production and view the bundle analyzer report
+npm run build --report
 
-https://www.youtube.com/watch?v=aircAruvnKk
+# deploy
+.deploy.sh
+```
 
-https://www.youtube.com/watch?v=IHZwWFHWa-w
+## File Structure
+There are 2 parts to the app. The first part is the neural network and
+the algorithmen. The second part is the webserver.
+### Neural Network
+The main part is the deepnet directory. It holds a self written deep
+neural network library.
 
-https://www.youtube.com/watch?v=Ilg3gGewQ5U
+In the helperfunction directory are the main function, which are used
+to determine if an image is an ad and other helpful functions.
+Note: some function need images to function, which aren't on github
+[more info](helperfunctions/prosieben)
 
-https://www.youtube.com/watch?v=tIeHLnjs5U8
-###### Backpropagation
-https://sudeepraja.github.io/Neural/
-###### Evaluation
-http://blog.exsilio.com/all/accuracy-precision-recall-f1-score-interpretation-of-performance-measures/
-###### Softmax
-https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/
-###### Convolution
-https://wiseodd.github.io/techblog/2016/07/16/convnet-conv-layer/
+The numpywrapper module is just so the neural network library can
+switch between numpy and cupy
 
-http://cs231n.github.io/convolutional-networks/
-###### Gradient / Optimizer
-http://ruder.io/optimizing-gradient-descent/
+### Webserver
+The main parts are: app, src, vuedj
+##### vuedj
+The Django settings
+##### app
+Backend and Websocket
+##### src
+Frontend implemented with VueJS
 
-https://towardsdatascience.com/types-of-optimization-algorithms-used-in-neural-networks-and-ways-to-optimize-gradient-95ae5d39529f
-###### Regulations
-https://kratzert.github.io/2016/02/12/understanding-the-gradient-flow-through-the-batch-normalization-layer.html
+### Others
+thoughts is the directory with the Protokoll
 
-https://towardsdatascience.com/batch-normalization-in-neural-networks-1ac91516821c
-
-https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/batch_norm_layer.html
-
-https://wiseodd.github.io/techblog/2016/07/04/batchnorm/
-###### Activation function
-https://en.wikipedia.org/wiki/Activation_function
-###### Teleboy
-https://github.com/reduzent/watchteleboy
-###### SWA
-https://arxiv.org/abs/1803.05407
+update_handler.py is the intersection between the server and the algorithmen
