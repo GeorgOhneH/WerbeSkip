@@ -1,7 +1,7 @@
-<!-- TODO Gedanken -->
+"""
 # Gedanken
 ## 15.06.2018
-Die Generator Implantierung ist nicht so allgeimein Gültig und man müsste
+Die Generator Implementierung ist nicht so allgemein Gültig und man müsste
 dann immer viel selber machen. Werde eine Hilfsklasse machen.
 
 Hab die fit funktion im Netzwerk aufgeräumt
@@ -31,14 +31,14 @@ eignet sich einiges besser für diese Anwendung.
 Das Problem, dass die Threads nicht aufhören wenn die liste schon lang genug
 ist löse ich am besten mit einem zweiten Condition Object. Wird es
 auch schneller machen, da dann die liste mit den Items nicht mehr die
-ganze Ziet von den Threads blockiert wird.
+ganze Zeit von den Threads blockiert wird.
 
 Ein Problem könnte noch sein, dass die Threads vom Generator schon
-anfangen obwohl das Netzwerk noch nicht initziliesiert ist und es
-desewgen ziemlich lange braucht um anzufangen.
+anfangen obwohl das Netzwerk noch nicht initialisiert ist und es
+deswegen ziemlich lange braucht um anzufangen.
 
 Muss noch den Generator richtig beenden(Threads schliessen etc) und
-auch wieder reiniliesieren. Bin mir nicht sicher ob ich die Threads
+auch wieder reinitialisieren. Bin mir nicht sicher ob ich die Threads
 noch joinen muss oder nicht, da alle schon nicht mehr "leben".
  Glaub aber nicht das es schadet
 
@@ -49,10 +49,10 @@ dort alles SharedMemory ist.
 ## 17.06.2018
 
 Mithilfe des Managers kann man ziemlich einfach SharedMemory
-implementieren, dabei muss man aber sehr aufpassen, da der Processe
+implementieren, dabei muss man aber sehr aufpassen, da der Process
 alles was es braucht pickelt und wenn man den Manager pickelt gibt
 es eine Fehlermeldung, d.h. der Manager darf nicht in der Klasse sein
-oder muss man irgenwie Unsichtbar machen vom Processe. Muss noch schauen
+oder muss man irgenwie Unsichtbar machen vom Process. Muss noch schauen
 wie ich das am besten Löse.
 
 Ich lösch einach die referenz des Manager aus dem dict der Klasse, so
@@ -83,26 +83,26 @@ Der Multicore Generator ist besser als der Alte. Aber mehr workers
 macht ihn nicht viel schneller, was wahrscheinlich darin liegt das ich viele
 Locks benutze, die sich gegenseitig blockieren.
 
-#### Parallelizing
-Ich hab mir verschiedene Arten von Parralelitierung von einem
-Neuronalen Netzwek angeschaut. Darunter waren Pipline, large scale distributed und
+#### Parallelling
+Ich hab mir verschiedene Arten von Parallelisierung von einem
+Neuronalen Netzwerk angeschaut. Darunter waren Pipline, large scale distributed und
 anderes. Am meisten hat mir der [Hogwild Alogrithmus](https://arxiv.org/abs/1106.5730)
-gefallen, da einfach zu implementieren ist und auch gut zu funktioniren scheint
+gefallen, da einfach zu implementieren ist und auch gut zu funktionieren scheint
 
 ## 18.06.2018
 Nach Hogwild muss ich nur in den Layers SharedMemory bereit stellen.
 Der Optimizer speichert auch daten, aber ich glaub das ist ok wenn
-jeder Processe seinen eigenen Optimizer hat.
+jeder Process seinen eigenen Optimizer hat.
 
 Nach langem probieren ist mir aufgefallen, dass der Hogwild Alogrithmus
 nicht implementierbar ist in Python, da das SharedMemory auf picklen und
 hin und herschicken mit Pipes basiert, aber für Hogwild  bräuchte ich
-eine atomi funktion, die es so nicht in Python gibt. Ich weiss gar nicht
-ob es sich üperhaupt lohnen kann, das Netzwerk zu parallelisieren, da Python
+eine atomic funktion, die es so nicht in Python gibt. Ich weiss gar nicht
+ob es sich überhaupt lohnen kann, das Netzwerk zu parallelisieren, da Python
 einfach nicht dafür gemacht worden ist. Ich gebe das Parallelisieren auf und
 werden es vielleicht später nochmal probieren
 
-Hab den Convolution Layer implementiert. Hab viel Code von Websiten.
+Hab den Convolution Layer implementiert. Hab viel Code von Webseiten.
 
 Implementierung von MaxPoolLayer mit einer BasePool Layer Klasse für
 einfache implementierung einer weitern Pool Klasse
@@ -118,7 +118,7 @@ an der ersten Stelle.(Umstellung noch nicht am Generator und am Batchnormlayer)
 
 Batchnorm mit Convolution kompatibel
 
-Der Convoultion Layer funktiniert gut, aber es braucht ewig zum lernen
+Der Convoultion Layer funktioniert gut, aber es braucht ewig zum lernen
 mit dem Netzwerk:
 ```
 train_data, train_labels, test_data, test_labels = load_conv()
@@ -150,9 +150,9 @@ net.evaluate(test_data, test_labels)
 ```
 bräuchte es 16 Stunden.
 
-Deswegen hab ich die numpy libary mit cupy ersetzt. Sie funktiniert
+Deswegen hab ich die numpy libary mit cupy ersetzt. Sie funktioniert
 genau gleich(bis auf kleine Ausnahmen), aber sie arbeitet mit der GPU
-mithilfe von CUDA, d.h es funktiniert nur wenn CUDA installiert ist und
+mithilfe von CUDA, d.h es funktioniert nur wenn CUDA installiert ist und
 man eine NVIDIA GPU hat. Ueber die GPU lernt das Netzwerk 10 Mal schneller, d.h
 es  braucht "nur" noch 1.6 Stunden. Im Moment geht es aber nur mit CUDA
 und nicht mehr über die CPU.
@@ -164,7 +164,7 @@ Hab alles kompatible mit cupy gemacht.(Ausser Generator)
 Um auch ohne GPU und Cupy das Netzwerk zu benutzen habe ich ein Wrapper-Module
 für numpy and cupy entwickelt, da beide die gleiche api benutzen. Mit dem
 Wrapper kann jeder Zeit von numpy auf cupy umstellen, sollte man aber
-am besten nur einmal am Anfang machne(default ist numpy).
+am besten nur einmal am Anfang machen(default ist numpy).
 
 ### Testlauf
 setup:
@@ -208,9 +208,9 @@ loss: 0.03619 | accuracy: 0.98700
 
 ### Colab
 Hab die Struktur vom Ordner aufgeräumt, so das es leichter zu benutzen
-ist. Vorallem aus dem Grund, das ich dann das [Colab](https://colab.research.google.com/)
+ist. Vor allem aus dem Grund, das ich dann das [Colab](https://colab.research.google.com/)
 einfacher benutzen kann. Tenserflow Ordner hab ich gelöscht, da er nicht
-wieklich reingepasst hat. Werde ihn vielleicht später wieder rein
+wirklich reingepasst hat. Werde ihn vielleicht später wieder rein
 nehmen um Vergleiche anzustellen
 
 Hab ersten Colab versuch gemacht: [Mein Colab](https://colab.research.google.com/drive/1Uq9kIGxhfTSdy-aHziWgWcj2fLuT22oV)
@@ -226,14 +226,14 @@ der Struktur sicheren, sondern nur noch die Parameter.
 Habe die funktionen vom app Ordner aufgeräumt und ermöglicht, dass
 man das Bild Farbig trainieren kann.
 
-Jetzt ist das wichtigste implementier, damit ich anfangen kann, dass
-best mögliche netzwerk zu findem, dass das prosieben Logo erkennen kann.
+Jetzt ist das wichtigste implementiert, damit ich anfangen kann, dass
+best mögliche netzwerk zu finden, dass das prosieben Logo erkennen kann.
 Das Logo kann an 3 Orten auf dem Bild sein. Die Frage ist ob ich ein Netzwerk
 trainiere, dass alle 3 Orten erkennt mit einem Bild oder ob ich dem
 Netzwerk 3 Bilder gebe und er soll schauen ob in einem der 3 Bilder das Logo ist.
 
 Bei cv2 ist die erste Stelle nicht die Breite sondern die Höhe und die zweite
-Stelle die Breite und nicht die Höhe. Hat mich nur sehr verwirred.
+    Stelle die Breite und nicht die Höhe. Hat mich nur sehr verwirrt.
 
 Ich hab probiert nur mit einem Bild alle 3 Stellen abzudecken, lauf aber
 in grosse Memory probleme hinein, da das Bild so gross wird. Ich hab 6GB Video
@@ -248,17 +248,17 @@ da ich dort 12GB Ram habe.
 ## 01.07.2018
 Habe ein Netzwerk trainiert mit einem f1_score von 0.988.
 
-Werde jetzt von Zatto auf Teleboy wechseln, da ich dort relative einfach
+Werde jetzt von Zattoo auf Teleboy wechseln, da ich dort relative einfach
 den HD Stream anzapfen kann. Das heisst auch, dass ich das Logo neu
 "finden" muss.
 ## 10.07.2018
-Um hervorzusagen ob ein Logo im Bild, ohne zu wissen wo es genau ist, lasse ich jeden Pixel
+Um vorherzusagen ob ein Logo im Bild, ohne zu wissen wo es genau ist, lasse ich jeden Pixel
 durchs Netzwerk laufen und schau wie dieses Bild, dann ausschaut.
 
 Im moment kann man nur das Bild generieren.
 ## 15.07.2018
 Ich habe ein paar Bilder generieren lassen und es braucht viel zu lange
-ca 14 min, was einfach viel zu lange ist. Und sobalt weisse Flächen im Bild
+ca 14 min, was einfach viel zu lange ist. Und sobald weisse Flächen im Bild
 sind wird es unvorhersehbar, da das Netzwerk nicht gut unterscheiden kann
 zwischen Logo und weisser Flächen. Sieht man gut am Bild in app/prosieben/networks/prediction1
 ## 22.07.2018
@@ -268,27 +268,27 @@ farbiges
 Habe ein Netzwerk trainiert, dass das ganze Prosiebenbild als input
 nimmt. Die training_accuracy war auf ungefähr 95.7 %.
 
-1 beutedt Logo und 0 beteuted kein Logo
+1 bedeutet Logo und 0 bedeutet kein Logo
 
 ![figure1](assets/mean_figure.png)
 
-Jeder Punkt ist der durchnittliche Output vom Netzwerk von  von einer sekunde (30 Bilder).
+Jeder Punkt ist der durchschnittliche Output vom Netzwerk von  von einer sekunde (30 Bilder).
 
 ![figure2](assets/frame_figure.png)
 
 Gleich wie der ander Graf, aber nur ein Bild anstatt 30.
 
-Das erste was einem direkt auffält sind die Punkte in der
+Das erste was einem direkt auffällt sind die Punkte in der
 Mitte. Zu dem Zeitpunkt lief gerade MediaShop TV, wo kein
 Prosieben-Logo eingespielt worden ist und deswegen ist so
 lange "Werbung".
 
 Ansonsten sieht man schön, dass wenn ein Logo vorhanden ist, ist es
-sehr sicher und wenn es keinen findes ist es sehr unsicher. Dies ist verständlich,
+sehr sicher und wenn es keinen findet ist es sehr unsicher. Dies ist verständlich,
 da es auf weissen Flächen unmöglich ist ein Logo zu erkennnen, da es gleich
-ausschauen würde, selbt wenn ein Logo dort wäre.
+ausschauen würde, selbst wenn ein Logo dort wäre.
 
-Die heisst, wenn ich sagen will ob Webung läuft schau ich hauptsächlich
+Die heisst, wenn ich sagen will ob Werbung läuft schau ich hauptsächlich
 ob es sicher ist das ein Logo ist, d.h die Werte zwischen 0.9 und 1
 sind die wichtigsten
 
@@ -334,8 +334,8 @@ for i in range(len(array)):
 Das Prinzip basiert darauf, dass das Netzwerk so sicher ist, wenn es
 ein Logo erkennt, d.h ich nehms als Logo nur wenn es zu 97% sicher ist.
 Im 2 Teil gehts ums umschalten zwischen "Logo" und "keinem Logo", d.h
-es wird erst Umgeschaltelt, wenn es vorher 5 mal das gleiche bekommen hat.
-Es schaltet auch nur zu Logo, wenn der Durschnitt mindestetens über 0.8 ist.
+es wird erst Umgeschaltet, wenn es vorher 5 mal das gleiche bekommen hat.
+Es schaltet auch nur zu Logo, wenn der Durchschnitt mindestens über 0.8 ist.
 
 ##### Folgerungen
 Von Logo zu keinem Logo kann es erst nach minimal filter_size+chain_size
@@ -345,7 +345,7 @@ mindesten 15 sekunden zu spät.
 Von keinem Logo zu Logo braucht man aber nur minimal chain_size, da man
 im ersten Teil nur einer das Kriterium erfüllen muss.
 Es ist auch viel wichtiger, dass man von keinem Logo zu Logo schnell
-wechselt als andersrum, da man diesen Weschel als benutzer nicht
+wechselt als andersrum, da man diesen Wechsel als benutzer nicht
 selber sehen würde
 
 Zu beachten ist das der Algorithmus in real-time laufen kann.
@@ -374,4 +374,4 @@ will.
 ![figure2](assets/result2_figure.png)
 
 note: Jeder rote Punkt ist ein einzelner Frame. Ein Frame pro Sekunde
-
+"""
