@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "chart.js": "^2.7.2",
+    "mime": "^1.4.1",
     "vue": "^2.5.2",
     "vue-chartjs": "^3.4.0",
     "vue-native-websocket": "^2.0.8",
