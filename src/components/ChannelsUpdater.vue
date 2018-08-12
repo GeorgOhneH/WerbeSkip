@@ -1,14 +1,28 @@
 <template>
+  <channels-updater-dev-mode :use="devMode"></channels-updater-dev-mode>
 </template>
 
 <script>
   import {mapMutations} from 'vuex'
 
+  import ChannelsUpdaterDevMode from './ChannelsUpdaterDevMode'
 
   export default {
     name: "ChannelsUpdater",
-    created() {
-      this.$options.sockets.onmessage = (message) => this.messageReceived(message.data)
+    components: {
+      ChannelsUpdaterDevMode,
+    },
+    data() {
+      return {
+        devMode: false
+      }
+    },
+    mounted() {
+      if (window.webpackHotUpdate) {
+        this.devMode = true
+      } else {
+        this.$options.sockets.onmessage = (message) => this.messageReceived(message.data)
+      }
     },
     methods: {
       ...mapMutations([
@@ -17,7 +31,6 @@
       ]),
       messageReceived(data) {
         data = JSON.parse(data)
-        console.log(data.channel)
         if (data.channel !== undefined) {
           this.updateChannels(data.channel)
         }

@@ -10,7 +10,16 @@
         </v-list-tile-content>
       </v-list-tile>
 
+      <div v-if="loading" class="text-xs-center my-3">
+        <v-progress-circular
+          indeterminate
+          :size="30"
+          :width="2"
+        ></v-progress-circular>
+      </div>
+
       <v-list-tile
+        v-else
         v-for="channel in listChannels"
         :key="channel.name"
         :to="{path: '/' + channel.name}"
@@ -78,6 +87,9 @@
         set(val) {
         }
       },
+      loading() {
+        return this.listChannels.length === 0
+      }
     },
     methods: {
       ...mapMutations([
@@ -86,11 +98,10 @@
       ]),
     },
     watch: {
-      '$route'(to, from, next) {
+      '$route'(to, from) {
         this.$emit('close')
-        next()
       }
-    }
+    },
   }
 </script>
 

@@ -1,4 +1,3 @@
-import time
 from websocket import create_connection
 from deepnet import Network
 import numpy as np
@@ -20,7 +19,6 @@ class WerbeSkip(object):
 
         self.filter_size = 25
         self.chain_size = 5
-        self.time = time.time()
 
     def init_network(self):
         net = Network()
@@ -80,8 +78,6 @@ class WerbeSkip(object):
         return message
 
     def get_prediction(self):
-        print(time.time()-self.time)
-        self.time = time.time()
         img = next(self.cap)
 
         prediction = self.network.feedforward(img)
@@ -118,7 +114,6 @@ class WerbeSkip(object):
         while True:
             message = self.producer()
             websocket.send(json.dumps(message))
-            print("message send")
 
     def run(self):
         cookies = self.get_cookies()

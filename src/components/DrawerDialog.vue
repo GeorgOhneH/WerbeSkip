@@ -2,16 +2,16 @@
   <v-navigation-drawer
     v-if="$vuetify.breakpoint.mdAndUp"
     app
-    :value="value"
+    :value="open"
     clipped
   >
-    <drawer-dialog-content @close="value = false"></drawer-dialog-content>
+    <drawer-dialog-content @close="open = false"></drawer-dialog-content>
   </v-navigation-drawer>
 
   <v-dialog
     app
     v-else
-    v-model="value"
+    v-model="open"
     fullscreen
     hide-overlay
     transition="dialog-bottom-transition"
@@ -20,11 +20,11 @@
       <v-toolbar dark color="primary">
         <v-toolbar-title class="ml-3">WerbeSkip</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn icon dark @click.native="value = false">
+        <v-btn icon dark @click.native="open = false">
           <v-icon>close</v-icon>
         </v-btn>
       </v-toolbar>
-      <drawer-dialog-content @close="value = false"></drawer-dialog-content>
+      <drawer-dialog-content @close="open = false"></drawer-dialog-content>
     </v-card>
   </v-dialog>
 </template>
@@ -38,11 +38,16 @@
     components: {
       DrawerDialogContent,
     },
-    watch: {
-      value: function (val) {
-        this.$emit('input', val)
+    computed: {
+      open: {
+        get() {
+          return this.value
+        },
+        set(val) {
+          this.$emit('input', val)
+        }
       }
-    }
+    },
   }
 </script>
 

@@ -64,7 +64,6 @@
       },
       hide() {
         return this.listChannels.length === 0;
-
       }
     },
   }
