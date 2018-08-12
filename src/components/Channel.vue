@@ -16,7 +16,7 @@
       <v-divider class="mb-4"></v-divider>
       <h1 class="display-2">History</h1>
       <v-divider class="my-2"></v-divider>
-      <chart :ads="channel.ads" :styles="{height: '500px', position: 'relative'}" ></chart>
+      <chart :ads="channel.ads" :styles="{height: height, position: 'relative'}" ></chart>
 
     </div>
   </v-container>
@@ -50,7 +50,18 @@
       },
       error404() {
         return this.channel === undefined && !this.loading;
-      }
+      },
+      height() {
+        if (this.$vuetify.breakpoint.lgAndUp) {
+          return '500px'
+        } else if (this.$vuetify.breakpoint.mdOnly) {
+          return '400px'
+        } else if (this.$vuetify.breakpoint.smOnly) {
+          return '300px'
+        } else if (this.$vuetify.breakpoint.xsOnly) {
+          return '200px'
+        }
+      },
     },
   }
 </script>
