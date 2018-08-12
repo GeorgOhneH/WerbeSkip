@@ -3,7 +3,7 @@
 .idea/
 test.py
 /helperfunctions/prosieben/images/
-/helperfunctions/prosieben/wrong_predictions
+wrong_predictions/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
