@@ -14,7 +14,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -62,6 +61,9 @@ coverage.xml
 .media/
 local_settings.py
 db.sqlite3
+templates/*
+dump.rdb
+static-vuedj/*
 
 # Flask stuff:
 instance/
@@ -128,5 +130,5 @@ yarn-error.log*
 
 
 # Staticfiles
-staticfiles/
+staticfiles/*
 

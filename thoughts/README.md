@@ -374,3 +374,4 @@ will.
 ![figure2](assets/result2_figure.png)
 
 note: Jeder rote Punkt ist ein einzelner Frame. Ein Frame pro Sekunde
+
