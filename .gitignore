@@ -2,8 +2,8 @@
 
 .idea/
 test.py
-/app/prosieben/images/
-/app/prosieben/wrong_predictions
+/helperfunctions/prosieben/images/
+/helperfunctions/prosieben/wrong_predictions
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -108,3 +108,24 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+.DS_Store
+node_modules/
+/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+
+
+
+# Staticfiles
+staticfiles/
+
