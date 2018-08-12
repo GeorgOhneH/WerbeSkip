@@ -100,8 +100,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         Called by receive_json when someone sends a message to a room.
         """
         # Check they are in this room
-        if not self.scope["user"].is_superuser:
-            raise ClientError("ROOM_ACCESS_DENIED")
         if room_id not in self.rooms:
             raise ClientError("ROOM_ACCESS_DENIED")
         # Get the room and send to the group about it

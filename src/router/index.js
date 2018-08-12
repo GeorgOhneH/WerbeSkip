@@ -1,22 +1,15 @@
 import Vue from 'vue'
-import Router from 'vue-router'
-import Hello from '@/components/Hello'
-import Foo from '@/components/Foo'
+import VueRouter from 'vue-router'
 
-Vue.use(Router)
+import Overview from '../components/Overview'
+import Channel from '../components/Channel'
 
-export default new Router({
+Vue.use(VueRouter)
+
+export default new VueRouter({
   mode: 'history',
   routes: [
-    {
-      path: '/',
-      name: 'Hello',
-      component: Foo
-    },
-    {
-      path: '/foo',
-      name: 'Foo',
-      component: Hello
-    }
+    {path: '/', component: Overview},
+    {path: '/:channel', component: Channel}
   ]
 })

@@ -8,7 +8,8 @@ import time
 
 class VideoCapture(object):
 
-    def __init__(self, channel: int, colour=True, rate_limit=None):
+    def __init__(self, channel: int, colour=True, rate_limit=None, convert_network=False):
+        self.convert_network = convert_network
         self.rate_limit = rate_limit  # images per second
         self.colour = colour
         self.session = requests.session()
@@ -51,25 +52,34 @@ class VideoCapture(object):
 
     def __next__(self):
         if self.rate_limit:
-            delta_time = time.time() - self.last_read
-            time_out = 1 / self.rate_limit - delta_time
-            if time_out > 0:
-                time.sleep(time_out)
-
-            missed_frames = math.ceil(self.FRAME_RATE * max(1 / self.rate_limit, delta_time))
-            self.grab(missed_frames)
-            self.last_read = time.time()
+            self.wait()
 
         ret, frame = self.cap.read()
-        if not self.colour:
-            frame = np.expand_dims(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), axis=2)
+
         if not ret:
             raise StopIteration
+
+        if not self.colour:
+            frame = np.expand_dims(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), axis=2)
+
+        if self.convert_network:
+            frame = np.expand_dims(frame.transpose(2, 0, 1), axis=0) / 255
+
         return frame
 
     def grab(self, n):
         for _ in range(n):
             self.cap.grab()
+
+    def wait(self):
+        delta_time = time.time() - self.last_read
+        self.last_read = time.time()
+        time_out = 1 / self.rate_limit - delta_time
+        if time_out > 0:
+            time.sleep(time_out)
+
+        missed_frames = int(self.FRAME_RATE / self.rate_limit)
+        self.grab(missed_frames)
 
 
 if __name__ == "__main__":

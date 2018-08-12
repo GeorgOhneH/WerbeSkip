@@ -1,0 +1,60 @@
+<template>
+  <v-container>
+    <div v-if="loading" class="text-xs-center mt-5">
+      <v-progress-circular
+        indeterminate
+        :size="70"
+        :width="2"
+      ></v-progress-circular>
+    </div>
+    <div v-else-if="error404">
+      <error404></error404>
+    </div>
+    <div v-else>
+      <h1 v-if="$vuetify.breakpoint.mdAndUp" class="display-4">{{name}}</h1>
+      <h1 v-else class="display-3" style="font-weight: 300">{{name}}</h1>
+      <v-divider class="mb-4"></v-divider>
+      <h1 class="display-2">History</h1>
+      <v-divider class="my-2"></v-divider>
+      <chart :ads="channel.ads" :styles="{height: '500px', position: 'relative'}" ></chart>
+
+    </div>
+  </v-container>
+</template>
+
+<script>
+  import Error404 from './Error404'
+  import Chart from './Chart'
+
+  import {mapGetters} from 'vuex'
+
+  export default {
+    name: "Channel",
+    components: {
+      Error404,
+      Chart,
+    },
+    computed: {
+      ...mapGetters([
+        'channel',
+        'listChannels'
+      ]),
+      name() {
+        return this.$route.params.channel
+      },
+      channel() {
+        return this.$store.getters.channel(this.name)
+      },
+      loading() {
+        return this.$store.getters.listChannels.length === 0
+      },
+      error404() {
+        return this.channel === undefined && !this.loading;
+      }
+    },
+  }
+</script>
+
+<style scoped>
+
+</style>
