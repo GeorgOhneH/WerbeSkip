@@ -1,5 +1,5 @@
 # WerbeSkip
-A Webserver to recognize ads on TV
+A Webserver to detect ads on TV
 
 Build with Machine Learning, Django and Vue
 
