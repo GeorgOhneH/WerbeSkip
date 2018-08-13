@@ -43,11 +43,11 @@ noch joinen muss oder nicht, da alle schon nicht mehr "leben".
 
 Der Generator funktioniert nicht mit Multicoreprocesse, da
 die Liste nicht SharedMemory ist. Fürs Threadning war das egal, da
-dort alles SharedMemory ist.
+es auf einem Processor läuft
 
 ## 17.06.2018
 
-Mithilfe des Managers kann man ziemlich einfach SharedMemory
+Mithilfe des Managers kann man ziemlich einfach eine SharedMemory
 implementieren, dabei muss man aber sehr aufpassen, da der Process
 alles was es braucht pickelt und wenn man den Manager pickelt gibt
 es eine Fehlermeldung, d.h. der Manager darf nicht in der Klasse sein
@@ -90,7 +90,7 @@ gefallen, da einfach zu implementieren ist und auch gut zu funktionieren scheint
 
 ## 18.06.2018
 Nach Hogwild muss ich nur in den Layers SharedMemory bereit stellen.
-Der Optimizer speichert auch daten, aber ich glaub das ist ok wenn
+Der Optimizer speichert auch Daten, aber ich glaub das ist ok wenn
 jeder Process seinen eigenen Optimizer hat.
 
 Nach langem probieren ist mir aufgefallen, dass der Hogwild Alogrithmus
@@ -147,7 +147,7 @@ net.fit(train_data, train_labels, validation_set=(test_data, test_labels), epoch
         plot=True, snapshot_step=2)
 net.evaluate(test_data, test_labels)
 ```
-bräuchte es 16 Stunden.
+brauchte 16 Stunden.
 
 Deswegen hab ich die numpy libary mit cupy ersetzt. Sie funktioniert
 genau gleich(bis auf kleine Ausnahmen), aber sie arbeitet mit der GPU
@@ -215,15 +215,15 @@ nehmen um Vergleiche anzustellen
 Hab ersten Colab versuch gemacht: [Mein Colab](https://colab.research.google.com/drive/1Uq9kIGxhfTSdy-aHziWgWcj2fLuT22oV)
 
 ## 21.06.2018
-Habe Colab gefixed und sollte jetzt
+Habe Colab gefixed und sollte jetzt gehen
 
-Schneller save funktion, kann aber nicht mehr das ganze Netzwerk mit
+Schnellere save funktion, kann aber nicht mehr das ganze Netzwerk mit
 der Struktur sicheren, sondern nur noch die Parameter.
 
 ## 22.06.2018
 
-Habe die funktionen vom app Ordner aufgeräumt und ermöglicht, dass
-man das Bild Farbig trainieren kann.
+Habe die funktionen vom app (Jetzt helperfunctions) Ordner aufgeräumt
+und ermöglicht, dass man das Bild Farbig trainieren kann.
 
 Jetzt ist das wichtigste implementiert, damit ich anfangen kann, dass
 best mögliche netzwerk zu finden, dass das prosieben Logo erkennen kann.
@@ -249,17 +249,21 @@ Habe ein Netzwerk trainiert mit einem f1_score von 0.988.
 
 Werde jetzt von Zattoo auf Teleboy wechseln, da ich dort relative einfach
 den HD Stream anzapfen kann. Das heisst auch, dass ich das Logo neu
-"finden" muss.
+"finden" muss und das ich kein validation set dafür habe.
 ## 10.07.2018
-Um vorherzusagen ob ein Logo im Bild, ohne zu wissen wo es genau ist, lasse ich jeden Pixel
-durchs Netzwerk laufen und schau wie dieses Bild, dann ausschaut.
+Um vorherzusagen ob ein Logo im Bild ist, ohne zu wissen wo es genau ist,
+ lasse ich jeden Pixel durchs Netzwerk laufen und schau wie dieses Bild, dann ausschaut.
 
 Im moment kann man nur das Bild generieren.
 ## 15.07.2018
 Ich habe ein paar Bilder generieren lassen und es braucht viel zu lange
 ca 14 min, was einfach viel zu lange ist. Und sobald weisse Flächen im Bild
 sind wird es unvorhersehbar, da das Netzwerk nicht gut unterscheiden kann
-zwischen Logo und weisser Flächen. Sieht man gut am Bild in app/prosieben/networks/prediction1
+zwischen Logo und weisser Flächen. Sieht man gut an den Bildern in app/prosieben/networks/prediction1
+
+![Bild](../helperfunctions/prosieben/networks/prediction1/colourmap0.png)
+
+![Bild](../helperfunctions/prosieben/networks/prediction1/orig0.jpg)
 ## 22.07.2018
 Ein schwarz-weisses Bild lernt schneller und besser als ein
 farbiges
@@ -275,7 +279,7 @@ Jeder Punkt ist der durchschnittliche Output vom Netzwerk von  von einer sekunde
 
 ![figure2](assets/frame_figure.png)
 
-Gleich wie der ander Graf, aber nur ein Bild anstatt 30.
+Gleich wie der ander Graf, aber nicht der durchschnitt, sondern nur ein Bild pro sekunde.
 
 Das erste was einem direkt auffällt sind die Punkte in der
 Mitte. Zu dem Zeitpunkt lief gerade MediaShop TV, wo kein
@@ -374,3 +378,22 @@ will.
 
 note: Jeder rote Punkt ist ein einzelner Frame. Ein Frame pro Sekunde
 
+## 13.08.2018
+
+Hab den Webserver hochgeladen.
+
+Fürs Backend benutze ich Django und Django Channels (Für das Websocket)
+
+Fürs Frontend benutze ich Vue und Vuetify
+
+Benutze das [DjangoVue](https://github.com/NdagiStanley/vue-django)
+
+update_handler.py ist dafür zuständig den Websocket mit Daten zu füllen.
+Im Moment schaffe ich es nicht mich über script einzulocken.
+
+Der Websocket basiert auf dem [Beispiel multichat](https://github.com/andrewgodwin/channels-examples/)
+
+Zum starten vom Server muss man einfach die deploy.sh ausführen.
+Achtung: zum schliessen des Servers einfach in der console enter drücken,
+sonst werden die Processe(redis-server, django-server und update_handler.py)
+nicht geschlossen.
