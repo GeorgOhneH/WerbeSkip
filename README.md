@@ -22,6 +22,7 @@ npm run build
 npm run build --report
 
 # deploy
+# Note to stop the bash just press enter, else the processes it starts aren't going close
 .deploy.sh
 ```
 

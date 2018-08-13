@@ -33,6 +33,6 @@ python update_handler.py &
 
 read var1
 
-kill $(ps aux | grep '[r]edis-server' | awk '{print $2}')
 kill $(ps aux | grep '[p]ython manage.py' | awk '{print $2}')
+kill $(ps aux | grep '[r]edis' | awk '{print $2}')
 kill $(ps aux | grep '[p]ython update_handler.py' | awk '{print $2}')
