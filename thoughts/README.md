@@ -394,6 +394,6 @@ Im Moment schaffe ich es nicht mich über script einzulocken.
 Der Websocket basiert auf dem [Beispiel multichat](https://github.com/andrewgodwin/channels-examples/)
 
 Zum starten vom Server muss man einfach die deploy.sh ausführen.
-Achtung: zum schliessen des Servers einfach in der console enter drücken,
+Achtung: zum schliessen des Servers einfach die bash console terminieren,
 sonst werden die Processe(redis-server, django-server und update_handler.py)
 nicht geschlossen.

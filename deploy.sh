@@ -22,17 +22,14 @@ echo 'Done...'
 echo 'Start Redis'
 redis-server &
 echo 'Done...'
-
+sleep 2s
 echo 'Start Django'
 export PORT=8000
 echo 'Server runnning on port ' $PORT
 python manage.py runserver &
+sleep 4s
 
 echo 'Start update_handler.py'
 python update_handler.py &
 
-read var1
-
-kill $(ps aux | grep '[p]ython manage.py' | awk '{print $2}')
-kill $(ps aux | grep '[r]edis' | awk '{print $2}')
-kill $(ps aux | grep '[p]ython update_handler.py' | awk '{print $2}')
+read
