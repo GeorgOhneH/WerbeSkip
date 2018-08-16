@@ -100,7 +100,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         Called by receive_json when someone sends a message to a room.
         """
         room_name = content['room']
-        if content['token'] != 'NWcVm69HTM4kQ2giE7JQ20buzQmu7uGcfNxftTC1':
+        token = content.get('token', None)
+        if token != 'NWcVm69HTM4kQ2giE7JQ20buzQmu7uGcfNxftTC1':
             raise ClientError("ROOM_ACCESS_DENIED")
         # Check they are in this room
         if room_name not in self.rooms:
