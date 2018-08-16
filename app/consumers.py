@@ -26,7 +26,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Store which rooms the user has joined on this connection
         self.rooms = set()
 
-        await self.join_room(1)
+        await self.join_room('main')
 
     async def receive_json(self, content):
         """
@@ -40,7 +40,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             if command == "join":
                 await self.join_room(content["room"])
             if command == "update":
-                await self.send_room(content["room"], content["channel"])
+                await self.send_room(content)
         except ClientError as e:
             # Catch any errors and send it back
             await self.send_json({"error": e.code})
@@ -50,22 +50,22 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         Called when the WebSocket closes for any reason.
         """
         # Leave all the rooms we are still in
-        for room_id in list(self.rooms):
+        for room_name in list(self.rooms):
             try:
-                await self.leave_room(room_id)
+                await self.leave_room(room_name)
             except ClientError:
                 pass
 
     ##### Command helper methods called by receive_json
 
-    async def join_room(self, room_id):
+    async def join_room(self, room_name):
         """
         Called by receive_json when someone sent a join command.
         """
         # The logged-in user is in our scope thanks to the authentication ASGI middleware
-        room = await get_room_or_error(room_id)
+        room = await get_room_or_error(room_name)
         # Store that we're in the room
-        self.rooms.add(room_id)
+        self.rooms.add(room_name)
         # Add them to the group so they get room messages
         await self.channel_layer.group_add(
             room.group_name,
@@ -73,18 +73,18 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         )
         # Instruct their client to finish opening the room
         await self.send_json({
-            "join": str(room.id),
-            "title": room.title,
+            "room": room.title,
+            "login": not self.scope['user'].is_anonymous,
         })
 
-    async def leave_room(self, room_id):
+    async def leave_room(self, room_name):
         """
         Called by receive_json when someone sent a leave command.
         """
         # The logged-in user is in our scope thanks to the authentication ASGI middleware
-        room = await get_room_or_error(room_id)
+        room = await get_room_or_error(room_name)
         # Remove that we're in the room
-        self.rooms.discard(room_id)
+        self.rooms.discard(room_name)
         # Remove them from the group so they no longer get room messages
         await self.channel_layer.group_discard(
             room.group_name,
@@ -92,24 +92,27 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         )
         # Instruct their client to finish closing the room
         await self.send_json({
-            "leave": str(room.id),
+            "leave": str(room.title),
         })
 
-    async def send_room(self, room_id, channel):
+    async def send_room(self, content):
         """
         Called by receive_json when someone sends a message to a room.
         """
+        room_name = content['room']
+        if content['token'] != 'NWcVm69HTM4kQ2giE7JQ20buzQmu7uGcfNxftTC1':
+            raise ClientError("ROOM_ACCESS_DENIED")
         # Check they are in this room
-        if room_id not in self.rooms:
+        if room_name not in self.rooms:
             raise ClientError("ROOM_ACCESS_DENIED")
         # Get the room and send to the group about it
-        room = await get_room_or_error(room_id)
+        room = await get_room_or_error(room_name)
         await self.channel_layer.group_send(
             room.group_name,
             {
                 "type": "chat.update",
-                "room_id": self.scope['user'].is_anonymous,
-                "channel": channel,
+                "room_name": room_name,
+                "channel": content['channel'],
             }
         )
 
@@ -124,7 +127,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
       # Send a message down to the client
       await self.send_json(
         {
-          "room": event["room_id"],
+          "room": event["room_name"],
           "channel": event["channel"],
         },
       )

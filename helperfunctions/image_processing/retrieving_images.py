@@ -63,7 +63,7 @@ class VideoCapture(object):
             frame = np.expand_dims(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), axis=2)
 
         if self.convert_network:
-            frame = np.expand_dims(frame.transpose(2, 0, 1), axis=0) / 255
+            frame = np.expand_dims(frame.transpose((2, 0, 1)), axis=0) / 255
 
         return frame
 
@@ -72,20 +72,11 @@ class VideoCapture(object):
             self.cap.grab()
 
     def wait(self):
-        delta_time = time.time() - self.last_read
-        self.last_read = time.time()
-        time_out = 1 / self.rate_limit - delta_time
-        if time_out > 0:
-            time.sleep(time_out)
-
-        missed_frames = int(self.FRAME_RATE / self.rate_limit)
+        missed_frames = math.ceil(self.FRAME_RATE / self.rate_limit)
         self.grab(missed_frames)
 
 
 if __name__ == "__main__":
-    smallest_m = 100000000000
-    for frame in VideoCapture(channel=303):
-        m = np.mean(frame)
-        if m < smallest_m:
-            cv2.imwrite("black_img.png", frame)
-            smallest_m = m
+    for frame in VideoCapture(channel=354):
+        cv2.imshow("img", frame)
+        cv2.waitKey(1)

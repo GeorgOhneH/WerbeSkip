@@ -1,11 +1,12 @@
-from websocket import create_connection
 from deepnet import Network
 import numpy as np
 from helperfunctions.image_processing.retrieving_images import VideoCapture
-from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, Flatten
+from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, \
+    Flatten
 from deepnet.optimizers import Adam
 import json
-import requests
+import websocket
+import _thread as thread
 
 
 class WerbeSkip(object):
@@ -54,27 +55,9 @@ class WerbeSkip(object):
         net.load("helperfunctions\prosieben\\networks\\teleboy\\teleboy.h5")
         return net
 
-    def get_cookies(self):
-        URL1 = 'http://localhost:8000/admin/'
-        URL = 'http://localhost:8000/admin/login/?next=/admin/'
-        UN = 'updater'
-        PWD = 'supersecret'
-        client = requests.session()
-
-        # Retrieve the CSRF token first
-        client.get(URL1)  # sets the cookie
-        csrftoken = client.cookies['csrftoken']
-
-        login_data = dict(username=UN, password=PWD, csrfmiddlewaretoken=csrftoken)
-        r = client.post(URL, data=login_data)
-        cookies = ""
-        for key, value in client.cookies.get_dict().items():
-            cookies += key + "=" + value + ";"
-        return cookies
-
     def producer(self):
         channel = self.get_prediction()
-        message = {"command": "update", "room": 1, "channel": channel}
+        message = {"command": "update", "room": 'main', "channel": channel, 'token': 'NWcVm69HTM4kQ2giE7JQ20buzQmu7uGcfNxftTC1'}
         return message
 
     def get_prediction(self):
@@ -110,15 +93,33 @@ class WerbeSkip(object):
             self.result.pop(0)
             self.predictions.pop(0)
 
-    def producer_handler(self, websocket):
-        while True:
-            message = self.producer()
-            websocket.send(json.dumps(message))
+    def on_message(self, ws, message):
+        error = json.loads(message).get('error', None)
+        if error:
+            print('GOT ERROR:', error)
+
+    def on_error(self, ws, error):
+        print(error)
+
+    def on_close(self, ws):
+        print("### closed ###")
+
+    def on_open(self, ws):
+        def run(*args):
+            while True:
+                message = self.producer()
+                ws.send(json.dumps(message))
+
+        thread.start_new_thread(run, ())
 
     def run(self):
-        cookies = self.get_cookies()
-        websocket = create_connection(url="ws://127.0.0.1:8000/chat/stream/", cookies=cookies)
-        self.producer_handler(websocket)
+        websocket.enableTrace(True)
+        ws = websocket.WebSocketApp("ws://127.0.0.1:8000/chat/stream/",
+                                    on_message=self.on_message,
+                                    on_error=self.on_error,
+                                    on_close=self.on_close)
+        ws.on_open = self.on_open
+        ws.run_forever()
 
 
 if __name__ == "__main__":

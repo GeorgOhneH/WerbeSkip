@@ -9,12 +9,6 @@ def init_room(apps, schema_editor):
     room.save()
 
 
-def init_user(apps, schema_editor):
-    User = apps.get_model('auth', 'User')
-    user, created = User.objects.get_or_create(is_superuser=True, username="updater", is_staff=True, password="pbkdf2_sha256$100000$hnXs6xgXb8Mu$r6wIJBXB09i8exxM7Br1UEyGdObnLPU3mN4nfqY5y/s=")
-    user.save()
-
-
 class Migration(migrations.Migration):
     dependencies = [
         ('app', '0001_initial'),
@@ -23,5 +17,4 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(init_room),
-        migrations.RunPython(init_user),
     ]

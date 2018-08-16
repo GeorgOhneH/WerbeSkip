@@ -3,12 +3,10 @@ deepdish
 numpy
 matplotlib
 scipy
-tensorflow
 python-mnist
 pygame
 opencv-python
 requests
-python-mnist
 coverage==4.5.1
 coveralls==1.3.0
 Django==2.0.7
