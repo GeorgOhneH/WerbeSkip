@@ -1,5 +1,5 @@
 <template>
-  <router-link tag="div" :to="{path: '/' + channel.name}">
+  <router-link tag="div" :to="{path: '/' + channel.name.toLowerCase()}">
     <v-card style="cursor: pointer;">
       <v-card-title><h4 class="main-card-title">{{ channel.name }}</h4></v-card-title>
       <v-divider></v-divider>

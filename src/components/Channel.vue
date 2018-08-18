@@ -11,11 +11,16 @@
       <error404></error404>
     </div>
     <div v-else>
-      <h1 v-if="$vuetify.breakpoint.mdAndUp" class="display-4">{{name}}</h1>
+      <h1 v-if="$vuetify.breakpoint.smAndUp" class="display-4">{{name}}</h1>
       <h1 v-else class="display-3" style="font-weight: 300">{{name}}</h1>
+
       <v-divider class="mb-4"></v-divider>
-      <h1 class="display-2">History</h1>
-      <v-divider class="my-2"></v-divider>
+      <h1 class="display-1" style="font-weight: 300;">Status</h1>
+
+      <h1 v-if="$vuetify.breakpoint.smAndUp" class="display-4">{{ad}}</h1>
+      <h1 v-else class="display-3" style="font-weight: 300">{{ad}}</h1>
+
+      <h1 class="display-1 mt-3" style="font-weight: 300;">History</h1>
       <chart :ads="channel.ads" :styles="{height: height, position: 'relative'}" ></chart>
 
     </div>
@@ -39,17 +44,26 @@
         'channel',
         'listChannels'
       ]),
-      name() {
+      urlName() {
         return this.$route.params.channel
       },
       channel() {
-        return this.$store.getters.channel(this.name)
+        return this.$store.getters.channel(this.urlName)
+      },
+      name() {
+        return this.channel.name
       },
       loading() {
         return this.$store.getters.listChannels.length === 0
       },
       error404() {
         return this.channel === undefined && !this.loading;
+      },
+      ad() {
+        if (this.channel.ads[this.channel.ads.length-1]) {
+          return 'No Ads'
+        }
+        return 'Ads'
       },
       height() {
         if (this.$vuetify.breakpoint.lgAndUp) {

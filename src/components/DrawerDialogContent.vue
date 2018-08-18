@@ -22,7 +22,7 @@
         v-else
         v-for="channel in listChannels"
         :key="channel.name"
-        :to="{path: '/' + channel.name}"
+        :to="{path: '/' + channel.name.toLowerCase()}"
         ripple
       >
         <v-list-tile-content>

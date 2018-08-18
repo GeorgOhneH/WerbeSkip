@@ -21,7 +21,11 @@ export default new Vuex.Store({
       return state.dictChannels
     },
     channel: state => name => {
-      return state.dictChannels[name]
+      for (const channel of state.listChannels) {
+        if (name.toLowerCase() === channel.name.toLowerCase()) {
+          return channel
+        }
+      }
     },
   },
   mutations: {
