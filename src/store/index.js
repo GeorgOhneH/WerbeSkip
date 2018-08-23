@@ -7,12 +7,20 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     darkMode: true,
+    useNotification: false,
+    useNotificationSound: true,
     listChannels: [],
     dictChannels: {},
   },
   getters: {
     darkMode: state => {
       return state.darkMode
+    },
+    useNotification: state => {
+      return state.useNotification
+    },
+    useNotificationSound: state => {
+      return state.useNotificationSound
     },
     listChannels: state => {
       return state.listChannels
@@ -32,6 +40,16 @@ export default new Vuex.Store({
     darkMode: (state, val) => {
       if (typeof(val) === "boolean") {
         state.darkMode = val
+      }
+    },
+    useNotification: (state, val) => {
+      if (typeof(val) === "boolean") {
+        state.useNotification = val
+      }
+    },
+    useNotificationSound: (state, val) => {
+      if (typeof(val) === "boolean") {
+        state.useNotificationSound = val
       }
     },
     initChannels: (state, dictChannels) => {

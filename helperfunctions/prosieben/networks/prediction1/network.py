@@ -1,7 +1,7 @@
 from deepnet import Network
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, Flatten
 from deepnet.optimizers import Adam
-from app.image_processing.prediction import visualize_prediction
+from helperfunctions.image_processing.prediction import visualize_prediction
 
 import cv2
 import numpy as np

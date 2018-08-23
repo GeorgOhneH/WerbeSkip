@@ -1,9 +1,8 @@
 from deepnet import Network
 import cv2
 import numpy as np
-from app.image_processing.image_loader import load_ads_cnn
-from app.image_processing.generator import TrainGenerator
-from app.image_processing.retrieving_images import VideoCapture
+from helperfunctions.image_processing.logo_generator import LogoGenerator
+from helperfunctions.image_processing.retrieving_images import VideoCapture
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, Flatten
 from deepnet.optimizers import Adam, SGD
 import time
@@ -11,7 +10,7 @@ import deepdish as dd
 
 if __name__ == "__main__":
 
-    gen = TrainGenerator(epochs=1, mini_batch_size=64, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy")
+    gen = LogoGenerator(epochs=1, mini_batch_size=64, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy")
     net = Network()
 
     net.use_gpu = True

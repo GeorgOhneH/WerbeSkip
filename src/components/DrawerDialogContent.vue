@@ -58,6 +58,32 @@
           ></v-switch>
         </v-list-tile-action>
       </v-list-tile>
+
+      <v-list-tile>
+        <v-list-tile-content>
+          <v-list-tile-title>Notification</v-list-tile-title>
+        </v-list-tile-content>
+
+        <v-list-tile-action>
+          <v-switch
+            v-model="useNotification"
+          ></v-switch>
+        </v-list-tile-action>
+      </v-list-tile>
+
+      <v-list-tile>
+        <v-list-tile-content>
+          <v-list-tile-title>Notification Sound</v-list-tile-title>
+        </v-list-tile-content>
+
+        <v-list-tile-action :class="{'switch-disable': !useNotification}">
+          <v-switch
+            v-model="useNotificationSound"
+            :disabled="!useNotification"
+          ></v-switch>
+        </v-list-tile-action>
+      </v-list-tile>
+
     </v-list-group>
   </v-list>
 </template>
@@ -70,6 +96,8 @@
     computed: {
       ...mapGetters([
         'darkMode',
+        'useNotification',
+        'useNotificationSound',
         'listChannels'
       ]),
       darkMode: {
@@ -78,6 +106,22 @@
         },
         set(val) {
           this.$store.commit('darkMode', val)
+        }
+      },
+      useNotification: {
+        get() {
+          return this.$store.getters.useNotification
+        },
+        set(val) {
+          this.$store.commit('useNotification', val)
+        }
+      },
+      useNotificationSound: {
+        get() {
+          return this.$store.getters.useNotificationSound
+        },
+        set(val) {
+          this.$store.commit('useNotificationSound', val)
         }
       },
       listChannels: {
@@ -94,11 +138,13 @@
     methods: {
       ...mapMutations([
         'darkMode',
+        'useNotification',
+        'useNotificationSound',
         'listChannels'
       ]),
     },
     watch: {
-      '$route'(to, from) {
+      $route(to, from) {
         this.$emit('close')
       }
     },
@@ -106,5 +152,7 @@
 </script>
 
 <style scoped>
-
+.switch-disable {
+  cursor: not-allowed;
+}
 </style>

@@ -11,6 +11,7 @@
       <error404></error404>
     </div>
     <div v-else>
+      <notification :status="ad" :channel="name"></notification>
       <h1 v-if="$vuetify.breakpoint.smAndUp" class="display-4">{{name}}</h1>
       <h1 v-else class="display-3" style="font-weight: 300">{{name}}</h1>
 
@@ -19,9 +20,10 @@
 
       <h1 v-if="$vuetify.breakpoint.smAndUp" class="display-4">{{ad}}</h1>
       <h1 v-else class="display-3" style="font-weight: 300">{{ad}}</h1>
+      <v-divider class="my-4"></v-divider>
 
       <h1 class="display-1 mt-3" style="font-weight: 300;">History</h1>
-      <chart :ads="channel.ads" :styles="{height: height, position: 'relative'}" ></chart>
+      <chart :ads="channel.ads" :styles="{height: height, position: 'relative'}"></chart>
 
     </div>
   </v-container>
@@ -30,6 +32,7 @@
 <script>
   import Error404 from './Error404'
   import Chart from './Chart'
+  import Notification from './Notification'
 
   import {mapGetters} from 'vuex'
 
@@ -38,6 +41,7 @@
     components: {
       Error404,
       Chart,
+      Notification,
     },
     computed: {
       ...mapGetters([
@@ -51,6 +55,9 @@
         return this.$store.getters.channel(this.urlName)
       },
       name() {
+        if (this.channel === undefined) {
+          return ''
+        }
         return this.channel.name
       },
       loading() {
@@ -60,7 +67,7 @@
         return this.channel === undefined && !this.loading;
       },
       ad() {
-        if (this.channel.ads[this.channel.ads.length-1]) {
+        if (this.channel.ads[this.channel.ads.length - 1]) {
           return 'No Ads'
         }
         return 'Ads'

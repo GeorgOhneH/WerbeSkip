@@ -1,9 +1,9 @@
 from deepnet import Network
 import cv2
 import numpy as np
-from app.image_processing.image_loader import load_ads_cnn
-from app.image_processing.generator import TrainGenerator
-from app.image_processing.retrieving_images import VideoCapture
+from helperfunctions.image_processing.image_loader import load_ads_cnn
+from helperfunctions.image_processing.generator import TrainGenerator
+from helperfunctions.image_processing.retrieving_images import VideoCapture
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, \
     Flatten
 from deepnet.optimizers import Adam, SGD

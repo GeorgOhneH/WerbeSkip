@@ -1,5 +1,5 @@
 from deepnet import Network
-from app.image_processing.image_loader import load_ads_cnn
+from helperfunctions.image_processing.image_loader import load_ads_cnn
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, Flatten
 from deepnet.optimizers import Adam
 
