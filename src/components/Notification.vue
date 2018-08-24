@@ -12,30 +12,53 @@
         'useNotification',
         'useNotificationSound',
       ]),
+      useNotification() {
+        return this.$store.getters.useNotification
+      }
+    },
+    mounted() {
+      this.requestPermission()
     },
     methods: {
       notification() {
         if (this.$store.getters.useNotificationSound) {
-          var audio = new Audio('/staticfiles/sounds/notification.mp3');
-          audio.play();
+          if (window.webpackHotUpdate) {
+            let audio = new Audio('/static/sounds/notification.mp3');
+            audio.play();
+          } else {
+            let audio = new Audio('/staticfiles/sounds/notification.mp3');
+            audio.play();
+          }
         }
-        var notification = new Notification(this.channel, {
+        let notification = new Notification(this.channel, {
           icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
           body: "Status: " + this.status.toString(),
           vibrate: [200, 100, 200],
         });
+      },
+      requestPermission() {
+        if (this.useNotification) {
+          // Let's check if the browser supports notifications
+          if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+          }
+        }
       }
     },
     watch: {
       status() {
-        if (this.$store.getters.useNotification) {
+        if (this.useNotification) {
           // Let's check if the browser supports notifications
-          if (Notification.permission !== "granted")
+          if (Notification.permission !== "granted") {
             Notification.requestPermission();
+          }
           else {
             this.notification()
           }
         }
+      },
+      useNotification() {
+        this.requestPermission()
       }
     }
   }
