@@ -12,6 +12,8 @@ import _thread as thread
 class WerbeSkip(object):
     def __init__(self):
         self.network = self.init_network()
+        # Prosieben: 354
+        # SRF: 303
         self.cap = VideoCapture(channel=354, colour=False, rate_limit=1, convert_network=True)
 
         self.filters = []
@@ -85,7 +87,7 @@ class WerbeSkip(object):
             self.result.append(self.result[-1])
 
         self.clean_up()
-        return {"Prosieben": {"ad": self.result[-1]}}
+        return {"Prosieben": {"ad": self.result[-1], "id": 354}}
 
     def clean_up(self):
         if len(self.predictions) > 2 * self.filter_size and len(self.filters) > 2 * self.chain_size:

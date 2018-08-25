@@ -11,7 +11,7 @@
       <error404></error404>
     </div>
     <div v-else>
-      <notification :status="ad" :channel="name"></notification>
+      <notification :status="ad" :channel="name" :id="channel.id"></notification>
       <h1 v-if="$vuetify.breakpoint.smAndUp" class="display-4">{{name}}</h1>
       <h1 v-else class="display-3" style="font-weight: 300">{{name}}</h1>
 

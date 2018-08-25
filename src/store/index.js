@@ -54,10 +54,10 @@ export default new Vuex.Store({
     },
     initChannels: (state, dictChannels) => {
       if (state.listChannels.length === 0) {
-        for (const [name, ad] of Object.entries(dictChannels)) {
+        for (const [name, ad, id] of Object.entries(dictChannels)) {
           let ads = []
-          state.listChannels.push({'name': name, 'ads': ads})
-          Vue.set(state.dictChannels, name, {'ads': ads})
+          state.listChannels.push({'name': name, 'ads': ads, 'id': dictChannels[name].id})
+          Vue.set(state.dictChannels, name, {'ads': ads, 'id': dictChannels[name].id})
         }
       }
     },

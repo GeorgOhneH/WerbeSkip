@@ -6,7 +6,7 @@
 
   export default {
     name: "Notification",
-    props: ['status', 'channel'],
+    props: ['status', 'channel', 'id'],
     computed: {
       ...mapGetters([
         'useNotification',
@@ -31,7 +31,7 @@
           }
         }
         let notification = new Notification(this.channel, {
-          icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+          icon: 'https://media.cinergy.ch/t_station/' + this.id +'/icon160_light.png',
           body: "Status: " + this.status.toString(),
           vibrate: [200, 100, 200],
         });

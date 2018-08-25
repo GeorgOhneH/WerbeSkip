@@ -40,75 +40,93 @@
         return {
           'Prosieben':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 354
             },
           'SAT':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'SRF':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'RTL':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'ZDF':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Twitch':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel200':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel201':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel202':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel203':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel204':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel205':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel206':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel207':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel208':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel209':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel210':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
           'Channel211':
             {
-              'ad': Math.random() >= 0.5
+              'ad': Math.random() >= 0.5,
+              'id': 100
             },
         }
       }
