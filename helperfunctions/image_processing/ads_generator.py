@@ -1,13 +1,19 @@
 from deepnet import Network
 import numpy as np
+import os
 from helperfunctions.image_processing.retrieving_images import VideoCapture
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, \
     Flatten
 from deepnet.optimizers import Adam
 
+import cv2
+
 
 class AdsGenerator(object):
     def __init__(self, epochs, mini_batch_size):
+        self.PATH_TO_NET = os.path.join(os.path.split(os.path.dirname(__file__))[0],
+                                        "prosieben/networks/teleboy/teleboy.h5")
+
         self.cap = VideoCapture(channel=354, colour=False, convert_network=True)
         self.mini_batch_size = mini_batch_size
         self.epochs = epochs
@@ -55,7 +61,7 @@ class AdsGenerator(object):
 
         optimizer = Adam(learning_rate=0.001)
         net.regression(optimizer=optimizer, cost="cross_entropy")
-        net.load("helperfunctions\prosieben\\networks\\teleboy\\teleboy.h5")
+        net.load(self.PATH_TO_NET)
         return net
 
     def __iter__(self):
@@ -118,4 +124,6 @@ class AdsGenerator(object):
 
 if __name__ == "__main__":
     for frame in AdsGenerator(1, 10):
+        cv2.imshow('test', frame[0][0, 0, :, :])
+        cv2.waitKey(1)
         print(frame[0].shape, frame[1].shape)
