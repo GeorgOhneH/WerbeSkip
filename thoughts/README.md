@@ -397,3 +397,6 @@ Zum starten vom Server muss man einfach die deploy.sh ausführen.
 Achtung: zum schliessen des Servers einfach die bash console terminieren,
 sonst werden die Processe(redis-server, django-server und update_handler.py)
 nicht geschlossen.
+
+## 02.09.2018%
+Maturaarbeit hinzugefügt
