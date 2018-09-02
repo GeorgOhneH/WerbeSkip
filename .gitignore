@@ -6,6 +6,9 @@ test.py
 helperfunctions/prosieben/networks/example1/wrong_predictions
 helperfunctions/prosieben/networks/example2/wrong_predictions
 
+thoughts/arbeit/auxil/
+thoughts/arbeit/out/Maturaarbeit.synctex.gz
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *$py.class
@@ -133,3 +136,6 @@ yarn-error.log*
 # Staticfiles
 staticfiles/*
 
+/thoughts/arbeit/out/Maturaarbeit.synctex.gz
+/thoughts/arbeit/auxil/Maturaarbeit.toc
+/thoughts/arbeit/auxil/Maturaarbeit.out

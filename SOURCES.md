@@ -61,3 +61,5 @@ https://en.wikipedia.org/wiki/Activation_function
 https://github.com/reduzent/watchteleboy
 <!-- ## SWA -->
 <!-- https://arxiv.org/abs/1803.05407 -->
+## Latex
+https://tex.stackexchange.com/questions/132444/diagram-of-an-artificial-neural-network

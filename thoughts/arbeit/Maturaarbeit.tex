@@ -1,0 +1,284 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[onehalfspacing]{setspace}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{pifont}
+
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{subcaption}
+\usepackage{wrapfig}
+\usepackage{mathtools}
+\usepackage{listings}
+\usepackage{tabto}
+\usepackage{tikz}
+\usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows,calc}
+
+\begin{document}
+
+\begin{titlepage}
+	\centering
+	{\Large Gymnasium Bäumlihof, 5Bb \par}
+	\vspace{1cm}
+	{\LARGE\scshape Maturaarbeit\par}
+	\vspace{1.5cm}
+	{\huge\bfseries Kann der Computer Werbung erkennen?\par}
+	\vspace{0.6cm}
+    {\Large Bilderkennung mit einem Neuronalen Netzwerk\par}
+	\vspace{2cm}
+	{\Large\itshape Georg Schwan\par}
+	\vfill
+	Betreuungsperson\par
+	{\itshape Test1\par}
+	Korreferent\par
+	{\itshape Test2}
+	\vfill
+	{\large Datum\par}
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+
+\chapter{Einleitung}\label{ch:einleitung}
+
+\section{Motivation}
+\label{sec:motivation}
+
+\section{Aufbau der Arbeit}
+\label{sec:aufbauDerArbeit}
+
+\chapter{Neuronales Netzwerk}
+\label{ch:neuronalesNetzwerk}
+
+\section{Konzept}\label{sec:konzept}
+Ein Neuronales Netzwerk wird nicht gezeigt wie man ein Problem löst, sondern man zeigt es viele Beispiele und lässt es
+seine eigene Lösung finden.
+Alles was ein Neuronales Netzwerk braucht sind Beispiel Daten, bei denen wir schon das korrekte Ergebnis wissen,
+so dass man sehen kann ob die Prognose des Neuronales Netzwerks korrekt oder inkorrekt ist und man es daraufhin anpassen kann.
+Zum Beispiel, wir wollen einem Netzwerk beibringen ob in einem Bild ein Auto vorkommt,
+dazu speisen wir dem Neuronale Netzwerk viele Bilder, mit und ohne Auto, ein
+Mit jedem Bild, dass das Neuronale Netzwerk falsch hat, können wir nun das Netzwerk anpassen
+bis es immer besser wird im erkennen eines Autos.
+
+\section{Architektur}\label{sec:architektur}
+User Gehirn kann Entscheidungen treffe, da wir billionen von Neuronen haben, die miteinander verbunden sind und sich
+verständigen können.
+Aber ein Neuron an sich ist praktisch nutzlos, aber in grosser Anzahl können sie komplexeste Probleme lösen.
+
+Nach dem gleichen Prinzip funktioniert ein Neuronales Netzwerk
+Es besteht aus vielen Neuronen (daher der Name) die miteinander verbunden sind.
+
+
+\begin{figure}[!h]
+    \centering
+\begin{tikzpicture}[
+init/.style={
+  draw,
+  circle,
+  inner sep=2pt,
+  font=\Huge,
+  join = by -latex
+},
+squa/.style={
+  draw,
+  inner sep=2pt,
+  font=\Large,
+  join = by -latex
+},
+start chain=2,node distance=13mm
+]
+\node[on chain=2]
+  (x2) {$x_2$};
+\node[on chain=2,join=by o-latex]
+  {$w_2$};
+\node[on chain=2,init] (sigma)
+  {$\displaystyle\Sigma$};
+%\node[on chain=2,squa,label=above:{\parbox{2cm}{\centering Activate \\ function}}]
+%  {$f$};
+\node[on chain=2,label=above:Ausgabe,join=by -latex]
+  {$y$};
+\begin{scope}[start chain=1]
+\node[on chain=1] at (0,1.5cm)
+  (x1) {$x_1$};
+\node[on chain=1,join=by o-latex]
+  (w1) {$w_1$};
+\end{scope}
+\begin{scope}[start chain=3]
+\node[on chain=3] at (0,-1.5cm)
+  (x3) {$x_3$};
+\node[on chain=3,label=below:Gewichte,join=by o-latex]
+  (w3) {$w_3$};
+\end{scope}
+\node[label=above:\parbox{2cm}{\centering Verzerrung \\ $b$}] at (sigma|-w1) (b) {};
+
+\draw[-latex] (w1) -- (sigma);
+\draw[-latex] (w3) -- (sigma);
+\draw[o-latex] (b) -- (sigma);
+
+\draw[decorate,decoration={brace,mirror}] (x1.north west) -- node[left=10pt] {Eingabe} (x3.south west);
+\end{tikzpicture}
+    \caption{Einzelner Neuron in einem Neuronalen Netzwerks}
+    \label{fig:neuron1}
+\end{figure}
+
+Ein Neuron in einem Neuronales Netzwerk wird als Mathematische funktion definiert wie in Abbildung~\ref{fig:neuron1}
+zu erkennen ist.
+Ein Neuron hat $n$ verschiedene Eingaben, die als $x_j$ bezeichnet werden und mit einem spezifischen Gewicht $w_j$ multipliziert werden.
+Die Ausgabe erfolgt indem man alle gewichteten Eingaben, mit einer Verzerrung $b$, addiert.
+Als Ausdruck:
+\[y =\sum_{j=1}^{n} x_j * w_j + b\]
+Die Gewichte $w_j$ und die Verzerrung $b$ des Neurons sind die Parameter, die angepasst werden und somit das Neuron lernfähig machen.
+
+Wie auch im biologischen Gehirn ist ein Neuron allein nutzlos.
+Erst wenn man die Neuronen miteinander verbindet kann es komplexe Zusammenhänge modellieren.
+\begin{figure}[h]
+    \centering
+\begin{tikzpicture}[
+plain/.style={
+  draw=none,
+  fill=none,
+  },
+net/.style={
+  matrix of nodes,
+  nodes={
+    draw,
+    circle,
+    inner sep=10pt
+    },
+  nodes in empty cells,
+  column sep=2cm,
+  row sep=-9pt
+  },
+>=latex
+]
+\matrix[net] (mat)
+{
+|[plain]| \parbox{1.3cm}{\centering} & |[plain]| \parbox{1.3cm}{\centering} & |[plain]| \parbox{1.3cm}{\centering} \\
+& |[plain]| \\
+|[plain]| & \\
+& |[plain]| \\
+  |[plain]| & |[plain]| \\
+& & \\
+  |[plain]| & |[plain]| \\
+& |[plain]| \\
+  |[plain]| & \\
+& |[plain]| \\    };
+\foreach \ai [count=\mi ]in {2,4,...,10}
+  \draw[<-] (mat-\ai-1) -- node[above] {Eingabe \mi} +(-2.8cm,0);
+\foreach \ai in {2,4,...,10}
+{\foreach \aii in {3,6,9}
+  \draw[->] (mat-\ai-1) -- (mat-\aii-2);
+}
+\foreach \ai in {3,6,9}
+  \draw[->] (mat-\ai-2) -- (mat-6-3);
+\draw[->] (mat-6-3) -- node[above] {Ausgabe} +(2.5cm,0);
+\end{tikzpicture}
+    \caption{Mögliche architektur eines Neuronalen Netzwerk}
+    \label{fig:network1}
+\end{figure}
+
+Eine mögliche Architektur kann wie in  Abbildung~\ref{fig:network1} ausschauen.
+Ein Netzwerk wird generell immer in verschiedene Schichten unterteilt.
+Die linke Schicht wird als eingabe Schicht bezeichnet und die Neuronen in dieser Schicht werden eingabe Neuronen genannt.
+Analog da zu wird die rechte Schicht ausgabe Schicht genannt, die die ausgabe Neuronen beinhaltet.
+Die mittleren Schichten, die von der Anzahl variieren können, werden versteckte Schichten genannt.
+Die Anzahl der Neuronen in jeder Schicht kann auch variieren.
+Abbildung~\ref{fig:network2} zeigt eine andere mögliche Architektur für ein Netzwerk, welches 2 versteckte
+Schichten hat.
+\begin{figure}[h]
+    \centering
+\begin{tikzpicture}[
+plain/.style={
+  draw=none,
+  fill=none,
+  },
+net/.style={
+  matrix of nodes,
+  nodes={
+    draw,
+    circle,
+    inner sep=10pt
+    },
+  nodes in empty cells,
+  column sep=2cm,
+  row sep=-9pt
+  },
+>=latex
+]
+\matrix[net] (mat)
+{
+|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+& |[plain]|& |[plain]|& |[plain]| \\
+|[plain]| && |[plain]|& |[plain]| \\
+& |[plain]|&& |[plain]|& |[plain]| \\
+  |[plain]| && |[plain]|&& |[plain]| \\
+& |[plain]| & \\
+  |[plain]| && |[plain]|&& |[plain]| \\
+& |[plain]| && |[plain]|& |[plain]|  \\
+  |[plain]| & & |[plain]|& |[plain]|  \\
+& |[plain]|& |[plain]|& |[plain]| \\     };
+\foreach \ai in {2,4,...,10}
+{\foreach \aii in {3,5, 7,9}
+  \draw[->] (mat-\ai-1) -- (mat-\aii-2);
+}
+\foreach \ai in {3,5,7,9}
+{\foreach \aii in {4,6,8}
+  \draw[->] (mat-\ai-2) -- (mat-\aii-3);
+}
+\foreach \ai in {4,6,8}
+{\foreach \aii in {5, 7}
+  \draw[->] (mat-\ai-3) -- (mat-\aii-4);
+}
+\draw[decorate,decoration={brace}] (mat-1-1.west) -- node[above=5pt] {\parbox{3cm}{\centering Eingabe\\Schicht}} (mat-1-1.east);
+\draw[decorate,decoration={brace}] (mat-1-2.west) -- node[above=5pt] {\parbox{3cm}{\centering Versteckte\\Schichten}} (mat-1-3.east);
+\draw[decorate,decoration={brace}] (mat-1-4.west) -- node[above=5pt] {\parbox{3cm}{\centering Ausgabe\\Schicht}} (mat-1-4.east);
+\draw[decorate,decoration={brace,mirror}] ($(mat-1-1.west)+(-0.1cm,-0.2cm)$) -- node[left=5pt] {\parbox{2cm}{\centering Eingabe\\Neuronen}} ($(mat-10-1.west) + (-0.1cm,-16pt)$);
+\draw[decorate,decoration={brace}] ($(mat-5-4.east)+(+0.1cm,+16pt)$) -- node[right=5pt] {\parbox{2cm}{\centering Ausgabe\\Neuronen}} ($(mat-7-4.east) + (+0.1cm,-16pt)$);
+\end{tikzpicture}
+    \caption{Neuronales Netzwerk mit 2 versteckten Schichten}
+    \label{fig:network2}
+\end{figure}
+Jedes Neuron von der vorigen Schicht ist mit jedem Neuron der nachfolgenden Schicht verbunden.
+Dies ist ein klassisches vorwärtsgekoppeltes Netzwerk (im englischen feed forward network).
+Wichtig zu beachten ist, dass keine Schleifen vorkommen.
+Es gibt Netzwerke wo Schleifen vorkommen, aber auf diese wir nicht näher eingegangen:
+
+\chapter{Lösungsansatz}
+\label{ch:lösungsansatz}
+
+\chapter{Umsetzung}
+\label{ch:umsetzung}
+
+\chapter{Reflexion}
+\label{ch:reflexion}
+
+%\clearpage
+%\phantomsection
+%\addcontentsline{toc}{chapter}{Literaturverzeichnis}
+%\nocite{*}
+%\bibliographystyle{plain}
+%\bibliography{literatur}
+%
+%\clearpage
+%\phantomsection
+\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+
+\listoffigures
+
+\appendix
+
+\chapter*{Ehrlichkeitserklärung}
+
+Die eingereichte Arbeit ist das Resultat meiner persönlichen, selbstständigen Beschäftigung mit dem Thema.
+Ich habe für sie keine anderen Quellen benutzt als die in den Verzeichnissen aufgeführten.
+Sämtliche wörtlich übernommenen Texte (Sätze) sind als Zitate gekennzeichnet.
+
+\vspace{2cm}
+Insert Datum
+\end{document}
