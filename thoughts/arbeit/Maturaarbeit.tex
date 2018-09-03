@@ -57,16 +57,21 @@
 \label{ch:neuronalesNetzwerk}
 
 \section{Konzept}\label{sec:konzept}
-Ein Neuronales Netzwerk wird nicht gezeigt wie man ein Problem löst, sondern man zeigt es viele Beispiele und lässt es
-seine eigene Lösung finden.
-Alles was ein Neuronales Netzwerk braucht sind Beispiel Daten, bei denen wir schon das korrekte Ergebnis wissen,
-so dass man sehen kann ob die Prognose des Neuronales Netzwerks korrekt oder inkorrekt ist und man es daraufhin anpassen kann.
+Wenn man ein normales Programm schreiben will muss man das Problem in viele kleiner aufteilen, bis der Computer fähig ist
+es zu lösen.
+In einem Neuronale Netzwerk sagen wir dem Computer nicht wie er das Problem lösen kann, sondern ein Neuronales Netzwerk
+versteht das Problem, indem wir es Beispieldaten geben und es daran lernen kann, bis es seine eigene Lösung gefunden hat.
 Zum Beispiel, wir wollen einem Netzwerk beibringen ob in einem Bild ein Auto vorkommt,
-dazu speisen wir dem Neuronale Netzwerk viele Bilder, mit und ohne Auto, ein
-Mit jedem Bild, dass das Neuronale Netzwerk falsch hat, können wir nun das Netzwerk anpassen
-bis es immer besser wird im erkennen eines Autos.
+dazu geben wir dem Neuronale Netzwerk viele Bilder, mit und ohne Auto.
+Mit jedem Bild, dass das Neuronale Netzwerk bekommt, lernt es besser wie ein Auto ausschaut.
+
+Das Konzept eines Neuronales Netzwerk ist nicht etwas neuses.
+Im Jahre 1957 hat Frank Rosenblatt ein erste Idee eines Neuronales Netzwerk vorgestellt, aber erst in den letzten
+Jahren ist der grosse Hype des Neuronale Netzwerkes ausgebrochen, dies liegt daran, dass man früher nicht die Daten
+und Rechenleistung hatte, wie sie heute zur verfügung steht.
 
 \section{Architektur}\label{sec:architektur}
+\subsection{Neuron}
 User Gehirn kann Entscheidungen treffe, da wir billionen von Neuronen haben, die miteinander verbunden sind und sich
 verständigen können.
 Aber ein Neuron an sich ist praktisch nutzlos, aber in grosser Anzahl können sie komplexeste Probleme lösen.
@@ -132,9 +137,10 @@ zu erkennen ist.
 Ein Neuron hat $n$ verschiedene Eingaben, die als $x_j$ bezeichnet werden und mit einem spezifischen Gewicht $w_j$ multipliziert werden.
 Die Ausgabe erfolgt indem man alle gewichteten Eingaben, mit einer Verzerrung $b$, addiert.
 Als Ausdruck:
-\[y =\sum_{j=1}^{n} x_j * w_j + b\]
+\[y =\sum_{j=1}^{n} x_j w_j + b\]
 Die Gewichte $w_j$ und die Verzerrung $b$ des Neurons sind die Parameter, die angepasst werden und somit das Neuron lernfähig machen.
 
+\subsection{Zusammensetzung der Neuronen}
 Wie auch im biologischen Gehirn ist ein Neuron allein nutzlos.
 Erst wenn man die Neuronen miteinander verbindet kann es komplexe Zusammenhänge modellieren.
 \begin{figure}[h]
@@ -170,7 +176,7 @@ net/.style={
   |[plain]| & \\
 & |[plain]| \\    };
 \foreach \ai [count=\mi ]in {2,4,...,10}
-  \draw[<-] (mat-\ai-1) -- node[above] {Eingabe \mi} +(-2.8cm,0);
+  \draw[<-] (mat-\ai-1) -- node[above] {Eingabe $x_\mi$} +(-2.8cm,0);
 \foreach \ai in {2,4,...,10}
 {\foreach \aii in {3,6,9}
   \draw[->] (mat-\ai-1) -- (mat-\aii-2);
@@ -244,10 +250,10 @@ net/.style={
     \caption{Neuronales Netzwerk mit 2 versteckten Schichten}
     \label{fig:network2}
 \end{figure}
-Jedes Neuron von der vorigen Schicht ist mit jedem Neuron der nachfolgenden Schicht verbunden.
+Jeder Neuron von der vorigen Schicht ist mit jedem Neuron der nachfolgenden Schicht verbunden.
 Dies ist ein klassisches vorwärtsgekoppeltes Netzwerk (im englischen feed forward network).
 Wichtig zu beachten ist, dass keine Schleifen vorkommen.
-Es gibt Netzwerke wo Schleifen vorkommen, aber auf diese wir nicht näher eingegangen:
+Es gibt Architekturen in denen Schleifen vorkommen, aber auf diese wir nicht näher eingegangen.
 
 \chapter{Lösungsansatz}
 \label{ch:lösungsansatz}
