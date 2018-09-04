@@ -56,6 +56,8 @@ https://leonardoaraujosantos.gitbooks.io/artificial-inteligence/content/batch_no
 
 https://wiseodd.github.io/techblog/2016/07/04/batchnorm/
 ## Activation function
+https://towardsdatascience.com/activation-functions-and-its-types-which-is-better-a9a5310cc8f
+
 https://en.wikipedia.org/wiki/Activation_function
 ## Teleboy
 https://github.com/reduzent/watchteleboy

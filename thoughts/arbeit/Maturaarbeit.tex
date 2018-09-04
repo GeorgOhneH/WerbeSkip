@@ -18,6 +18,7 @@
 \usepackage{tabto}
 \usepackage{tikz}
 \usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows,calc}
+\usepackage{pgfplots}
 
 \begin{document}
 
@@ -70,8 +71,7 @@ Im Jahre 1957 hat Frank Rosenblatt ein erste Idee eines Neuronales Netzwerk vorg
 Jahren ist der grosse Hype des Neuronale Netzwerkes ausgebrochen, dies liegt daran, dass man früher nicht die Daten
 und Rechenleistung hatte, wie sie heute zur verfügung steht.
 
-\section{Architektur}\label{sec:architektur}
-\subsection{Neuron}
+\section{Neuron}
 User Gehirn kann Entscheidungen treffe, da wir billionen von Neuronen haben, die miteinander verbunden sind und sich
 verständigen können.
 Aber ein Neuron an sich ist praktisch nutzlos, aber in grosser Anzahl können sie komplexeste Probleme lösen.
@@ -104,8 +104,8 @@ start chain=2,node distance=13mm
   {$w_2$};
 \node[on chain=2,init] (sigma)
   {$\displaystyle\Sigma$};
-%\node[on chain=2,squa,label=above:{\parbox{2cm}{\centering Activate \\ function}}]
-%  {$f$};
+\node[on chain=2,squa,label=above:{\parbox{2cm}{\centering Activate \\ function}},join=by -latex, minimum size=0.9cm]
+  {$f$};
 \node[on chain=2,label=above:Ausgabe,join=by -latex]
   {$y$};
 \begin{scope}[start chain=1]
@@ -135,12 +135,52 @@ start chain=2,node distance=13mm
 Ein Neuron in einem Neuronales Netzwerk wird als Mathematische funktion definiert wie in Abbildung~\ref{fig:neuron1}
 zu erkennen ist.
 Ein Neuron hat $n$ verschiedene Eingaben, die als $x_j$ bezeichnet werden und mit einem spezifischen Gewicht $w_j$ multipliziert werden.
-Die Ausgabe erfolgt indem man alle gewichteten Eingaben, mit einer Verzerrung $b$, addiert.
+Die Ausgabe erfolgt indem man alle gewichteten Eingaben, mit einem bias $b$, addiert und durch eine so genannte
+Aktivierungsfunktion durchlaufen läst.
 Als Ausdruck:
-\[y =\sum_{j=1}^{n} x_j w_j + b\]
+\[y =f\left(\sum_{j=1}^{n} x_j w_j + b\right)\]
 Die Gewichte $w_j$ und die Verzerrung $b$ des Neurons sind die Parameter, die angepasst werden und somit das Neuron lernfähig machen.
 
-\subsection{Zusammensetzung der Neuronen}
+Quelle: https://towardsdatascience.com/activation-functions-and-its-types-which-is-better-a9a5310cc8f
+
+Eine Aktivierungsfunktion ist nötig, da ohne eine wäre ein Neuronales Netzwerk eine komplett lineare funktion, welches
+nur lineare Probleme lösen könnte.
+Die meisten Probleme sind viel komplexer als das man sie linear darstellen könnte und deswegen ist eine aktivierungsfunktion von nötig.
+
+Ein Beispiel für eine Aktivierungsfunktion ist die Sigmoidfunktion, wie sie auf Abbildung~\ref{fig:activation1} zu sehen ist.
+\begin{figure}[h]
+    \centering
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = $x$,
+    ylabel = {$f(x)$},
+]
+\pgfplotsset{
+every axis legend/.append style={
+at={(0.1,0.9)},
+anchor=north west,
+},
+}
+\addplot [
+    domain=-8:8,
+    samples=200,
+    color=blue,
+    ]
+    {1 / (1 + 2.71828^(-x))};
+\addlegendentry{$\frac{1}{1 + e^{-x}}$}
+
+\end{axis}
+\end{tikzpicture}
+    \caption{Sigmoidfunktion}
+    \label{fig:activation1}
+\end{figure}
+Besonders an dieser Funktion ist, dass sie den Ausgabewert zwischen 0 und 1 eingrenzt, was uns erlaubt den Ausgabewert des ganzen
+Netzwerkes besser zu deuten, als wenn der Wert von $-\infty$ bis $\infty$ gross sein könnte.
+
+Es muss auch nicht jedes Neuron im Netzwerk die gleiche Aktivierungsfunktion haben.
+
+\section{Architektur}
 Wie auch im biologischen Gehirn ist ein Neuron allein nutzlos.
 Erst wenn man die Neuronen miteinander verbindet kann es komplexe Zusammenhänge modellieren.
 \begin{figure}[h]
@@ -253,7 +293,7 @@ net/.style={
 Jeder Neuron von der vorigen Schicht ist mit jedem Neuron der nachfolgenden Schicht verbunden.
 Dies ist ein klassisches vorwärtsgekoppeltes Netzwerk (im englischen feed forward network).
 Wichtig zu beachten ist, dass keine Schleifen vorkommen.
-Es gibt Architekturen in denen Schleifen vorkommen, aber auf diese wir nicht näher eingegangen.
+Es gibt Architekturen in denen Schleifen vorkommen, aber auf diese wird nicht näher eingegangen.
 
 \chapter{Lösungsansatz}
 \label{ch:lösungsansatz}
