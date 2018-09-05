@@ -137,7 +137,7 @@ zu erkennen ist.
 Ein Neuron hat $n$ verschiedene Eingaben, die als $x_j$ bezeichnet werden und mit einem spezifischen Gewicht $w_j$ multipliziert werden.
 Die Ausgabe erfolgt indem man alle gewichteten Eingaben, mit einem bias $b$, addiert und durch eine so genannte
 Aktivierungsfunktion durchlaufen läst.
-Als Ausdruck:
+Als Formel:
 \[y =f\left(\sum_{j=1}^{n} x_j w_j + b\right)\]
 Die Gewichte $w_j$ und die Verzerrung $b$ des Neurons sind die Parameter, die angepasst werden und somit das Neuron lernfähig machen.
 
@@ -178,7 +178,7 @@ anchor=north west,
 Besonders an dieser Funktion ist, dass sie den Ausgabewert zwischen 0 und 1 eingrenzt, was uns erlaubt den Ausgabewert des ganzen
 Netzwerkes besser zu deuten, als wenn der Wert von $-\infty$ bis $\infty$ gross sein könnte.
 
-Es muss auch nicht jedes Neuron im Netzwerk die gleiche Aktivierungsfunktion haben.
+Jedes Neuron in einem Netzwerk kann eine andere Aktivierungsfunkton haben.
 
 \section{Architektur}
 Wie auch im biologischen Gehirn ist ein Neuron allein nutzlos.
@@ -293,7 +293,68 @@ net/.style={
 Jeder Neuron von der vorigen Schicht ist mit jedem Neuron der nachfolgenden Schicht verbunden.
 Dies ist ein klassisches vorwärtsgekoppeltes Netzwerk (im englischen feed forward network).
 Wichtig zu beachten ist, dass keine Schleifen vorkommen.
-Es gibt Architekturen in denen Schleifen vorkommen, aber auf diese wird nicht näher eingegangen.
+Es gibt Architekturen in denen Schleifen vorkommen, aber auf diese wird nicht näher eingegangen, da sie für die
+Bilderkennung nicht relevant sind.
+
+\subsection{Formel}
+
+\begin{figure}[h]
+    \centering
+\begin{tikzpicture}[
+plain/.style={
+  draw=none,
+  fill=none,
+  },
+net/.style={
+  matrix of nodes,
+  nodes={
+    draw,
+    circle,
+    inner sep=10pt
+    },
+  nodes in empty cells,
+  column sep=2cm,
+  row sep=-9pt
+  },
+>=latex
+]
+\matrix[net] (mat)
+{
+|[plain]| \parbox{2cm}{\centering Schicht 1} & |[plain]| \parbox{2cm}{\centering Schicht 2} & |[plain]| \parbox{2cm}{\centering Schicht 3} \\
+& |[plain]| \\
+|[plain]| & \\
+& |[plain]| \\
+  |[plain]| & |[plain]| \\
+& & \\
+  |[plain]| & |[plain]| \\
+& |[plain]| \\
+  |[plain]| & \\
+& |[plain]| \\    };
+\foreach \ai in {2,4,...,10}
+{\foreach \aii in {3,6,9}
+  \draw[->] (mat-\ai-1) -- (mat-\aii-2) coordinate[midway](center1\ai\aii);
+}
+\foreach \ai in {3,6,9}
+  \draw[->] (mat-\ai-2) -- (mat-6-3) coordinate[midway](center2\ai);
+
+
+\node[] at (mat-8-1)
+  (x3) {$b^1_4$};
+\node[] at (mat-3-2)
+  (x3) {$a^2_1$};
+
+\node (h1) at (-1.5, 2.2) {$w^2_{1,2}$};
+
+\draw[->] (h1) -- (center126);
+
+\node (h2) at (3, 1.5) {$w^3_{3,1}$};
+
+\draw[->] (h2) -- (center29);
+
+\end{tikzpicture}
+    \caption{Bezeichnung der Parameter}
+    \label{fig:network3}
+\end{figure}
 
 \chapter{Lösungsansatz}
 \label{ch:lösungsansatz}
