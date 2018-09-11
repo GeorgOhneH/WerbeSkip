@@ -19,6 +19,7 @@
 \usepackage{tikz}
 \usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows,calc}
 \usepackage{pgfplots}
+\usepackage{amsmath}
 
 \begin{document}
 
@@ -71,7 +72,7 @@ Im Jahre 1957 hat Frank Rosenblatt ein erste Idee eines Neuronales Netzwerk vorg
 Jahren ist der grosse Hype des Neuronale Netzwerkes ausgebrochen, dies liegt daran, dass man früher nicht die Daten
 und Rechenleistung hatte, wie sie heute zur verfügung steht.
 
-\section{Neuron}
+\section{Neuron}\label{sec:neuron}
 User Gehirn kann Entscheidungen treffe, da wir billionen von Neuronen haben, die miteinander verbunden sind und sich
 verständigen können.
 Aber ein Neuron an sich ist praktisch nutzlos, aber in grosser Anzahl können sie komplexeste Probleme lösen.
@@ -132,8 +133,8 @@ start chain=2,node distance=13mm
     \label{fig:neuron1}
 \end{figure}
 
-Ein Neuron in einem Neuronales Netzwerk wird als Mathematische funktion definiert wie in Abbildung~\ref{fig:neuron1}
-zu erkennen ist.
+Ein Neuron in einem Neuronales Netzwerk wird als Mathematische funktion definiert wie Abbildung~\ref{fig:neuron1}
+verdeutlicht.
 Ein Neuron hat $n$ verschiedene Eingaben, die als $x_j$ bezeichnet werden und mit einem spezifischen Gewicht $w_j$ multipliziert werden.
 Die Ausgabe erfolgt indem man alle gewichteten Eingaben, mit einem bias $b$, addiert und durch eine so genannte
 Aktivierungsfunktion durchlaufen läst.
@@ -298,6 +299,12 @@ Bilderkennung nicht relevant sind.
 
 \subsection{Formel}
 
+Um eine allgemeine Formel bestimmen zu können, muss man zuerst die Elemente des Netzwerks benennen.
+Wir bezeichnen das Gewicht $w^l_{k,j}$ für die Verbindung des $k^{ten}$ Neuron der $(l-1)^{ten}$ Schicht
+zu dem $j^{ten}$ Neuron der $l^{ten}$ Schicht.
+Ähnlich dazu bezeichnen wir die Ausgabe des Neurons als $a^l_j$ und der bias des Neurons als $b^l_j$,
+Abbildung~\ref{fig:network3} verdeutlicht diese Notation.
+
 \begin{figure}[h]
     \centering
 \begin{tikzpicture}[
@@ -355,6 +362,62 @@ net/.style={
     \caption{Bezeichnung der Parameter}
     \label{fig:network3}
 \end{figure}
+Mit dieser Notation kann eine Formel für das Netzwerk aufgestellt werden, welche sehr ähnlich zu der Formel vom Abschnitt~\ref{sec:neuron} ist.
+
+\[a^l_j = f\left(\sum_{k} a^{l-1}_k w^l_{k,j} + b^l_j\right)\]
+
+\section{Lernen}\label{sec:lernen}
+Bis jetzt ging es nur darum wie ein Neuronales Netzwerk aufgebaut ist.
+In dem Abschnitt geht wie ein Neuronales Netzwerk, anhand von Daten, lernen kann
+\subsection{Kostenfunktion}
+Damit ein Netzwerk lernen kann muss man dem Netzwerk zuerst sagen können wie gut oder wie schlecht es gerade ist.
+Dazu definieren wir eine Kostenfunktion $C$, die von allen Gewichten $w$ und allen biases $b$ abhängig ist.
+Das Netzwerk wird als Funktion $y(x)$ bezeichnet.
+Den Eingabewert wird als $x$ bezeichnet mit dem dazugehörige Label $l$.
+Beachte, dass $x$ und $l$ Vektoren sind.
+Zum Beispiel würde ein Bild, das 10x10 Pixel gross ist, einen ($10 * 10 = 100$) 100-dimensionaler Vektor bekommen
+und die Label, wenn es 3 verschiedene Ergebnisse gibt, einem 3-dimensional Vektor, der z.B so ausschaut: $(0, 1, 0)$
+
+\[C(w,b) = \left|y(x)-l\right|^2\]
+
+Das Ziel des Netzwerkes ist diese Kostenfunktion zu minimieren, bis idealerweise $C \approx 0$,
+dies geschieht wenn die Ausgabe des Netzwerks und des Label sehr ähnlich sind.
+\subsection{Gradient Descent}
+Um diese Kostenfunktion zu minimieren wird ein Algorithmus names Gradient Descent benutzt.
+Das Konzept basiert darauf, dass man eine Funktion, in abhängigkeit einer Variablen, ableiten kann und so die Steigung
+and diesem Punkt berechnen kann und die Variable richtung Minimum anpasst.
+
+**Bild Einfügen**
+
+Zum Beispiel hat man eine Kostenfunktion $C(a,b)$ die von $a$ und $b$ abhängig ist.
+Wenn man diese Graphisch abbildet, sieht es wie auf Abbildung **ref**.
+
+Die Variablen $a$ und $b$ werden am Anfang zufällige Werte zugeteilt und das Ziel ist sie so anzupassen,
+dass man das Minimum der Kostenfunktion findet.
+Um das Minimum zu finden kann man sich einen Ball vorstellen, der in das Minimum herunterrollt.
+Um dies zu berechnen muss man die Steigung, mithilfe einer Ableitung, herausfinden und die Variable in die
+gegensätzliche Richtung bewegen, wie auf Abbildung **ref** zu sehen ist.
+
+**Bild Einfügen**
+
+Die Bewegung als Formel sieht so aus:
+\begin{gather*}
+    a \rightarrow a^\prime\ = a - \mu\frac{\partial C}{\partial a}\\
+    b \rightarrow b^\prime\ = b - \mu\frac{\partial C}{\partial b}\\
+\end{gather*}
+wobei $\mu$ eine kleine positive Zahl (learning rate genannt) ist, die die Geschwindigkeit der Bewegung steuert.
+Ausserdem beachte, dass der Ball keine Beschleunigung hat.
+Wenn man diese Formel nun immer wieder anwendend gelangt man zum Minimum der Kostenfunktion.
+
+Der Algorithmus funktioniert auch bei mehr als nur 2 Variablen und sieht fürs Neuronale Netzwerk identisch aus.
+\begin{gather*}
+    w^l_{k,j} \rightarrow w^{l^\prime}_{k,j} = w^l_{k,j} - \mu\frac{\partial C}{\partial w^l_{k,j}}\\
+    b^l_j \rightarrow b^{l^\prime}_j = b^l_j - \mu\frac{\partial C}{\partial b^l_j}\\
+\end{gather*}
+
+\subsection{Backpropagation}
+
+
 
 \chapter{Lösungsansatz}
 \label{ch:lösungsansatz}

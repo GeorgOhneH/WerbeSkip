@@ -13,7 +13,6 @@ import numpywrapper as np
 from numpy import ndarray
 import cv2
 import deepdish as dd
-from tqdm import tqdm
 
 
 class Network(object):
