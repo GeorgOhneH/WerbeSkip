@@ -138,7 +138,7 @@ verdeutlicht.
 Ein Neuron hat $n$ verschiedene Eingaben, die als $x_j$ bezeichnet werden und mit einem spezifischen Gewicht $w_j$ multipliziert werden.
 Die Ausgabe erfolgt indem man alle gewichteten Eingaben, mit einem bias $b$, addiert und durch eine so genannte
 Aktivierungsfunktion durchlaufen läst.
-Als Formel:
+Als Gleichung:
 \[y =f\left(\sum_{j=1}^{n} x_j w_j + b\right)\]
 Die Gewichte $w_j$ und die Verzerrung $b$ des Neurons sind die Parameter, die angepasst werden und somit das Neuron lernfähig machen.
 
@@ -146,40 +146,8 @@ Quelle: https://towardsdatascience.com/activation-functions-and-its-types-which-
 
 Eine Aktivierungsfunktion ist nötig, da ohne eine wäre ein Neuronales Netzwerk eine komplett lineare funktion, welches
 nur lineare Probleme lösen könnte.
-Die meisten Probleme sind viel komplexer als das man sie linear darstellen könnte und deswegen ist eine aktivierungsfunktion von nötig.
-
-Ein Beispiel für eine Aktivierungsfunktion ist die Sigmoidfunktion, wie sie auf Abbildung~\ref{fig:activation1} zu sehen ist.
-\begin{figure}[h]
-    \centering
-\begin{tikzpicture}
-\begin{axis}[
-    axis lines = left,
-    xlabel = $x$,
-    ylabel = {$f(x)$},
-]
-\pgfplotsset{
-every axis legend/.append style={
-at={(0.1,0.9)},
-anchor=north west,
-},
-}
-\addplot [
-    domain=-8:8,
-    samples=200,
-    color=blue,
-    ]
-    {1 / (1 + 2.71828^(-x))};
-\addlegendentry{$\frac{1}{1 + e^{-x}}$}
-
-\end{axis}
-\end{tikzpicture}
-    \caption{Sigmoidfunktion}
-    \label{fig:activation1}
-\end{figure}
-Besonders an dieser Funktion ist, dass sie den Ausgabewert zwischen 0 und 1 eingrenzt, was uns erlaubt den Ausgabewert des ganzen
-Netzwerkes besser zu deuten, als wenn der Wert von $-\infty$ bis $\infty$ gross sein könnte.
-
-Jedes Neuron in einem Netzwerk kann eine andere Aktivierungsfunkton haben.
+Die meisten Probleme sind viel komplexer als das man sie linear darstellen könnte und deswegen ist eine Aktivierungsfunktion von nötig.
+Es wird näher auf die Aktivierungsfunktion eingegangen im Abschnitt~\ref{sec:aktivierungsfunktionen}
 
 \section{Architektur}
 Wie auch im biologischen Gehirn ist ein Neuron allein nutzlos.
@@ -297,9 +265,9 @@ Wichtig zu beachten ist, dass keine Schleifen vorkommen.
 Es gibt Architekturen in denen Schleifen vorkommen, aber auf diese wird nicht näher eingegangen, da sie für die
 Bilderkennung nicht relevant sind.
 
-\subsection{Formel}
+\subsection{Beschriftung}
 
-Um eine allgemeine Formel bestimmen zu können, muss man zuerst die Elemente des Netzwerks benennen.
+Um eine allgemeine Gleichung zu bestimmen, muss man zuerst die Elemente des Netzwerks benennen.
 Wir bezeichnen das Gewicht $w^l_{k,j}$ für die Verbindung des $k^{ten}$ Neuron der $(l-1)^{ten}$ Schicht
 zu dem $j^{ten}$ Neuron der $l^{ten}$ Schicht.
 Ähnlich dazu bezeichnen wir die Ausgabe des Neurons als $a^l_j$ und der bias des Neurons als $b^l_j$,
@@ -362,7 +330,7 @@ net/.style={
     \caption{Bezeichnung der Parameter}
     \label{fig:network3}
 \end{figure}
-Mit dieser Notation kann eine Formel für das Netzwerk aufgestellt werden, welche sehr ähnlich zu der Formel vom Abschnitt~\ref{sec:neuron} ist.
+Mit dieser Notation kann eine Gleichung für das Netzwerk aufgestellt werden, welche sehr ähnlich zu der Gleichung vom Abschnitt~\ref{sec:neuron} ist.
 
 \[a^l_j = f\left(\sum_{k} a^{l-1}_k w^l_{k,j} + b^l_j\right)\]
 
@@ -378,10 +346,10 @@ Beachte, dass $x$ und $l$ Vektoren sind.
 Zum Beispiel würde ein Bild, das 10x10 Pixel gross ist, einen ($10 * 10 = 100$) 100-dimensionaler Vektor bekommen
 und die Label, wenn es 3 verschiedene Ergebnisse gibt, einem 3-dimensional Vektor, der z.B so ausschaut: $(0, 1, 0)$
 
-\[C(w,b) = \left|y(x)-l\right|^2\]
+\[C(w,b) = \sum_{j}(y(x)_j - l_j)^2\]
 
 Das Ziel des Netzwerkes ist diese Kostenfunktion zu minimieren, bis idealerweise $C \approx 0$,
-dies geschieht wenn die Ausgabe des Netzwerks und des Label sehr ähnlich sind.
+dies geschieht wenn die Ausgabe des Netzwerks und des Label ähnlich sind.
 \subsection{Gradient Descent}
 Um diese Kostenfunktion zu minimieren wird ein Algorithmus names Gradient Descent benutzt.
 Das Konzept basiert darauf, dass man eine Funktion, in abhängigkeit einer Variablen, ableiten kann und so die Steigung
@@ -400,14 +368,14 @@ gegensätzliche Richtung bewegen, wie auf Abbildung **ref** zu sehen ist.
 
 **Bild Einfügen**
 
-Die Bewegung als Formel sieht so aus:
+Für Bewegung ergibt sich:
 \begin{gather*}
     a \rightarrow a^\prime\ = a - \mu\frac{\partial C}{\partial a}\\
     b \rightarrow b^\prime\ = b - \mu\frac{\partial C}{\partial b}\\
 \end{gather*}
 wobei $\mu$ eine kleine positive Zahl (learning rate genannt) ist, die die Geschwindigkeit der Bewegung steuert.
 Ausserdem beachte, dass der Ball keine Beschleunigung hat.
-Wenn man diese Formel nun immer wieder anwendend gelangt man zum Minimum der Kostenfunktion.
+Wenn man diese Gleichung nun immer wieder anwendend gelangt man zum Minimum der Kostenfunktion.
 
 Der Algorithmus funktioniert auch bei mehr als nur 2 Variablen und sieht fürs Neuronale Netzwerk identisch aus.
 \begin{gather*}
@@ -416,6 +384,101 @@ Der Algorithmus funktioniert auch bei mehr als nur 2 Variablen und sieht fürs N
 \end{gather*}
 
 \subsection{Backpropagation}
+Der Algorithmus um $\frac{\partial C}{\partial w^l_{k,j}}$ und $\frac{\partial C}{\partial b^l_j}$ zu berechnen wird als
+Backpropagation bezeichnet und ist der mathematische schwerste Teil dieser Arbeit.
+Es ist aber nicht unbedingt nötig für das Verständnis eines Neuronale Netzwerkes.
+Es wird auch nicht näher auf die Beweise der Gleichungen eingegangen (oder soll ich???),
+da es sonst komplizierter wird und es im Grunde nur die Anwendung der Kettenregel ist.
+
+Um die Übersicht zu behalten wird eine Zwischenmenge $\delta^l_j$ eingeführt, welches als \textit{Fehler} bezeichnet wird.
+Der Fehler sagt aus wie gut oder schlecht ein Neuron ist und ist definiert als
+\[\delta^l_j = \frac{\partial C}{\partial z^l_j}\]
+wobei $z^l_j$ die Ausgabe von einem Neuron ohne die Aktivierungsfunktion ist, also $a^l_j = f(z^l_j)$.
+Mit dieser Definition kann man den Fehler in der letzten Schicht $L$ bestimmen:
+\[\delta^L_j = \frac{\partial C}{\partial a^L_j}f^\prime(z^L_j)\]
+%Der linke Teil $\frac{\partial C}{\partial a^L_j}$ gibt an wie schnell sich die Kosten in Abhängigkeit des $j^{ten}$ ausgang Neuron ändern.
+%Der rechte Teil $f^\prime(z^L_j)$ zeigt wie schnell sich die Aktivierungsfunktion $f$ ändert bei $z^L_j$
+In unserem Fall benutzen wir eine Quadratische Kostenfunktion $C = \sum_{j}(a^L_j - y_j)^2$ bei
+der die Ableitung $\frac{\partial C}{\partial a^L_j} = 2(a^L_j - y_j)$ ist und können $\delta^L_j$ einfacher definieren als:
+\[\delta^L_j = 2(a^L_j - y_j)f^\prime(z^L_j)\]
+Bei der berechnung des Fehlers $\delta^l_j$ Abhängig von $\delta^{l+1}_j$ bekommt man:
+\[\delta^l_j = \sum_k w^{l+1}_{j,k}\delta^{l+1}_k f^\prime(z^l_j)\]
+Beachte, dass bei $w^{l+1}_{j,k}$ das $j$ und $k$ vertauscht sind, so dass man durch alle Neuronen der $(l+1)^{ten}$ Schicht durch iteriert.
+Mit dieser Gleichung kann man jeden Fehler von jeder Schicht berechnen, indem man von hinten durch das Netzwerk durchläuft.
+Ähnlich wie wenn man sich beim Netzwerk nach vorne bewegt.
+
+Die Gleichung für die Änderungsrate der Kosten in Bezug auf ein Bias im Netzwerk:
+\[\frac{\partial C}{\partial b^l_j} = \delta^l_j\]
+Die Gleichung für die Änderungsrate der Kosten in Bezug auf ein Gewicht im Netzwerk:
+\[\frac{\partial C}{\partial w^{l}_{k,j}} = a^{l-1}_k\delta^l_j\]
+
+\section{Aktivierungsfunktionen}\label{sec:aktivierungsfunktionen}
+Das einzige was noch fehlt ist wie eine Aktivierungsfunktionen genau ausschaut.
+Wie schon gesagt muss eine Aktivierungsfunktionen nicht linear sein, da sie sonst nichts neues dem Netzwerk beiträgt.
+\subsection{Sigmoid}
+Ein Beispiel für eine Aktivierungsfunktion ist die Sigmoid Funktion, wie sie auf Abbildung~\ref{fig:activation1} zu sehen ist.
+\begin{figure}[h]
+    \centering
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = $x$,
+    ylabel = {$f(x)$},
+    ymin = -0.1,
+    ymax = 1.1,
+]
+\pgfplotsset{
+every axis legend/.append style={
+at={(0.1,0.9)},
+anchor=north west,
+},
+}
+\addplot [
+    domain=-8:8,
+    samples=200,
+    color=blue,
+    ]
+    {1 / (1 + 2.71828^(-x))};
+\addlegendentry{$\frac{1}{1 + e^{-x}}$}
+
+\end{axis}
+\end{tikzpicture}
+    \caption{Sigmoid Aktivierungsfunktionen}
+    \label{fig:activation1}
+\end{figure}
+Besonders an dieser Funktion ist, dass sie den Ausgabewert zwischen 0 und 1 eingrenzt, was uns erlaubt den Ausgabewert des ganzen
+Netzwerkes besser zu deuten, als wenn der Wert zwischen $-\infty$ und $\infty$ liegt.
+Ein Problem der Sigmoid Funktion ist, dass wenn die Ausgabe nah bei 1 oder 0 ist, dann ist die Ableitung davon nah bei 0,
+was den Fehler $\delta^l_j$ sehr klein macht und so das Netzwerk nicht mehr viel lernt.
+\subsection{Rectified linear units}
+\begin{figure}[h]
+    \centering
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = $x$,
+    ylabel = {$f(x)$},
+    ymin = -2,
+]
+\pgfplotsset{
+every axis legend/.append style={
+at={(0.1,0.9)},
+anchor=north west,
+},
+}
+\addplot [
+    domain=-8:8,
+    samples=200,
+    color=blue,
+    ]
+    {max(x, 0))};
+\addlegendentry{$\max(0, x)$}
+
+\end{axis}
+\end{tikzpicture}
+    \caption{ReLu Aktivierungsfunktionen}
+    \label{fig:activation2}
+\end{figure}
 
 
 
