@@ -496,9 +496,112 @@ Ausserdem gibt die Summer aller Resultate von $a^L$ gleich 1 und kann deswegen a
 Dies ist oft sehr hilfreich, da viele Probleme nur ein richtiges Resultat haben, zum Beispiel hat man Bilder von Zahlen,
 wo immer nur eine Zahl pro Bild zu sehen ist.
 Und durch die softmax Funktion sieht man dann eine geschätzte Wahrscheinlichkeit vom Netzwerk für jede Zahl.
-\section{Convolutional}
+\section{Convolution}
 Bis jetzt ging es nur um Schichten die völlig miteinander verbunden sind.
-Für die Bilderkennung kann das suboptimal sein, da nicht die Beziehung von nebeneinander liegenden Pixel miteinbezogen wird.
+Für die Bilderkennung kann das suboptimal sein, da bestimmte Eigenschaften eines Bildes nicht miteinbezogen werden,
+wie zum Beispiel die Beziehung von nebeneinander liegenden Pixel
+und das gesuchte Objekt in einem Bild an verschiedenen Orten vorkommen kann.
+\subsection{Architektur}
+Die Eingabe für einen convolutional Schicht ist nicht 1-Dimensional, sondern 2-Dimensional.
+Wie man auf Abbildung~\ref{fig:conv1} sieht.
+\begin{figure}[h]
+    \centering
+\begin{tikzpicture}[
+plain/.style={
+  draw=none,
+  fill=none,
+  },
+net/.style={
+  matrix of nodes,
+  nodes={
+    draw,
+    circle,
+    inner sep=5pt
+    },
+  nodes in empty cells,
+  column sep=2pt,
+  row sep=2pt
+  },
+>=latex
+]
+\matrix[net] (mat)
+{
+|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| & |[plain]|  & |[plain]| & |[plain]|\\
+&  &   &  &  &  &  &  &  & \\
+&  &   &  &  &  &  &  &  & \\
+&  &   &  &  &  &  &  &  & \\
+&  &   &  &  &  &  &  &  & \\
+&  &   &  &  &  &  &  &  & \\
+&  &   &  &  &  &  &  &  & \\
+&  &   &  &  &  &  &  &  & \\
+&  &   &  &  &  &  &  &  & \\
+&  &   &  &  &  &  &  &  & \\
+&  &   &  &  &  &  &  &  & \\
+};
+\node[] at (mat-1-6.north west)
+  (x) {\centering Eingabe Neuronen};
+\end{tikzpicture}
+    \caption{Eingabe Neuronen für eine convolution Schicht}
+    \label{fig:conv1}
+\end{figure}
+Die Neuronen werden normal verbunden, einfach mit dem Unterschied, dass nicht jeder Neuron mit jedem Neuron verbunden wird,
+sondern dass nur ein bestimmter Bereich zum nächsten Neuron verbunden ist.
+Dieser Bereich wird als \textit{Filter} bezeichnet
+
+\begin{figure}[h]
+    \centering
+\begin{tikzpicture}[
+plain/.style={
+  draw=none,
+  fill=none,
+  },
+net/.style={
+  matrix of nodes,
+  nodes={
+    draw,
+    circle,
+    inner sep=5pt
+    },
+  nodes in empty cells,
+  column sep=2pt,
+  row sep=2pt
+  },
+>=latex
+]
+\matrix[net] (mat)
+{
+|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| & |[plain]|  & |[plain]| & |[plain]|\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| & |[plain]|\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| & |[plain]|\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+};
+\node[] at (mat-1-6.north)
+  (x) {\centering Eingabe Neuronen};
+
+\node[] at (mat-5-15.north)
+  (y) {\centering Verstecktes Neuron};
+
+\foreach \ai in {7,...,9}
+{\foreach \aii in {7,...,9}
+  \node[circle, line width=1.5pt, draw, inner sep=5pt] at (mat-\ai-\aii) {};
+}
+\foreach \ai in {7,...,9}
+{\foreach \aii in {7,...,9}
+  \draw[->] (mat-\ai-\aii) -- (mat-6-15);
+}
+
+\end{tikzpicture}
+    \caption{Eingabe Neuronen für eine convolution schicht}
+    \label{fig:conv2}
+\end{figure}
+
 
 
 \chapter{Lösungsansatz}
@@ -524,6 +627,7 @@ Für die Bilderkennung kann das suboptimal sein, da nicht die Beziehung von nebe
 \listoffigures
 
 \appendix
+
 
 \chapter*{Ehrlichkeitserklärung}
 
