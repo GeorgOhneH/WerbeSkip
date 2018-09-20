@@ -2,9 +2,8 @@
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \usepackage[onehalfspacing]{setspace}
 
-\usepackage{ucs}
-\usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
 \usepackage{pifont}
 
@@ -59,9 +58,9 @@
 \label{ch:neuronalesNetzwerk}
 
 \section{Konzept}\label{sec:konzept}
-Wenn man ein normales Programm schreiben will muss man das Problem in viele kleiner aufteilen, bis der Computer fähig ist
+Wenn man ein normales Programm schreiben will muss man das Problem in viele kleiner aufteilen, bis der Computer fähig ist,
 es zu lösen.
-In einem Neuronale Netzwerk sagen wir dem Computer nicht wie er das Problem lösen kann, sondern ein Neuronales Netzwerk
+In einem Neuronale Netzwerk wird dem Computer nicht gesagt wie es das Problem lösen kann, sondern ein Neuronales Netzwerk
 versteht das Problem, indem wir es Beispieldaten geben und es daran lernen kann, bis es seine eigene Lösung gefunden hat.
 Zum Beispiel, wir wollen einem Netzwerk beibringen ob in einem Bild ein Auto vorkommt,
 dazu geben wir dem Neuronale Netzwerk viele Bilder, mit und ohne Auto.
@@ -69,8 +68,8 @@ Mit jedem Bild, dass das Neuronale Netzwerk bekommt, lernt es besser wie ein Aut
 
 Das Konzept eines Neuronales Netzwerk ist nicht etwas neuses.
 Im Jahre 1957 hat Frank Rosenblatt ein erste Idee eines Neuronales Netzwerk vorgestellt, aber erst in den letzten
-Jahren ist der grosse Hype des Neuronale Netzwerkes ausgebrochen, dies liegt daran, dass man früher nicht die Daten
-und Rechenleistung hatte, wie sie heute zur verfügung steht.
+Jahren ist der grosse Hype ausgebrochen, dies liegt daran, dass man erst jetzt die nötigen Daten
+und Rechenleistung zu verfügung hat.
 
 \section{Neuron}\label{sec:neuron}
 User Gehirn kann Entscheidungen treffe, da wir billionen von Neuronen haben, die miteinander verbunden sind und sich
@@ -81,7 +80,7 @@ Nach dem gleichen Prinzip funktioniert ein Neuronales Netzwerk
 Es besteht aus vielen Neuronen (daher der Name) die miteinander verbunden sind.
 
 
-\begin{figure}[!h]
+\begin{figure}[h]
     \centering
 \begin{tikzpicture}[
 init/.style={
@@ -136,11 +135,11 @@ start chain=2,node distance=13mm
 Ein Neuron in einem Neuronales Netzwerk wird als Mathematische funktion definiert wie Abbildung~\ref{fig:neuron1}
 verdeutlicht.
 Ein Neuron hat $n$ verschiedene Eingaben, die als $x_j$ bezeichnet werden und mit einem spezifischen Gewicht $w_j$ multipliziert werden.
-Die Ausgabe erfolgt indem man alle gewichteten Eingaben, mit einem bias $b$, addiert und durch eine so genannte
+Die Ausgabe erfolgt indem man alle gewichteten Eingaben, mit einem Bias $b$, addiert und durch eine so genannte
 Aktivierungsfunktion durchlaufen läst.
 Als Gleichung:
 \[y =f\left(\sum_{j=1}^{n} x_j w_j + b\right)\]
-Die Gewichte $w_j$ und die Verzerrung $b$ des Neurons sind die Parameter, die angepasst werden und somit das Neuron lernfähig machen.
+Die Gewichte $w_j$ und der Bias $b$ des Neurons sind die Parameter, die angepasst werden und somit das Neuron lernfähig machen.
 
 Quelle: https://towardsdatascience.com/activation-functions-and-its-types-which-is-better-a9a5310cc8f
 
@@ -263,7 +262,7 @@ Jeder Neuron von der vorigen Schicht ist mit jedem Neuron der nachfolgenden Schi
 Dies ist ein klassisches vorwärtsgekoppeltes Netzwerk (im englischen feed forward network).
 Wichtig zu beachten ist, dass keine Schleifen vorkommen.
 Es gibt Architekturen in denen Schleifen vorkommen, aber auf diese wird nicht näher eingegangen, da sie für die
-Bilderkennung nicht relevant sind.
+Bilderkennung nicht weiter relevant sind.
 
 \subsection{Beschriftung}
 
@@ -330,11 +329,11 @@ net/.style={
     \caption{Bezeichnung der Parameter}
     \label{fig:network3}
 \end{figure}
-Mit dieser Notation kann eine Gleichung für das Netzwerk aufgestellt werden, welche sehr ähnlich zu der Gleichung vom Abschnitt~\ref{sec:neuron} ist.
+Mit dieser Notation kann eine Gleichung für das Netzwerk aufgestellt werden, welche der Gleichung einem Neuron ähnelt~\ref{sec:neuron}.
 
 \[a^l_j = f\left(\sum_{k} a^{l-1}_k w^l_{k,j} + b^l_j\right)\]
 
-\section{Lernen}\label{sec:lernen}
+\section{Wie das Netzwerk lernt}\label{sec:lernen}
 Bis jetzt ging es nur darum wie ein Neuronales Netzwerk aufgebaut ist.
 In dem Abschnitt geht wie ein Neuronales Netzwerk, anhand von Daten, lernen kann
 \subsection{Kostenfunktion}
@@ -343,15 +342,15 @@ Dazu definieren wir eine Kostenfunktion $C$, die von allen Gewichten $w$ und all
 Das Netzwerk wird als Funktion $y(x)$ bezeichnet.
 Den Eingabewert wird als $x$ bezeichnet mit dem dazugehörige Label $l$.
 Beachte, dass $x$ und $l$ Vektoren sind.
-Zum Beispiel würde ein Bild, das 10x10 Pixel gross ist, einen ($10 * 10 = 100$) 100-dimensionaler Vektor bekommen
-und die Label, wenn es 3 verschiedene Ergebnisse gibt, einem 3-dimensional Vektor, der z.B so ausschaut: $(0, 1, 0)$
+Zum Beispiel würde ein Bild, das 10x10 Pixel gross ist, einen ($10 * 10 =$)100-dimensionaler Vektor haben
+und das Label, wenn es 3 ausgabe Neuronen gibt, einem 3-dimensional Vektor.
 
 \[C(w,b) = \sum_{j}(y(x)_j - l_j)^2\]
 
 Das Ziel des Netzwerkes ist diese Kostenfunktion zu minimieren, bis idealerweise $C \approx 0$,
 dies geschieht wenn die Ausgabe des Netzwerks und des Label ähnlich sind.
 \subsection{Gradient Descent}
-Um diese Kostenfunktion zu minimieren wird ein Algorithmus names Gradient Descent benutzt.
+Um diese Kostenfunktion zu minimieren wird ein Algorithmus names \textit{Gradient Descent} benutzt.
 Das Konzept basiert darauf, dass man eine Funktion, in abhängigkeit einer Variablen, ableiten kann und so die Steigung
 and diesem Punkt berechnen kann und die Variable richtung Minimum anpasst.
 
@@ -382,16 +381,18 @@ Der Algorithmus funktioniert auch bei mehr als nur 2 Variablen und sieht fürs N
     w^l_{k,j} \rightarrow w^{l^\prime}_{k,j} = w^l_{k,j} - \mu\frac{\partial C}{\partial w^l_{k,j}}\\
     b^l_j \rightarrow b^{l^\prime}_j = b^l_j - \mu\frac{\partial C}{\partial b^l_j}\\
 \end{gather*}
+Durch dieses Verfahren kann zwar relativ einfach das Minimum gefunden werden, dabei ist aber zu beachten, dass es nur ein lokales
+Minimum ist und kein globales.
 
 \subsection{Backpropagation}
 Der Algorithmus um $\frac{\partial C}{\partial w^l_{k,j}}$ und $\frac{\partial C}{\partial b^l_j}$ zu berechnen wird als
-Backpropagation bezeichnet und ist der mathematische schwerste Teil dieser Arbeit.
+Backpropagation bezeichnet und ist der mathematisch schwerste Teil dieser Arbeit.
 Es ist aber nicht unbedingt nötig für das Verständnis eines Neuronale Netzwerkes.
 Es wird auch nicht näher auf die Beweise der Gleichungen eingegangen (oder soll ich???),
-da es sonst komplizierter wird und es im Grunde nur die Anwendung der Kettenregel ist.
+da es sonst komplizierter wird und im Grunde ist es nur die Anwendung der Kettenregel.
 
 Um die Übersicht zu behalten wird eine Zwischenmenge $\delta^l_j$ eingeführt, welches als \textit{Fehler} bezeichnet wird.
-Der Fehler sagt aus wie gut oder schlecht ein Neuron ist und ist definiert als
+Der Fehler sagt aus wie gut oder schlecht ein Neuron ist und ist definiert als:
 \[\delta^l_j = \frac{\partial C}{\partial z^l_j}\]
 wobei $z^l_j$ die Ausgabe von einem Neuron ohne die Aktivierungsfunktion ist, also $a^l_j = f(z^l_j)$.
 Mit dieser Definition kann man den Fehler in der letzten Schicht $L$ bestimmen:
@@ -407,16 +408,17 @@ Beachte, dass bei $w^{l+1}_{j,k}$ das $j$ und $k$ vertauscht sind, so dass man d
 Mit dieser Gleichung kann man jeden Fehler von jeder Schicht berechnen, indem man von hinten durch das Netzwerk durchläuft.
 Ähnlich wie wenn man sich beim Netzwerk nach vorne bewegt.
 
-Die Gleichung für die Änderungsrate der Kosten in Bezug auf ein Bias im Netzwerk:
+Die Gleichung für die Änderungsrate der Kosten in Bezug auf ein Bias im Netzwerk ist genau der Fehler:
 \[\frac{\partial C}{\partial b^l_j} = \delta^l_j\]
 Die Gleichung für die Änderungsrate der Kosten in Bezug auf ein Gewicht im Netzwerk:
 \[\frac{\partial C}{\partial w^{l}_{k,j}} = a^{l-1}_k\delta^l_j\]
 
 \section{Aktivierungsfunktionen}\label{sec:aktivierungsfunktionen}
 Das einzige was noch fehlt ist wie eine Aktivierungsfunktionen genau ausschaut.
-Wie schon gesagt muss eine Aktivierungsfunktionen nicht linear sein, da sie sonst nichts neues dem Netzwerk beiträgt.
+Wie schon gesagt darf eine Aktivierungsfunktionen nicht linear sein, da sie sonst nichts neues dem Netzwerk beiträgt.
 \subsection{Sigmoid}
-Ein Beispiel für eine Aktivierungsfunktion ist die Sigmoid Funktion, wie sie auf Abbildung~\ref{fig:activation1} zu sehen ist.
+Ein Beispiel für eine Aktivierungsfunktion ist die Sigmoid Funktion $f(x) = \frac{1}{1 + e^{-x}}$,
+wie sie auf Abbildung~\ref{fig:activation1} zu sehen ist.
 \begin{figure}[h]
     \centering
 \begin{tikzpicture}
@@ -448,9 +450,11 @@ anchor=north west,
 \end{figure}
 Besonders an dieser Funktion ist, dass sie den Ausgabewert zwischen 0 und 1 eingrenzt, was uns erlaubt den Ausgabewert des ganzen
 Netzwerkes besser zu deuten, als wenn der Wert zwischen $-\infty$ und $\infty$ liegt.
-Ein Problem der Sigmoid Funktion ist, dass wenn die Ausgabe nah bei 1 oder 0 ist, dann ist die Ableitung davon nah bei 0,
-was den Fehler $\delta^l_j$ sehr klein macht und so das Netzwerk nicht mehr viel lernt.
+Ein Problem der Sigmoid Funktion ist, dass wenn die Ausgabe nah bei 1 oder 0 ist, dann ist die Ableitung $f^\prime()$ davon auch nah bei 0,
+was den Fehler $\delta^l_j$ sehr klein hält und so das Netzwerk nur noch langsam lernen lässt.
+Dieses Problem ist als \textit{Vanishing gradient problem} bekannt.
 \subsection{Rectified linear units}
+Eine andere populäre Aktivierungsfunktion ist die Rectified linear units Funktion oder kurz ReLu.
 \begin{figure}[h]
     \centering
 \begin{tikzpicture}
@@ -479,7 +483,22 @@ anchor=north west,
     \caption{ReLu Aktivierungsfunktionen}
     \label{fig:activation2}
 \end{figure}
-
+Die Funktion $f(x) = \max(0, x)$, wie sie auf Abbildung~\ref{fig:activation2} zu sehen ist,
+löst das Problem des Vanishing gradient und praktisch alle Neuronalen Netzwerke benutzen Relu als ihre Aktivierungsfunktion,
+da es die besten Ergebnisse erbringt.
+Ein Nachteil ist, dass sie nur in den Versteckten Schichten gut funktioniert,
+da der Ausgabewert des Netzwerks in einem unbestimmten Bereich ist.
+\subsection{Softmax}
+Die Softmax funktion wird verwendet um eindeutige Klassifikationen zu machen und ist definiert als:
+\[a^L_j = \frac{e^{z^L_j}}{\sum_k{e^{z^L_k}}}\]
+Das besondere an dieser Aktivierungsfunktion ist, dass sie nicht nur einen Wert braucht, sondern alle Werte der ganzen Schicht.
+Ausserdem gibt die Summer aller Resultate von $a^L$ gleich 1 und kann deswegen als eine Wahrscheinlichkeitsverteilung verstanden werden.
+Dies ist oft sehr hilfreich, da viele Probleme nur ein richtiges Resultat haben, zum Beispiel hat man Bilder von Zahlen,
+wo immer nur eine Zahl pro Bild zu sehen ist.
+Und durch die softmax Funktion sieht man dann eine geschätzte Wahrscheinlichkeit vom Netzwerk für jede Zahl.
+\section{Convolutional}
+Bis jetzt ging es nur um Schichten die völlig miteinander verbunden sind.
+Für die Bilderkennung kann das suboptimal sein, da nicht die Beziehung von nebeneinander liegenden Pixel miteinbezogen wird.
 
 
 \chapter{Lösungsansatz}
