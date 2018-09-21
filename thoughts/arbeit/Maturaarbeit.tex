@@ -10,7 +10,6 @@
 \usepackage{graphicx}
 \usepackage[export]{adjustbox}
 \usepackage[hidelinks]{hyperref}
-\usepackage{subcaption}
 \usepackage{wrapfig}
 \usepackage{mathtools}
 \usepackage{listings}
@@ -19,6 +18,7 @@
 \usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows,calc}
 \usepackage{pgfplots}
 \usepackage{amsmath}
+\usepackage{subfig}
 
 \begin{document}
 
@@ -546,8 +546,7 @@ net/.style={
 \end{figure}
 Die Neuronen werden normal verbunden, einfach mit dem Unterschied, dass nicht jeder Neuron mit jedem Neuron verbunden wird,
 sondern dass nur ein bestimmter Bereich zum nächsten Neuron verbunden ist.
-Dieser Bereich wird als \textit{Filter} bezeichnet
-
+Dieser Bereich wird als \textit{Filter} bezeichnet und in dem Beispiel auf Abbildung~\ref{fig:conv2} wird ein 3x3 Filter benutzt.
 \begin{figure}[h]
     \centering
 \begin{tikzpicture}[
@@ -596,11 +595,127 @@ net/.style={
 {\foreach \aii in {7,...,9}
   \draw[->] (mat-\ai-\aii) -- (mat-6-15);
 }
-
 \end{tikzpicture}
-    \caption{Eingabe Neuronen für eine convolution schicht}
+    \caption{Verbindung eines versteckten Neurons in einem convolution Schicht}
     \label{fig:conv2}
 \end{figure}
+Der Filter wird dann auf den Eingabe Neuronen um ein Neuron verschoben, um den nächsten Neuron zu verbinden.
+Und so geht das weiter, auch nach unten, bis die ganze versteckte Schicht gemacht wurde.
+Dabei wird die versteckte Schicht auch kleiner, in dem Beispiel wird die 10x10 Schicht zu einer 8x8 Schicht,
+da der Filter irgendwann am anderen Rand anstösst.
+Abbildung~\ref{fig:conv3} verdeutlicht das Prinzip noch einmal.
+
+Der Filter kann auch um mehr als nur einen Neuronen verschoben werden, und man kann in den beiden Richtungen verschiedene Werte nehmen,
+zum Beispiel bewegt sich der Neuron nach links um zwei Neuronen und nach unten um drei.
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+plain/.style={
+  draw=none,
+  fill=none,
+  },
+net/.style={
+  matrix of nodes,
+  nodes={
+    draw,
+    circle,
+    inner sep=3pt
+    },
+  nodes in empty cells,
+  column sep=1pt,
+  row sep=1pt
+  },
+>=latex
+]
+\matrix[net] (mat)
+{
+|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| & |[plain]|  & |[plain]| & |[plain]|  & |[plain]|  & |[plain]|  & |[plain]| & |[plain]|  & |[plain]| & |[plain]|& |[plain]|  & |[plain]|  & |[plain]|  & |[plain]|  & |[plain]|  \\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+};
+\node[] at (mat-1-6.north)
+  (x) {\centering Eingabe Neuronen};
+
+\node[] at (mat-1-18.north east)
+  (y) {\centering Versteckte Schicht};
+
+\foreach \ai in {2,...,4}
+{\foreach \aii in {1,...,3}
+  \node[circle, line width=1pt, draw, inner sep=3pt] at (mat-\ai-\aii) {};
+}
+\foreach \ai in {2,...,4}
+{\foreach \aii in {1,...,3}
+  \draw[->] (mat-\ai-\aii) -- (mat-3-15);
+}
+
+\end{tikzpicture}
+    \hspace{0.5cm}% NO SPACE!
+    \begin{tikzpicture}[
+plain/.style={
+  draw=none,
+  fill=none,
+  },
+net/.style={
+  matrix of nodes,
+  nodes={
+    draw,
+    circle,
+    inner sep=3pt
+    },
+  nodes in empty cells,
+  column sep=1pt,
+  row sep=1pt
+  },
+>=latex
+]
+\matrix[net] (mat)
+{
+|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| & |[plain]|  & |[plain]| & |[plain]|  & |[plain]|  & |[plain]|  & |[plain]| & |[plain]|  & |[plain]| & |[plain]|& |[plain]|  & |[plain]|  & |[plain]|  & |[plain]|  & |[plain]|  \\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| &  &   &  &  &  &  & &\\
+&  &   &  &  &  &  &  &  &  &|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| \\
+};
+\node[] at (mat-1-6.north)
+  (x) {\centering Eingabe Neuronen};
+
+\node[] at (mat-1-18.north east)
+  (y) {\centering Versteckte Schicht};
+
+\foreach \ai in {2,...,4}
+{\foreach \aii in {2,...,4}
+  \node[circle, line width=1pt, draw, inner sep=3pt] at (mat-\ai-\aii) {};
+}
+\foreach \ai in {2,...,4}
+{\foreach \aii in {2,...,4}
+  \draw[->] (mat-\ai-\aii) -- (mat-3-16);
+}
+
+\end{tikzpicture}
+    \caption{Bewegung eines Filters über eine convolution Schicht}
+    \label{fig:conv3}
+\end{figure}
+
+Das wichtigste am Filter ist, dass er die gleichen Gewichte und Bias verwendet für die Verbindung, d.h bei einem
+Filter von 5x5 gibt is $(5*5=)$25 verschiedene Gewichte und einen Bias.
+Wenn nun der Filter bewegt wird werden die gleichen Gewichte und der der gleiche Bias verwendet.
+Als Gleichung:
+
+\[a^{l+1}_{j,k} = f\left(\sum_{p=0}^{2}\sum_{m=0}^{2}w^l_{p,m}a^l_{j+p,k+m} + b^l\right)\]
 
 
 
