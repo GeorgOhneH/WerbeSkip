@@ -32,6 +32,7 @@ class AdsGenerator(object):
 
     def init_network(self):
         net = Network()
+        net.use_gpu = True
 
         net.input((1, 180, 320))
 
@@ -126,4 +127,4 @@ if __name__ == "__main__":
     for frame in AdsGenerator(1, 10):
         cv2.imshow('test', frame[0][0, 0, :, :])
         cv2.waitKey(1)
-        print(frame[0].shape, frame[1].shape)
+        print(frame[0].shape, frame[1][0])

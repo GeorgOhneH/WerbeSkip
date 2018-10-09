@@ -25,6 +25,7 @@ class Network(object):
         self._optimizer = None
         self._input_neurons = None
         self._cost = None
+        self.is_binary = False
         self._layers = []
         self._train_loss = []
         self._train_accuracy = []
@@ -83,7 +84,7 @@ class Network(object):
         where D is the depth, H the height and W the width
         note:
         the input array must have the shape of (N, D, H, W)
-        where N is multiple inputs
+        where N are the multiple inputs
         example:
         if you just have one input the shape must be (1, D, H, W)
         if you have 10: (10, D, H, W)
@@ -131,6 +132,9 @@ class Network(object):
         neurons_before = self._input_neurons
         for layer in self._layers:
             neurons_before = layer.init(neurons_before, copy(self._optimizer))
+
+        if neurons_before == 2:
+            self.is_binary = True
 
     def fit(self,
             train_inputs: ndarray,
@@ -241,17 +245,13 @@ class Network(object):
             self._plot()
 
     def fit_generator(self,
-                      generator: Generator,
+                      generator,
                       validation_set: tuple or list = None,
                       plot: bool = False,
                       snapshot_step: float = 1,
                       metrics: list = None,
                       save_step: None or int = None,
                       path: str = "network.h5") -> None:
-        """checks values"""
-        # if not issubclass(type(generator), Generator):
-        #     raise ValueError("Must be a subclass of Generator. "
-        #                      "Use the Base Class from utils")
 
         if metrics is None:
             metrics = ["all"]
@@ -265,7 +265,7 @@ class Network(object):
                             )
 
     def _fit_generator(self,
-                       generator: Generator,
+                       generator,
                        validation_set: tuple or list,
                        plot: bool,
                        snapshot_step: float,
@@ -318,7 +318,7 @@ class Network(object):
         loss = self._cost.function(x, y)
         self._train_loss.append(float(loss))
 
-        accuracy = self._analysis.accuracy(x, y)
+        accuracy = self._analysis.accuracy_or_f1score(x, y)
         self._train_accuracy.append(float(accuracy))
 
         delta = self._cost.delta(x, y)
@@ -396,7 +396,6 @@ class Network(object):
         network = dd.io.load(path)
 
         parameters = network["parameters"]
-        self._init()
         for layer, parameter in zip(self._layers, parameters):
             layer.load([np.asarray(value) for value in parameter])
 

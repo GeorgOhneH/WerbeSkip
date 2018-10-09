@@ -7,7 +7,6 @@ import time
 
 
 class VideoCapture(object):
-
     def __init__(self, channel: int, colour=True, rate_limit=None, convert_network=False):
         self.convert_network = convert_network
         self.rate_limit = rate_limit  # images per second
@@ -78,5 +77,6 @@ class VideoCapture(object):
 
 if __name__ == "__main__":
     for frame in VideoCapture(channel=354):
+        print(frame.shape)
         cv2.imshow("img", frame)
         cv2.waitKey(1)

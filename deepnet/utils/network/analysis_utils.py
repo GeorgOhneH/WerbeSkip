@@ -26,6 +26,32 @@ class Analysis(object):
         return np.mean(np.argmax(x, axis=1) == np.argmax(y, axis=1))
 
     @staticmethod
+    def f1score(x, y):
+        """
+        Computes the accuracy with values, that went already
+        through the network
+        :param x: ndarray
+        :param y: ndarray
+        :return: accuracy: flout
+        """
+        a = np.argmax(x, axis=1) + np.argmax(y, axis=1) * 2
+        tp = np.count_nonzero(a == 3)  # True Positive
+        tn = np.count_nonzero(a == 0)  # True Negative
+        fp = np.count_nonzero(a == 1)  # False Positive
+        fn = np.count_nonzero(a == 2)  # False Negative
+        accuracy = (tp + tn) / (tp + tn + fp + fn)
+        precision = tp / (tp + fp)
+        recall = tp / (tp + fn)
+        f1_score = 2 * (recall * precision) / (recall + precision)
+        return f1_score, recall, precision, accuracy
+
+    def accuracy_or_f1score(self, x, y):
+        if self.network.is_binary:
+            return self.f1score(x, y)[0]
+        else:
+            return self.accuracy(x, y)
+
+    @staticmethod
     def wrong_predictions(x, y):
         """
         Calculates all inputs that were not correctly predicted and
@@ -66,7 +92,7 @@ class Analysis(object):
         x = self.network.feedforward(x)
 
         loss = self.network.cost.function(x, y)
-        accuracy = self.accuracy(x, y)
+        accuracy = self.accuracy_or_f1score(x, y)
 
         self.network.validate_accuracy.append(float(accuracy))
         self.network.validate_loss.append(float(loss))
@@ -94,7 +120,7 @@ class Analysis(object):
 
         x = self.network.feedforward(x)
         loss = self.network.cost.function(x, y)
-        if x.shape[1] != 2:
+        if not self.network.is_binary:
             self.normal_evaluation(x, y, loss)
         else:
             self.binary_evaluation(x, y, loss)
@@ -115,8 +141,7 @@ class Analysis(object):
             int(x.shape[0]), float(loss), float(accuracy),
         ))
 
-    @staticmethod
-    def binary_evaluation(x, y, loss):
+    def binary_evaluation(self, x, y, loss):
         """
         computes the accuracy. the precision, the recall
         and the f1 score and prints them out
@@ -126,15 +151,7 @@ class Analysis(object):
         :param loss: flout
         :return: print: results
         """
-        a = np.argmax(x, axis=1) + np.argmax(y, axis=1) * 2
-        tp = np.count_nonzero(a == 3)  # True Positive
-        tn = np.count_nonzero(a == 0)  # True Negative
-        fp = np.count_nonzero(a == 1)  # False Positive
-        fn = np.count_nonzero(a == 2)  # False Negative
-        accuracy = (tp + tn) / (tp + tn + fp + fn)
-        precision = tp / (tp + fp)
-        recall = tp / (tp + fn)
-        f1_score = 2 * (recall * precision) / (recall + precision)
+        f1_score, recall, precision, accuracy = self.f1score(x, y)
         print("Evaluation with {} data:\n"
               "loss: {:.5f} | accuracy: {:.5f} | precision: {:.5f} | recall: {:.5f} | f1_score: {:.5f}".format(
             int(x.shape[0]), float(loss), float(accuracy), float(precision), float(recall), float(f1_score)
