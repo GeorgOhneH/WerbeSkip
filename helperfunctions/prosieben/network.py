@@ -40,4 +40,5 @@ if __name__ == "__main__":
 
     optimizer = Adam(learning_rate=0.001)
     net.regression(optimizer=optimizer, cost="cross_entropy")
+    net.load("network.h5")
     net.fit_generator(generator=gen, save_step=100, snapshot_step=100)

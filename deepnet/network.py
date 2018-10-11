@@ -27,10 +27,10 @@ class Network(object):
         self._cost = None
         self.is_binary = False
         self._layers = []
-        self._train_loss = []
-        self._train_accuracy = []
-        self._validate_loss = []
-        self._validate_accuracy = []
+        self.train_loss = []
+        self.train_accuracy = []
+        self.validate_loss = []
+        self.validate_accuracy = []
         self._costs = {
             "quadratic": QuadraticCost(),
             "cross_entropy": CrossEntropyCost()
@@ -55,26 +55,6 @@ class Network(object):
     def cost(self) -> Cost:
         """read access only"""
         return self._cost
-
-    @property
-    def train_loss(self) -> list:
-        """read access only"""
-        return self._train_loss
-
-    @property
-    def train_accuracy(self) -> list:
-        """read access only"""
-        return self._train_accuracy
-
-    @property
-    def validate_loss(self) -> list:
-        """read access only"""
-        return self._validate_loss
-
-    @property
-    def validate_accuracy(self) -> list:
-        """read access only"""
-        return self._validate_accuracy
 
     def input(self, neurons) -> None:
         """
@@ -316,10 +296,10 @@ class Network(object):
             x = layer.forward_backpropagation(x)
 
         loss = self._cost.function(x, y)
-        self._train_loss.append(float(loss))
+        self.train_loss.append(float(loss))
 
         accuracy = self._analysis.accuracy_or_f1score(x, y)
-        self._train_accuracy.append(float(accuracy))
+        self.train_accuracy.append(float(accuracy))
 
         delta = self._cost.delta(x, y)
         for layer in reversed(self._layers):
@@ -381,10 +361,10 @@ class Network(object):
         meta = {
             "start_time": time.time()-self._iohandler.start_time,
             "inputs": self._iohandler.inputs,
-            "train_loss": self._train_loss,
-            "train_accuracy": self._train_accuracy,
-            "validate_loss": self._validate_loss,
-            "validate_accuracy": self._validate_accuracy,
+            "train_loss": self.train_loss,
+            "train_accuracy": self.train_accuracy,
+            "validate_loss": self.validate_loss,
+            "validate_accuracy": self.validate_accuracy,
         }
         parameters = [[np.asnumpy(value) for value in layer.save()] for layer in self._layers]
         dd.io.save(path, {"meta": meta, "parameters": parameters})
@@ -402,10 +382,10 @@ class Network(object):
         meta = network["meta"]
         self._iohandler.start_time = time.time() - meta["start_time"]
         self._iohandler.inputs = meta["inputs"]
-        self._train_loss = meta["train_loss"]
-        self._train_accuracy = meta["train_accuracy"]
-        self._validate_loss = meta["validate_loss"]
-        self._validate_accuracy = meta["validate_accuracy"]
+        self.train_loss = meta["train_loss"]
+        self.train_accuracy = meta["train_accuracy"]
+        self.validate_loss = meta["validate_loss"]
+        self.validate_accuracy = meta["validate_accuracy"]
 
     def print_network_structure(self) -> None:
         """

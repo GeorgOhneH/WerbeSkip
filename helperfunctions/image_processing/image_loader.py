@@ -47,7 +47,7 @@ def _get_img(path_to_img, cords, padding_w, padding_h, colour):
 
 
 def _get_path_to_file(padding_w, padding_h, center, colour):
-    path_to_cache = os.path.join(os.path.dirname(__file__), "cache")
+    path_to_cache = os.path.join(os.path.dirname(__file__), "load_cache")
     file_name = "w{}_h{}_ce{}_co{}.h5".format(padding_w, padding_h, center, colour)
     path_to_file = os.path.join(path_to_cache, file_name)
     return path_to_file

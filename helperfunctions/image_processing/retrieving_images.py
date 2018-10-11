@@ -44,6 +44,7 @@ class VideoCapture(object):
         response = self.session.get(master_url, verify=False, headers=header)
         data = response.content.decode("UTF-8")
         cap_url = data.split("\n")[2]
+        print(cap_url)
         return cap_url
 
     def __iter__(self):
@@ -77,6 +78,5 @@ class VideoCapture(object):
 
 if __name__ == "__main__":
     for frame in VideoCapture(channel=354):
-        print(frame.shape)
         cv2.imshow("img", frame)
         cv2.waitKey(1)
