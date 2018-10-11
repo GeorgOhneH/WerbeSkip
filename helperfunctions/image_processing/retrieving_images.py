@@ -44,7 +44,6 @@ class VideoCapture(object):
         response = self.session.get(master_url, verify=False, headers=header)
         data = response.content.decode("UTF-8")
         cap_url = data.split("\n")[2]
-        print(cap_url)
         return cap_url
 
     def __iter__(self):

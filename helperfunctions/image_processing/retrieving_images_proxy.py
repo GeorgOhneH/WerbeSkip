@@ -10,6 +10,8 @@ from threading import Thread
 
 class VideoCapture(object):
     def __init__(self, channel: int, rate_limit=30, convert_network=False):
+        self.proxies = {"https": "http://77.245.20.76:3128"}
+
         self.pipe = None
         self.m3u8_update_thread = None
         self.last_m3u8 = None
@@ -23,13 +25,12 @@ class VideoCapture(object):
         self.PATH_TO_CACHE = os.path.join(os.path.dirname(__file__), "m3u8_cache")
         self.PATH_TO_TS_FILES = os.path.dirname(os.path.dirname(__file__))  # ffmpeg is a bit weird with the paths
         self.M3U8_NAME = "index.m3u8"
-        self.proxies = {}
         self.ts_files = []
         self.init()
 
     def setup_cookies(self):
         url = "https://www.teleboy.ch/api/anonymous/verify"
-        response = self.session.get(url=url)
+        response = self.session.get(url=url, proxies=self.proxies)
         data = response.json()
         token = data["data"]["_token"]
 
@@ -42,7 +43,7 @@ class VideoCapture(object):
 
     def get_cap_url(self, channel):
         url = "https://www.teleboy.ch/api/anonymous/live/{}".format(channel)
-        response = self.session.get(url=url)
+        response = self.session.get(url=url, proxies=self.proxies)
         j = json.loads(response.content)
         master_url = j["data"]["stream"]["url"]
 
@@ -50,7 +51,7 @@ class VideoCapture(object):
             'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:12.0) Gecko/20100101 Firefox/12.0'
         }
 
-        response = self.session.get(master_url, verify=False, headers=header)
+        response = self.session.get(master_url, verify=False, headers=header, proxies=self.proxies)
         data = response.content.decode("UTF-8")
         cap_url = data.split("\n")[2]
         return cap_url
@@ -78,7 +79,7 @@ class VideoCapture(object):
         self.m3u8_update_thread.start()
 
     def update_m3u8_file(self):
-        text = requests.get(self.cap_url).text
+        text = requests.get(self.cap_url, proxies=self.proxies).text
         if text != self.last_m3u8:
             if len(self.ts_files) > 5:
                 for file_name in self.ts_files[:-4]:
@@ -92,7 +93,7 @@ class VideoCapture(object):
                 if ".ts" in file_name and not os.path.exists(path_to_ts_file):
                     self.ts_files.append(path_to_ts_file)
                     file_url = self.cap_url[:-10] + file_name
-                    data = requests.get(file_url).content
+                    data = requests.get(file_url, proxies=self.proxies).content
                     with open(path_to_ts_file, mode="wb") as f:
                         f.write(data)
 
