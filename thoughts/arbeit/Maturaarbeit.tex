@@ -13,12 +13,15 @@
 \usepackage{wrapfig}
 \usepackage{mathtools}
 \usepackage{listings}
+\usepackage{url}
 \usepackage{tabto}
 \usepackage{tikz}
 \usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows,calc}
 \usepackage{pgfplots}
 \usepackage{amsmath}
 \usepackage{subfig}
+
+\graphicspath{{C:/Jetbrains/PyCharm/WerbeSkip/thoughts/arbeit/}}
 
 \begin{document}
 
@@ -50,15 +53,44 @@
 
 \section{Motivation}
 \label{sec:motivation}
+Vor ein paar Jahren haben wir Fernsehen geschaut und immer wenn Werbung kam haben wir den Sender gewechselt,
+bis die Werbung vorbei war und das normale Programm weiter lief.
+Das Problem war nur, dass wir nie wussten wann die Werbung vorbei war.
+Meinem Bruder ist aufgefallen, dass bei Werbung nie das Logo vom Sender eingespielt wird.
+Daraufhin hat er probiert ein Algorithmus zu schreiben, der das Logo von einem Sender erkennen kann.
+Er versuchte das Logo mithilfe von Bedingungen und Schleifen auszudrücken, aber vergebens.
 
+Als ich auf der Suche nach einer Idee war erinnerte ich mich wieder an das Problem und an einen neuen Lösungsansatz,
+nämlich Neuronale Netzwerke, welche Heute überall verwendet werden und extrem Mächtig sind.
+Die Idee war aber nicht nur ein Logo zu erkennen sondern auch genau verstehen wie ein Neuronales Netzwerk funktioniert
+und deshalb habe ich mein eigenes Neuronale Netzwerk programmiert.
 \section{Aufbau der Arbeit}
 \label{sec:aufbauDerArbeit}
+
+\chapter{Problemstellung}
+Das endgültige Ziel der Arbeit ist Werbung in einem Sender zu erkennen.
+Dafür wrd ein Neuronales Netzwerk benutzt, dass sich immer nur auf ein Bild benutzt und nicht eine Video sequenz.
+\section{Logo}
+Wie schon gesagt wird bei Werbung das Senderlogo ausgeblendet und deswegen kann man das Problem reduzieren darauf,
+ob das Senderlogo eingeblendet ist oder nicht.
+
+\begin{figure}[h]%
+    \centering
+    \subfloat[Werbung]{{\includegraphics[width=7cm]{assets/images/prosieben_kein_logo.png} }}%
+    \qquad
+    \subfloat[Keine Werbung]{{\includegraphics[width=7cm]{assets/images/prosieben_logo.png} }}%
+    \caption{Kein Senderlogo bei Werbung}%
+    \label{fig:logo1}%
+\end{figure}
+
+Das grösste Problem um das Logo zu erkennen ist, dass das Logo nicht einfach über das normale Bild gelegt wird,
+sondern es wird negativ multipliziert mit dem Bild, d.h die beiden Bilder werden invertiert, multipliziert und dann wieder invertiert.\cite{wiki:blend}
 
 \chapter{Neuronales Netzwerk}
 \label{ch:neuronalesNetzwerk}
 
 \section{Konzept}\label{sec:konzept}
-Wenn man ein normales Programm schreiben will muss man das Problem in viele kleiner aufteilen, bis der Computer fähig ist,
+Wenn man ein normales Programm schreiben will muss man das Problem in viele kleinere aufteilen, bis der Computer fähig ist,
 es zu lösen.
 In einem Neuronale Netzwerk wird dem Computer nicht gesagt wie es das Problem lösen kann, sondern ein Neuronales Netzwerk
 versteht das Problem, indem wir es Beispieldaten geben und es daran lernen kann, bis es seine eigene Lösung gefunden hat.
@@ -141,10 +173,8 @@ Als Gleichung:
 \[y =f\left(\sum_{j=1}^{n} x_j w_j + b\right)\]
 Die Gewichte $w_j$ und der Bias $b$ des Neurons sind die Parameter, die angepasst werden und somit das Neuron lernfähig machen.
 
-Quelle: https://towardsdatascience.com/activation-functions-and-its-types-which-is-better-a9a5310cc8f
-
 Eine Aktivierungsfunktion ist nötig, da ohne eine wäre ein Neuronales Netzwerk eine komplett lineare funktion, welches
-nur lineare Probleme lösen könnte.
+nur lineare Probleme lösen könnte.\cite{activations}
 Die meisten Probleme sind viel komplexer als das man sie linear darstellen könnte und deswegen ist eine Aktivierungsfunktion von nötig.
 Es wird näher auf die Aktivierungsfunktion eingegangen im Abschnitt~\ref{sec:aktivierungsfunktionen}
 
@@ -728,15 +758,15 @@ Als Gleichung:
 \chapter{Reflexion}
 \label{ch:reflexion}
 
-%\clearpage
-%\phantomsection
-%\addcontentsline{toc}{chapter}{Literaturverzeichnis}
-%\nocite{*}
-%\bibliographystyle{plain}
-%\bibliography{literatur}
-%
-%\clearpage
-%\phantomsection
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Literaturverzeichnis}
+\nocite{*}
+\bibliography{C:/Jetbrains/PyCharm/WerbeSkip/thoughts/arbeit/maturaarbeit}
+\bibliographystyle{plain}
+
+\clearpage
+\phantomsection
 \addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
 
 \listoffigures

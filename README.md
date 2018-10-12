@@ -4,9 +4,9 @@ A Webserver to detect ads on TV
 Build with Machine Learning, Django and Vue
 
 ## Installation
-Note: Cloning this repository may take a while, because it's very big
+Note: Cloning this repository may take a while, because it's very large
 
-[Redis](https://redis.io/download) must be installed on your system
+[Redis](https://redis.io/download) and ffmpeg (with the environment variable) must be installed on your system
 ``` bash
 # install dependencies
 npm install
@@ -43,11 +43,11 @@ switch between numpy and cupy
 
 ### Webserver
 The main parts are: app, src, vuedj
-##### vuedj
+#### vuedj
 The Django settings
-##### app
+#### app
 Backend and Websocket
-##### src
+#### src
 Frontend implemented with VueJS
 
 ### Others

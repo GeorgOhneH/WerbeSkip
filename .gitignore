@@ -2,6 +2,9 @@
 
 .idea/
 test.py
+test2.py
+test3.py
+test4.py
 /helperfunctions/prosieben/images/
 helperfunctions/prosieben/networks/example1/wrong_predictions
 helperfunctions/prosieben/networks/example2/wrong_predictions

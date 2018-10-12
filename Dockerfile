@@ -1,5 +1,4 @@
 FROM node:alpine
-MAINTAINER Stanley Ndagi "ndagis@gmail.com"
 RUN apk update && apk upgrade
 
 WORKDIR /app
@@ -24,4 +23,4 @@ RUN python3 manage.py collectstatic --noinput
 EXPOSE 8000
 
 # Set command to run as soon as container is up
-CMD python3 manage.py runserver 0.0.0.0:8000
+CMD python3 manage.py runserver 0.0.0.0:8000 && redis-server && update_handler.py

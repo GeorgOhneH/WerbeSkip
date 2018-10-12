@@ -22,12 +22,10 @@ echo 'Done...'
 echo 'Start Redis'
 redis-server &
 echo 'Done...'
-sleep 2s
 echo 'Start Django'
 export PORT=8000
 echo 'Server runnning on port ' $PORT
 python manage.py runserver &
-sleep 4s
 
 echo 'Start update_handler.py'
 python update_handler.py &

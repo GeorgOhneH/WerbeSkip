@@ -7,6 +7,7 @@ from deepnet.optimizers import Adam
 import json
 import websocket
 import _thread as thread
+import time
 
 
 class WerbeSkip(object):
@@ -105,6 +106,8 @@ class WerbeSkip(object):
 
     def on_close(self, ws):
         print("### closed ###")
+        time.sleep(10)
+        self.run()
 
     def on_open(self, ws):
         def run(*args):
