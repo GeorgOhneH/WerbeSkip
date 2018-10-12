@@ -69,7 +69,7 @@ und deshalb habe ich mein eigenes Neuronale Netzwerk programmiert.
 
 \chapter{Problemstellung}
 Das endgültige Ziel der Arbeit ist Werbung in einem Sender zu erkennen.
-Dafür wrd ein Neuronales Netzwerk benutzt, dass sich immer nur auf ein Bild benutzt und nicht eine Video sequenz.
+Dafür wrd ein Neuronales Netzwerk benutzt, das sich auf die Bilderkennung beschränkt.
 \section{Logo}
 Wie schon gesagt wird bei Werbung das Senderlogo ausgeblendet und deswegen kann man das Problem reduzieren darauf,
 ob das Senderlogo eingeblendet ist oder nicht.
@@ -83,8 +83,51 @@ ob das Senderlogo eingeblendet ist oder nicht.
     \label{fig:logo1}%
 \end{figure}
 
-Das grösste Problem um das Logo zu erkennen ist, dass das Logo nicht einfach über das normale Bild gelegt wird,
-sondern es wird negativ multipliziert mit dem Bild, d.h die beiden Bilder werden invertiert, multipliziert und dann wieder invertiert.\cite{wiki:blend}
+Das Logo wird eingespielt indem es mit dem Bild negativ multipliziert wird,
+d.h die beiden Bilder werden invertiert, multipliziert und dann wieder invertiert.\cite{wiki:blend}
+\[f(a,b) = 1 - (1-a)(1-b)\]
+wobei $a$ und $b$ die beiden Bilder sind und die Werte von 0 (Schwarz) bis 1 (Weiss) gehen.
+
+Das bewirkt, dass man leicht durch das Logo hindurchsehen kann,
+wodurch der Hintergrund hinter dem Logo auch eine Rolle spielt.
+Wie auf Abbildung~\ref{fig:logo2} (a, b) zu sehen ist.
+\begin{figure}[h]%
+    \centering
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel1.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel2.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel3.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel4.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel5.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel6.png} }}%
+    \caption{Logo mit verschiedenen Hintergründen}%
+    \label{fig:logo2}%
+\end{figure}
+Das grösste Problem ist, dass man bei manchen Hintergründen, vor allem weisse, das Logo abgeschnitten oder kaum bis gar nicht sichtbar ist.
+Bei Abbildung~\ref{fig:logo2} (c) ist das Logo abgeschnitten, bei (d) ist es kaum sichtbar und bei (e) ist komplett verschwunden.
+Das ist auch relativ einfach zu erklären.
+Wenn man für $a = 1$ (Weiss) in die Formel oben einsetzt erhält man: $f(b) = 1$, was bedeutet, dass das ganze Bild weiss ist.
+Analog dazu, wenn man für $a = 0$ (Schwarz) einsetzt erhält man: $f(b) = b$, was bedeutet das Schwarz das Bild nicht verändert.
+Wegen dem kann man das Logo komplett herausfiltern und wieder verwenden wenn man das Logo mit einem schwarzen Hintergrund findet,
+wie auf Abbildung~\ref{fig:logo2} (f) zu sehen ist.
+
+Ein andere Schwierigkeit ist, dass das Logo nicht unbedingt immer am gleichen Ort sein muss.
+Zum Beispiel hat Prosieben 3 verschiedene Positionen, wie auf Abbildung~\ref{fig:logo3} zu erkennen ist.
+
+\begin{figure}[h]%
+    \centering
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_above.jpg} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_side.jpg} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_no_boarder.jpg} }}%
+    \caption{Logo an verschiedenen Positionen}%
+    \label{fig:logo3}%
+\end{figure}
 
 \chapter{Neuronales Netzwerk}
 \label{ch:neuronalesNetzwerk}
