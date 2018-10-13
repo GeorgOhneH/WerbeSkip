@@ -10,7 +10,7 @@ from threading import Thread
 
 class VideoCapture(object):
     def __init__(self, channel: int, rate_limit=30, convert_network=False):
-        self.proxies = {"https": "http://77.245.20.76:3128"}
+        self.proxies = {"https": "http://37.153.110.245:3128"}
 
         self.pipe = None
         self.m3u8_update_thread = None

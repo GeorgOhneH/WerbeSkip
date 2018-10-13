@@ -42,7 +42,7 @@
 	Korreferent\par
 	{\itshape Test2}
 	\vfill
-	{\large Datum\par}
+	{\large \today\par}
 \end{titlepage}
 
 \tableofcontents
@@ -60,7 +60,7 @@ Meinem Bruder ist aufgefallen, dass bei Werbung nie das Logo vom Sender eingespi
 Daraufhin hat er probiert ein Algorithmus zu schreiben, der das Logo von einem Sender erkennen kann.
 Er versuchte das Logo mithilfe von Bedingungen und Schleifen auszudrücken, aber vergebens.
 
-Als ich auf der Suche nach einer Idee war erinnerte ich mich wieder an das Problem und an einen neuen Lösungsansatz,
+Als ich auf der Suche nach einer Idee für eine Maturaarbeit war erinnerte ich mich wieder an das Problem und an einen neuen Lösungsansatz,
 nämlich Neuronale Netzwerke, welche Heute überall verwendet werden und extrem Mächtig sind.
 Die Idee war aber nicht nur ein Logo zu erkennen sondern auch genau verstehen wie ein Neuronales Netzwerk funktioniert
 und deshalb habe ich mein eigenes Neuronale Netzwerk programmiert.
@@ -117,21 +117,24 @@ wie auf Abbildung~\ref{fig:logo2} (f) zu sehen ist.
 
 Ein andere Schwierigkeit ist, dass das Logo nicht unbedingt immer am gleichen Ort sein muss.
 Zum Beispiel hat Prosieben 3 verschiedene Positionen, wie auf Abbildung~\ref{fig:logo3} zu erkennen ist.
-
 \begin{figure}[h]%
     \centering
-    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_above.jpg} }}%
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_above.png} }}%
     \qquad
-    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_side.jpg} }}%
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_side.png} }}%
     \qquad
-    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_no_boarder.jpg} }}%
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_no_boarder.png} }}%
     \caption{Logo an verschiedenen Positionen}%
     \label{fig:logo3}%
 \end{figure}
 
+Alle diese Schwierigkeiten machen das erkennen eines Logo's ohne ein Neuronales Netzwerk extrem schwer und selbst
+wenn man es schaffen würde könnte man nur ein Logo von einem Sender bestimmen und müsste für jeden Sender von vorne starten.
+Ein Neuronales Netzwerk hingegen löst das Probleme ziemlich elegant.
+
 \chapter{Neuronales Netzwerk}
 \label{ch:neuronalesNetzwerk}
-
+Dieses ganze Kapitel bezieht sich auf das Buch von Michael A. Nielsen\cite{neuralbook}, ausser es ist anders deklariert.
 \section{Konzept}\label{sec:konzept}
 Wenn man ein normales Programm schreiben will muss man das Problem in viele kleinere aufteilen, bis der Computer fähig ist,
 es zu lösen.
@@ -211,7 +214,7 @@ Ein Neuron in einem Neuronales Netzwerk wird als Mathematische funktion definier
 verdeutlicht.
 Ein Neuron hat $n$ verschiedene Eingaben, die als $x_j$ bezeichnet werden und mit einem spezifischen Gewicht $w_j$ multipliziert werden.
 Die Ausgabe erfolgt indem man alle gewichteten Eingaben, mit einem Bias $b$, addiert und durch eine so genannte
-Aktivierungsfunktion durchlaufen läst.
+Aktivierungsfunktion $f$ durchlaufen läst.
 Als Gleichung:
 \[y =f\left(\sum_{j=1}^{n} x_j w_j + b\right)\]
 Die Gewichte $w_j$ und der Bias $b$ des Neurons sind die Parameter, die angepasst werden und somit das Neuron lernfähig machen.
@@ -783,10 +786,10 @@ net/.style={
     \label{fig:conv3}
 \end{figure}
 
-Das wichtigste am Filter ist, dass er die gleichen Gewichte und Bias verwendet für die Verbindung, d.h bei einem
+Das entscheidende am Filter ist, dass er die gleichen Gewichte und Bias verwendet für die Verbindung, d.h bei einem
 Filter von 5x5 gibt is $(5*5=)$25 verschiedene Gewichte und einen Bias.
 Wenn nun der Filter bewegt wird werden die gleichen Gewichte und der der gleiche Bias verwendet.
-Als Gleichung:
+Als Gleichung bei einem 3x3 Filter:
 
 \[a^{l+1}_{j,k} = f\left(\sum_{p=0}^{2}\sum_{m=0}^{2}w^l_{p,m}a^l_{j+p,k+m} + b^l\right)\]
 
