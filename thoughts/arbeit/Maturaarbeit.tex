@@ -68,11 +68,11 @@ und deshalb habe ich mein eigenes Neuronale Netzwerk programmiert.
 \label{sec:aufbauDerArbeit}
 
 \chapter{Problemstellung}
-Das endgültige Ziel der Arbeit ist Werbung in einem Sender zu erkennen.
+Das Ziel dieser Arbeit ist einen Algorithmus zu programmieren der Bilder als Werbung erkennen kann.
 Dafür wrd ein Neuronales Netzwerk benutzt, das sich auf die Bilderkennung beschränkt.
-\section{Logo}
-Wie schon gesagt wird bei Werbung das Senderlogo ausgeblendet und deswegen kann man das Problem reduzieren darauf,
-ob das Senderlogo eingeblendet ist oder nicht.
+\section{Werbung}
+Wie schon gesagt wird bei Werbung das Senderlogo nicht eingeblendet und deswegen kann das Problem
+vereinfacht werden auf die Frage ob das Senderlogo eingeblendet ist oder nicht (siehe Abbildung~\ref{fig:logo1}).
 
 \begin{figure}[h]%
     \centering
@@ -83,58 +83,15 @@ ob das Senderlogo eingeblendet ist oder nicht.
     \label{fig:logo1}%
 \end{figure}
 
-Das Logo wird eingespielt indem es mit dem Bild negativ multipliziert wird,
-d.h die beiden Bilder werden invertiert, multipliziert und dann wieder invertiert.\cite{wiki:blend}
-\[f(a,b) = 1 - (1-a)(1-b)\]
-wobei $a$ und $b$ die beiden Bilder sind und die Werte von 0 (Schwarz) bis 1 (Weiss) gehen.
+\section{Neuronales Netzwerk}
+Neuronale Netzwerke sind ein sehr umfangreiches Thema und deswegen begrenze ich mich auf Netzwerke die für die Bilderkennung entscheidend sind.
+Darunter sind klassische feedforward und convolution Netzwerke.
+Auf recurrent neuronale Netzwerke\footnote{Ein Neuronales Netzwerk, das geeignet für Sequenzen ist} wird nicht näher eingegangen.
 
-Das bewirkt, dass man leicht durch das Logo hindurchsehen kann,
-wodurch der Hintergrund hinter dem Logo auch eine Rolle spielt.
-Wie auf Abbildung~\ref{fig:logo2} (a, b) zu sehen ist.
-\begin{figure}[h]%
-    \centering
-    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel1.png} }}%
-    \qquad
-    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel2.png} }}%
-    \qquad
-    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel3.png} }}%
-    \qquad
-    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel4.png} }}%
-    \qquad
-    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel5.png} }}%
-    \qquad
-    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel6.png} }}%
-    \caption{Logo mit verschiedenen Hintergründen}%
-    \label{fig:logo2}%
-\end{figure}
-Das grösste Problem ist, dass man bei manchen Hintergründen, vor allem weisse, das Logo abgeschnitten oder kaum bis gar nicht sichtbar ist.
-Bei Abbildung~\ref{fig:logo2} (c) ist das Logo abgeschnitten, bei (d) ist es kaum sichtbar und bei (e) ist komplett verschwunden.
-Das ist auch relativ einfach zu erklären.
-Wenn man für $a = 1$ (Weiss) in die Formel oben einsetzt erhält man: $f(b) = 1$, was bedeutet, dass das ganze Bild weiss ist.
-Analog dazu, wenn man für $a = 0$ (Schwarz) einsetzt erhält man: $f(b) = b$, was bedeutet das Schwarz das Bild nicht verändert.
-Wegen dem kann man das Logo komplett herausfiltern und wieder verwenden wenn man das Logo mit einem schwarzen Hintergrund findet,
-wie auf Abbildung~\ref{fig:logo2} (f) zu sehen ist.
-
-Ein andere Schwierigkeit ist, dass das Logo nicht unbedingt immer am gleichen Ort sein muss.
-Zum Beispiel hat Prosieben 3 verschiedene Positionen, wie auf Abbildung~\ref{fig:logo3} zu erkennen ist.
-\begin{figure}[h]%
-    \centering
-    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_above.png} }}%
-    \qquad
-    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_side.png} }}%
-    \qquad
-    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_no_boarder.png} }}%
-    \caption{Logo an verschiedenen Positionen}%
-    \label{fig:logo3}%
-\end{figure}
-
-Alle diese Schwierigkeiten machen das erkennen eines Logo's ohne ein Neuronales Netzwerk extrem schwer und selbst
-wenn man es schaffen würde könnte man nur ein Logo von einem Sender bestimmen und müsste für jeden Sender von vorne starten.
-Ein Neuronales Netzwerk hingegen löst das Probleme ziemlich elegant.
 
 \chapter{Neuronales Netzwerk}
 \label{ch:neuronalesNetzwerk}
-Dieses ganze Kapitel bezieht sich auf das Buch von Michael A. Nielsen\cite{neuralbook}, ausser es ist anders deklariert.
+Dieses ganze Kapitel bezieht sich auf das Buch von Michael A. Nielsen\cite{neuralbook}, ausser es wird anders deklariert.
 \section{Konzept}\label{sec:konzept}
 Wenn man ein normales Programm schreiben will muss man das Problem in viele kleinere aufteilen, bis der Computer fähig ist,
 es zu lösen.
@@ -198,7 +155,7 @@ start chain=2,node distance=13mm
 \node[on chain=3,label=below:Gewichte,join=by o-latex]
   (w3) {$w_3$};
 \end{scope}
-\node[label=above:\parbox{2cm}{\centering Verzerrung \\ $b$}] at (sigma|-w1) (b) {};
+\node[label=above:\parbox{2cm}{\centering Bias \\ $b$}] at (sigma|-w1) (b) {};
 
 \draw[-latex] (w1) -- (sigma);
 \draw[-latex] (w3) -- (sigma);
@@ -335,18 +292,15 @@ net/.style={
     \label{fig:network2}
 \end{figure}
 Jeder Neuron von der vorigen Schicht ist mit jedem Neuron der nachfolgenden Schicht verbunden.
-Dies ist ein klassisches vorwärtsgekoppeltes Netzwerk (im englischen feed forward network).
+Dies ist ein klassisches feedforawrd Netzwerk.
 Wichtig zu beachten ist, dass keine Schleifen vorkommen.
-Es gibt Architekturen in denen Schleifen vorkommen, aber auf diese wird nicht näher eingegangen, da sie für die
-Bilderkennung nicht weiter relevant sind.
 
 \subsection{Beschriftung}
 
 Um eine allgemeine Gleichung zu bestimmen, muss man zuerst die Elemente des Netzwerks benennen.
 Wir bezeichnen das Gewicht $w^l_{k,j}$ für die Verbindung des $k^{ten}$ Neuron der $(l-1)^{ten}$ Schicht
 zu dem $j^{ten}$ Neuron der $l^{ten}$ Schicht.
-Ähnlich dazu bezeichnen wir die Ausgabe des Neurons als $a^l_j$ und der bias des Neurons als $b^l_j$,
-Abbildung~\ref{fig:network3} verdeutlicht diese Notation.
+Ähnlich dazu bezeichnen wir die Ausgabe des Neurons als $a^l_j$ und der bias des Neurons als $b^l_j$ (siehe Abbildung~\ref{fig:network3}).
 
 \begin{figure}[h]
     \centering
@@ -433,13 +387,13 @@ and diesem Punkt berechnen kann und die Variable richtung Minimum anpasst.
 **Bild Einfügen**
 
 Zum Beispiel hat man eine Kostenfunktion $C(a,b)$ die von $a$ und $b$ abhängig ist.
-Wenn man diese Graphisch abbildet, sieht es wie auf Abbildung **ref**.
+Wenn man diese Graphisch abbildet (siehe Abbildung~REF).
 
 Die Variablen $a$ und $b$ werden am Anfang zufällige Werte zugeteilt und das Ziel ist sie so anzupassen,
 dass man das Minimum der Kostenfunktion findet.
 Um das Minimum zu finden kann man sich einen Ball vorstellen, der in das Minimum herunterrollt.
 Um dies zu berechnen muss man die Steigung, mithilfe einer Ableitung, herausfinden und die Variable in die
-gegensätzliche Richtung bewegen, wie auf Abbildung **ref** zu sehen ist.
+gegensätzliche Richtung bewegen (siehe Abbildung~REF).
 
 **Bild Einfügen**
 
@@ -493,8 +447,7 @@ Die Gleichung für die Änderungsrate der Kosten in Bezug auf ein Gewicht im Net
 Das einzige was noch fehlt ist wie eine Aktivierungsfunktionen genau ausschaut.
 Wie schon gesagt darf eine Aktivierungsfunktionen nicht linear sein, da sie sonst nichts neues dem Netzwerk beiträgt.
 \subsection{Sigmoid}
-Ein Beispiel für eine Aktivierungsfunktion ist die Sigmoid Funktion $f(x) = \frac{1}{1 + e^{-x}}$,
-wie sie auf Abbildung~\ref{fig:activation1} zu sehen ist.
+Ein Beispiel für eine Aktivierungsfunktion ist die Sigmoid Funktion $f(x) = \frac{1}{1 + e^{-x}}$ (siehe Abbildung~\ref{fig:activation1}).
 \begin{figure}[h]
     \centering
 \begin{tikzpicture}
@@ -526,7 +479,7 @@ anchor=north west,
 \end{figure}
 Besonders an dieser Funktion ist, dass sie den Ausgabewert zwischen 0 und 1 eingrenzt, was uns erlaubt den Ausgabewert des ganzen
 Netzwerkes besser zu deuten, als wenn der Wert zwischen $-\infty$ und $\infty$ liegt.
-Ein Problem der Sigmoid Funktion ist, dass wenn die Ausgabe nah bei 1 oder 0 ist, dann ist die Ableitung $f^\prime()$ davon auch nah bei 0,
+Ein Problem der Sigmoid Funktion ist, dass wenn die Ausgabe nah bei 1 oder 0 ist, dann ist die Ableitung $f^\prime(x)$ davon auch nah bei 0,
 was den Fehler $\delta^l_j$ sehr klein hält und so das Netzwerk nur noch langsam lernen lässt.
 Dieses Problem ist als \textit{Vanishing gradient problem} bekannt.
 \subsection{Rectified linear units}
@@ -559,7 +512,7 @@ anchor=north west,
     \caption{ReLu Aktivierungsfunktionen}
     \label{fig:activation2}
 \end{figure}
-Die Funktion $f(x) = \max(0, x)$, wie sie auf Abbildung~\ref{fig:activation2} zu sehen ist,
+Die Funktion $f(x) = \max(0, x)$ (siehe Abbildung~\ref{fig:activation2}).
 löst das Problem des Vanishing gradient und praktisch alle Neuronalen Netzwerke benutzen Relu als ihre Aktivierungsfunktion,
 da es die besten Ergebnisse erbringt.
 Ein Nachteil ist, dass sie nur in den Versteckten Schichten gut funktioniert,
@@ -578,8 +531,7 @@ Für die Bilderkennung kann das suboptimal sein, da bestimmte Eigenschaften eine
 wie zum Beispiel die Beziehung von nebeneinander liegenden Pixel
 und das gesuchte Objekt in einem Bild an verschiedenen Orten vorkommen kann.
 \subsection{Architektur}
-Die Eingabe für einen convolutional Schicht ist nicht 1-Dimensional, sondern 2-Dimensional.
-Wie man auf Abbildung~\ref{fig:conv1} sieht.
+Die Eingabe für einen convolutional Schicht ist nicht 1-Dimensional, sondern 2-Dimensional (siehe Abbildung~\ref{fig:conv1}).
 \begin{figure}[h]
     \centering
 \begin{tikzpicture}[
@@ -793,10 +745,93 @@ Als Gleichung bei einem 3x3 Filter:
 
 \[a^{l+1}_{j,k} = f\left(\sum_{p=0}^{2}\sum_{m=0}^{2}w^l_{p,m}a^l_{j+p,k+m} + b^l\right)\]
 
+wobei $a_{x, y}$ der Neuron an der Position $x, y$ ist.
 
+Dadurch das immer die gleichen Gewichte und der gleiche Bias für jeden Filter benutzt werden,
+wird überall das gleiche Merkmal erkannt selbst wenn es sich an verschiedenen Orten befinde,
+deswegen wird die Ausgabe von dem Filter als \textit{Feature Map} bezeichnet.
+Normalerweise will man mehr als nur ein Merkmal erkennen und deswegen werden mehrere Filter verwendet (siehe Abbildung~\ref{fig:conv4}).
+
+\begin{figure}[h]%
+    \centering
+\begin{tikzpicture}
+\draw [draw=black] (5,5.5) rectangle (0,0.5);
+\draw [draw=black] (12,5) rectangle (7,0);
+\draw [draw=black] (12.5,5.5) rectangle (7.5,0.5);
+\draw [draw=black] (13,6) rectangle (8,1);
+\draw[->] (5, 3) -- (7, 2.5);
+\draw[->] (5, 3) -- (7.5, 3);
+\draw[->] (5, 3) -- (8, 3.5);
+\node[] at (2.5, 6.5)
+  (y) {\centering Eingabe Schicht};
+
+\node[] at (10, 6.5)
+  (y) {\centering Versteckte Schicht};
+
+\end{tikzpicture}
+    \label{fig:conv4}
+    \caption{Convolution Netzwerk mit 3 Feature Maps}%
+\end{figure}
 
 \chapter{Lösungsansatz}
 \label{ch:lösungsansatz}
+**experimental**
+\section{Logo}
+Um das Logo zu erkennen muss man zuerst verstehen wie es auf das Bild gelangt.
+Man könnte meinen das Logo wird einfach über das ander Bild gelegt wird,
+aber das Logo wird eingespielt indem es mit dem Bild negativ multipliziert wird,
+d.h die das Bild und das Logo werden invertiert, multipliziert und dann wieder invertiert.\cite{wiki:blend}
+\[f(a,b) = 1 - (1-a)(1-b)\]
+wobei $a$ das Bild ist und $b$ das Logo und die Werte von jedem Pixel von 0 (Schwarz) bis 1 (Weiss) gehen.
+
+Das bewirkt, dass man leicht durch das Logo hindurchsehen kann,
+wodurch der Hintergrund hinter dem Logo auch eine Rolle spielt (siehe Abbildung~\ref{fig:logo2}a,b).
+\begin{figure}[h]%
+    \centering
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel1.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel2.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel3.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel4.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel5.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel6.png} }}%
+    \caption{Logo mit verschiedenen Hintergründen}%
+    \label{fig:logo2}%
+\end{figure}
+Eine grosse Schwierigkeit ist, dass bei manchen Hintergründen, vor allem bei weissen, das Logo abgeschnitten oder kaum bis gar nicht sichtbar ist.
+Bei Abbildung~\ref{fig:logo2} (c) ist das Logo abgeschnitten, bei (d) ist es kaum sichtbar und bei (e) ist komplett verschwunden.
+Das ist auch einfach zu erklären.
+Wenn man für $a = 1$ (Weiss) in die Formel oben einsetzt erhält man: $f(1, b) = 1$, was bedeutet, dass das ganze Bild weiss ist und das Logo verschwunden ist.
+Analog dazu, wenn man für $a = 0$ (Schwarz) einsetzt erhält man: $f(0, b) = b$, was bedeutet, dass das Logo, bei einem schwarzem Hintergrund, im ursprünglichen Zustand befindet.
+Wegen dem kann man das Logo komplett herausfiltern und wieder verwenden wenn man das Logo mit einem schwarzen Hintergrund findet (siehe Abbildung~\ref{fig:logo2}f).
+
+Ein andere Schwierigkeit ist, dass das Logo nicht unbedingt immer am gleichen Ort sein muss.
+Zum Beispiel hat Prosieben 3 verschiedene Positionen (siehe Abbildung~\ref{fig:logo3}).
+\begin{figure}[h]%
+    \centering
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_above.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_side.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_no_boarder.png} }}%
+    \caption{Logo an verschiedenen Positionen}%
+    \label{fig:logo3}%
+\end{figure}
+
+Alle diese Schwierigkeiten machen das erkennen eines Logo's ohne ein Neuronales Netzwerk extrem schwer.
+Ein Neuronales Netzwerk hingegen löst das Probleme ziemlich elegant.
+
+\section{Das Netzwerk trainieren}
+\subsection{Farbe}
+Die erste Frage, die sich stellt ist, ob man das Netzwerk mit farbigen oder mit schwarz-weiss Bildern trainieren will.
+Dazu wird ein eigen gesammeltes Datensatz benutzt, das 7830 Prosieben Bilder besteht.
+Aus dem wurde die Logos ausgeschnitten mit einem Rand von 10 Pixeln.
+
+
 
 \chapter{Umsetzung}
 \label{ch:umsetzung}
