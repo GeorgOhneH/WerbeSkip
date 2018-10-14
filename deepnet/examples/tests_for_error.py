@@ -5,6 +5,7 @@ import os
 from deepnet.datasets import *
 from deepnet.layers import *
 from deepnet.optimizers import *
+from deepnet.functions.costs import QuadraticCost, CrossEntropyCost
 from deepnet import Network
 
 
@@ -29,7 +30,7 @@ net.add(FullyConnectedLayer(10))
 net.add(SoftMax())
 
 optimizer = Adam(learning_rate=0.03)
-net.regression(optimizer=optimizer, cost="cross_entropy")
+net.regression(optimizer=optimizer, cost=CrossEntropyCost())
 
 net.print_network_structure()
 

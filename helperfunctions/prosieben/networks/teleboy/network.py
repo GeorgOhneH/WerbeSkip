@@ -2,11 +2,12 @@ from deepnet import Network
 import cv2
 import numpy as np
 from helperfunctions.image_processing.image_loader import load_ads_cnn
-from helperfunctions.image_processing.generator import TrainGenerator
+from helperfunctions.image_processing.logo_generator import LogoGenerator
 from helperfunctions.image_processing.retrieving_images import VideoCapture
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, \
     Flatten
 from deepnet.optimizers import Adam, SGD
+from deepnet.functions.costs import QuadraticCost, CrossEntropyCost
 import time
 import deepdish as dd
 
@@ -14,7 +15,7 @@ if __name__ == "__main__":
     # training accuracy around 95%
     # training time around 25 hours
 
-    gen = TrainGenerator(epochs=1, mini_batch_size=64, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy")
+    gen = LogoGenerator(epochs=1, mini_batch_size=64, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy")
 
     net = Network()
 
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     net.add(SoftMax())
 
     optimizer = Adam(learning_rate=0.01)
-    net.regression(optimizer=optimizer, cost="cross_entropy")
+    net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("teleboy.h5")
     for img in VideoCapture(channel=354, colour=False):
         cv2.imshow("image", img)

@@ -5,6 +5,7 @@ from helperfunctions.image_processing.retrieving_images import VideoCapture
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, \
     Flatten
 from deepnet.optimizers import Adam
+from deepnet.functions.costs import CrossEntropyCost
 
 import cv2
 
@@ -61,7 +62,7 @@ class AdsGenerator(object):
         net.add(SoftMax())
 
         optimizer = Adam(learning_rate=0.001)
-        net.regression(optimizer=optimizer, cost="cross_entropy")
+        net.regression(optimizer=optimizer, cost=CrossEntropyCost())
         net.load(self.PATH_TO_NET)
         return net
 

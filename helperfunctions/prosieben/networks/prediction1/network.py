@@ -2,6 +2,7 @@ from deepnet import Network
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, Flatten
 from deepnet.optimizers import Adam
 from helperfunctions.image_processing.prediction import visualize_prediction
+from deepnet.functions.costs import QuadraticCost, CrossEntropyCost
 
 import cv2
 import numpy as np
@@ -47,6 +48,6 @@ if __name__ == "__main__":
     net.add(SoftMax())
 
     optimizer = Adam(learning_rate=0.001)
-    net.regression(optimizer=optimizer, cost="cross_entropy")
+    net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("../example1/parameters.h5")
     visualize_prediction(network=net, images=images, logo_w=52, logo_h=52, stride=2)  # I use stride=2, because I don't have enough ram

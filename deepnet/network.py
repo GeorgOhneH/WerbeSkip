@@ -1,7 +1,7 @@
 from deepnet.layers import Layer
-from deepnet.functions.costs import QuadraticCost, CrossEntropyCost, Cost
+from deepnet.functions.costs import Cost, QuadraticCost
 from deepnet.optimizers import Optimizer
-from deepnet.utils import make_mini_batches, Plotter, Analysis, Generator, IOHandler, make_batches
+from deepnet.utils import make_mini_batches, Plotter, Analysis, IOHandler, make_batches
 
 import time
 from copy import copy
@@ -31,10 +31,6 @@ class Network(object):
         self.train_accuracy = []
         self.validate_loss = []
         self.validate_accuracy = []
-        self._costs = {
-            "quadratic": QuadraticCost(),
-            "cross_entropy": CrossEntropyCost()
-        }
         self.current_epoch = 0
         self.total_epoch = 0
         self.progress = 0
@@ -85,7 +81,7 @@ class Network(object):
 
         self._layers.append(layer)
 
-    def regression(self, optimizer: Optimizer, cost: str = "quadratic") -> None:
+    def regression(self, optimizer: Optimizer, cost: Cost = QuadraticCost()) -> None:
         """
         sets optimizer and cost
         init network
@@ -95,11 +91,11 @@ class Network(object):
         if not issubclass(type(optimizer), Optimizer):
             raise ValueError("Must be a subclass of Optimizer not {}".format(type(optimizer)))
 
-        if cost not in self._costs.keys():
-            raise AssertionError("Must be one of these costs: {}".format(list(self._costs.keys())))
+        if not issubclass(type(cost), Cost):
+            raise AssertionError("Must be a subclass of Cost not {}".format(type(cost)))
 
         self._optimizer = optimizer
-        self._cost = self._costs[cost]
+        self._cost = cost
         self._init()
 
     def _init(self) -> None:
@@ -198,28 +194,35 @@ class Network(object):
         trains the network with mini batches and print the progress.
         it can plot the accuracy and the loss
         """
-        train_inputs = np.asarray(train_inputs)
-        train_labels = np.asarray(train_labels)
+        try:
+            train_inputs = np.asarray(train_inputs)
+            train_labels = np.asarray(train_labels)
 
-        self.total_epoch = epochs
-        for epoch in range(epochs):
-            self.current_epoch = epoch
-            mini_batches = make_mini_batches(train_inputs, train_labels, mini_batch_size)
+            self.total_epoch = epochs
+            for epoch in range(epochs):
+                self.current_epoch = epoch
+                mini_batches = make_mini_batches(train_inputs, train_labels, mini_batch_size)
 
-            for index, mini_batch in enumerate(mini_batches):
-                self.progress = index / len(mini_batches)
-                self._update_parameters(mini_batch, mini_batch_size)
+                for index, mini_batch in enumerate(mini_batches):
+                    self.progress = index / len(mini_batches)
+                    self._update_parameters(mini_batch, mini_batch_size)
 
-                if validation_set is not None:
-                    self._analysis.validate(*validation_set, mini_batch_size)
+                    if validation_set is not None:
+                        self._analysis.validate(*validation_set, mini_batch_size)
 
-                if save_step and index % save_step == 0:
+                    if save_step and index % save_step == 0:
+                        self.save(path)
+
+                    self._iohandler.print_metrics(metrics, snapshot_step, mini_batch_size)
+
+                if save_step:
                     self.save(path)
 
-                self._iohandler.print_metrics(metrics, snapshot_step, mini_batch_size)
+        except KeyboardInterrupt:
+            pass
 
-            if save_step:
-                self.save(path)
+        if save_step:
+            self.save(path)
 
         if plot:
             self._plot()
@@ -253,23 +256,30 @@ class Network(object):
                        save_step,
                        path) -> None:
         """Same as fit but with a generator"""
-        self.total_epoch = generator.epochs
-        for epoch in range(generator.epochs):
-            self.current_epoch = epoch
-            for index, mini_batch in enumerate(generator):
-                self.progress = generator.progress / len(generator)
-                self._update_parameters(mini_batch, generator.mini_batch_size)
+        try:
+            self.total_epoch = generator.epochs
+            for epoch in range(generator.epochs):
+                self.current_epoch = epoch
+                for index, mini_batch in enumerate(generator):
+                    self.progress = generator.progress / len(generator)
+                    self._update_parameters(mini_batch, generator.mini_batch_size)
 
-                if validation_set is not None:
-                    self._analysis.validate(*validation_set, generator.mini_batch_size)
+                    if validation_set is not None:
+                        self._analysis.validate(*validation_set, generator.mini_batch_size)
 
-                if save_step and index % save_step == 0:
+                    if save_step and index % save_step == 0:
+                        self.save(path)
+
+                    self._iohandler.print_metrics(metrics, snapshot_step, generator.mini_batch_size)
+
+                if save_step:
                     self.save(path)
 
-                self._iohandler.print_metrics(metrics, snapshot_step, generator.mini_batch_size)
+        except KeyboardInterrupt:
+            pass
 
-            if save_step:
-                self.save(path)
+        if save_step:
+            self.save(path)
 
         if plot:
             self.plot()
@@ -367,6 +377,9 @@ class Network(object):
             "validate_accuracy": self.validate_accuracy,
         }
         parameters = [[np.asnumpy(value) for value in layer.save()] for layer in self._layers]
+        backup_name = path.split(".")[0] + "backup." + path.split(".")[1]
+        if os.path.isfile(backup_name):
+            os.replace(path, backup_name)
         dd.io.save(path, {"meta": meta, "parameters": parameters})
 
     def load(self, path: str) -> None:

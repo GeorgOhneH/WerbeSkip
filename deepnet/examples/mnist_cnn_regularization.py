@@ -1,6 +1,7 @@
 from deepnet.datasets import load_mnist_cnn
 from deepnet.layers import FullyConnectedLayer, Dropout, ReLU, BatchNorm, SoftMax, ConvolutionLayer, MaxPoolLayer, Flatten
 from deepnet.optimizers import Adam
+from deepnet.functions.costs import QuadraticCost, CrossEntropyCost
 from deepnet import Network
 
 
@@ -28,7 +29,7 @@ net.add(FullyConnectedLayer(10))
 net.add(SoftMax())
 
 optimizer = Adam(learning_rate=0.03)
-net.regression(optimizer=optimizer, cost="cross_entropy")
+net.regression(optimizer=optimizer, cost=CrossEntropyCost())
 
 net.fit(train_data, train_labels, validation_set=(test_data, test_labels),
         epochs=22, mini_batch_size=512, snapshot_step=2)

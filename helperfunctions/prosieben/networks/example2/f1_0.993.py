@@ -2,6 +2,7 @@ from deepnet import Network
 from helperfunctions.image_processing.image_loader import load_ads_cnn
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, Flatten
 from deepnet.optimizers import Adam
+from deepnet.functions.costs import QuadraticCost, CrossEntropyCost
 
 if __name__ == "__main__":
     v_x, v_y, t_x, t_y = load_ads_cnn(split=0, colour=False)
@@ -31,8 +32,9 @@ if __name__ == "__main__":
     net.add(SoftMax())
 
     optimizer = Adam(learning_rate=0.001)
-    net.regression(optimizer=optimizer, cost="cross_entropy")
+    net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("10paddingNoColour.h5")
+    net.print_network_structure()
     # trained with 688000 images
     net.evaluate(t_x, t_y)
     # loss: 0.03852 | accuracy: 0.98966 | precision: 0.99912 | recall: 0.98675 | f1_score: 0.99289

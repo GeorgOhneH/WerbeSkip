@@ -80,5 +80,5 @@ if __name__ == "__main__":
     for frame in VideoCapture(channel=354, rate_limit=0.5):
         # cv2.imshow("img", frame)
         # cv2.waitKey(1)
-        cv2.imwrite("C:\Jetbrains\PyCharm\WerbeSkip\helperfunctions\prosieben\images\\teleboy\\random\\c" + str(x) + ".png", frame)
+        cv2.imwrite("C:\Jetbrains\PyCharm\WerbeSkip\helperfunctions\prosieben\images\\teleboy\\random\\d" + str(x) + ".png", frame)
         x += 1

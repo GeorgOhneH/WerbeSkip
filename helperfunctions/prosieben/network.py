@@ -5,6 +5,7 @@ from helperfunctions.image_processing.ads_generator import AdsGenerator
 from helperfunctions.image_processing.retrieving_images import VideoCapture
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, Flatten
 from deepnet.optimizers import Adam, SGD
+from deepnet.functions.costs import CrossEntropyCost
 import time
 import deepdish as dd
 
@@ -39,6 +40,6 @@ if __name__ == "__main__":
     net.add(SoftMax())
 
     optimizer = Adam(learning_rate=0.001)
-    net.regression(optimizer=optimizer, cost="cross_entropy")
+    net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("network.h5")
     net.fit_generator(generator=gen, save_step=100, snapshot_step=100)
