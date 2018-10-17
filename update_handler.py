@@ -1,5 +1,6 @@
 from deepnet import Network
 import numpy as np
+from deepnet.functions.costs import CrossEntropyCost
 from helperfunctions.image_processing.retrieving_images import VideoCapture
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, \
     Flatten
@@ -54,7 +55,7 @@ class WerbeSkip(object):
         net.add(SoftMax())
 
         optimizer = Adam(learning_rate=0.001)
-        net.regression(optimizer=optimizer, cost="cross_entropy")
+        net.regression(optimizer=optimizer, cost=CrossEntropyCost())
         net.load("helperfunctions\prosieben\\networks\\teleboy\\teleboy.h5")
         return net
 

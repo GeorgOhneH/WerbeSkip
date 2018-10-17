@@ -378,8 +378,11 @@ class Network(object):
         }
         parameters = [[np.asnumpy(value) for value in layer.save()] for layer in self._layers]
         backup_name = path.split(".")[0] + "backup." + path.split(".")[1]
-        if os.path.isfile(backup_name):
-            os.replace(path, backup_name)
+        if os.path.isfile(path):
+            if os.path.isfile(backup_name):
+                os.replace(path, backup_name)
+            else:
+                os.rename(path, backup_name)
         dd.io.save(path, {"meta": meta, "parameters": parameters})
 
     def load(self, path: str) -> None:

@@ -91,7 +91,7 @@ Auf recurrent neuronale Netzwerke\footnote{Ein Neuronales Netzwerk, das geeignet
 
 \chapter{Neuronales Netzwerk}
 \label{ch:neuronalesNetzwerk}
-Dieses ganze Kapitel bezieht sich auf das Buch von Michael A. Nielsen\cite{neuralbook}, ausser es wird anders deklariert.
+Dieses ganze Kapitel bezieht sich auf das Buch von Michael A. Nielsen\cite{neuralbook}, ausser es ist anders deklariert.
 \section{Konzept}\label{sec:konzept}
 Wenn man ein normales Programm schreiben will muss man das Problem in viele kleinere aufteilen, bis der Computer fähig ist,
 es zu lösen.
@@ -377,10 +377,10 @@ und das Label, wenn es 3 ausgabe Neuronen gibt, einem 3-dimensional Vektor.
 
 \[C(w,b) = \sum_{j}(y(x)_j - l_j)^2\]
 
-Das Ziel des Netzwerkes ist diese Kostenfunktion zu minimieren, bis idealerweise $C \approx 0$,
+Das Ziel des Netzwerkes ist diese Kostenfunktion zu minimieren, bis so viele beispiel Daten wie möglich $C \approx 0$ entsprechen,
 dies geschieht wenn die Ausgabe des Netzwerks und des Label ähnlich sind.
-\subsection{Gradient Descent}
-Um diese Kostenfunktion zu minimieren wird ein Algorithmus names \textit{Gradient Descent} benutzt.
+\subsection{Stochastic Gradient Descent}
+Um diese Kostenfunktion zu minimieren wird ein Algorithmus names \textit{Stochastic Gradient Descent} benutzt.
 Das Konzept basiert darauf, dass man eine Funktion, in abhängigkeit einer Variablen, ableiten kann und so die Steigung
 and diesem Punkt berechnen kann und die Variable richtung Minimum anpasst.
 
@@ -411,8 +411,8 @@ Der Algorithmus funktioniert auch bei mehr als nur 2 Variablen und sieht fürs N
     w^l_{k,j} \rightarrow w^{l^\prime}_{k,j} = w^l_{k,j} - \mu\frac{\partial C}{\partial w^l_{k,j}}\\
     b^l_j \rightarrow b^{l^\prime}_j = b^l_j - \mu\frac{\partial C}{\partial b^l_j}\\
 \end{gather*}
-Durch dieses Verfahren kann zwar relativ einfach das Minimum gefunden werden, dabei ist aber zu beachten, dass es nur ein lokales
-Minimum ist und kein globales.
+Durch dieses Verfahren kann zwar relativ einfach das Minimum gefunden werden, dabei ist aber zu beachten, dass es sich um ein lokales
+Minimum handelt und kein globales.
 
 \subsection{Backpropagation}
 Der Algorithmus um $\frac{\partial C}{\partial w^l_{k,j}}$ und $\frac{\partial C}{\partial b^l_j}$ zu berechnen wird als
@@ -745,10 +745,9 @@ Als Gleichung bei einem 3x3 Filter:
 
 \[a^{l+1}_{j,k} = f\left(\sum_{p=0}^{2}\sum_{m=0}^{2}w^l_{p,m}a^l_{j+p,k+m} + b^l\right)\]
 
-wobei $a_{x, y}$ der Neuron an der Position $x, y$ ist.
-
+wobei $a_{x, y}$ der Neuron an der Position $x, y$ ist und $f$ eine Aktivierungsfunktion.
 Dadurch das immer die gleichen Gewichte und der gleiche Bias für jeden Filter benutzt werden,
-wird überall das gleiche Merkmal erkannt selbst wenn es sich an verschiedenen Orten befinde,
+wird überall das gleiche Merkmal erkannt auch wenn es sich an einem anderen Ort befindet,
 deswegen wird die Ausgabe von dem Filter als \textit{Feature Map} bezeichnet.
 Normalerweise will man mehr als nur ein Merkmal erkennen und deswegen werden mehrere Filter verwendet (siehe Abbildung~\ref{fig:conv4}).
 
@@ -770,7 +769,149 @@ Normalerweise will man mehr als nur ein Merkmal erkennen und deswegen werden meh
 
 \end{tikzpicture}
     \label{fig:conv4}
-    \caption{Convolution Netzwerk mit 3 Feature Maps}%
+    \caption{Convolution Schicht mit 3 Feature Maps}%
+\end{figure}
+
+\subsection{Max pooling}
+Neben den Convolution Schichten gibt es auch die Max-Polling-Schicht\footnote{Es gibt noch andere Polling-Schichten, die aber in dieser Arbeit nicht verwendet wurden},
+die Idee vom Polling ist, dass es die Informationen vereinfacht.
+
+Max-Polling nimmt eine Feature Map als Eingabe und lässt auch etwas ähnliches wie ein Filter drüber laufen,
+nur der funktioniert nicht wie ein Neuron, sondern die Ausgabe ist der grösste Wert von den verbundenen Neuronen (siehe Abbildung~\ref{fig:pool1} ).
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+plain/.style={
+  draw=none,
+  fill=none,
+  },
+net/.style={
+  matrix of nodes,
+  nodes={
+    draw,
+    circle,
+    inner sep=10pt
+    },
+  nodes in empty cells,
+  column sep=2pt,
+  row sep=2pt
+  },
+>=latex
+]
+\matrix[net] (mat)
+{
+|[plain]|  & |[plain]|  & |[plain]|  & |[plain]| & |[plain]|  & |[plain]|  & |[plain]| \\
+&  &   &  &  |[plain]|  & |[plain]|\\
+&  &   &  &  |[plain]|  & |[plain]|\\
+&  &   &  &  |[plain]|  & |[plain]| &  &  \\
+&  &   &  &  |[plain]|  & |[plain]| &  &   \\
+};
+\node[] at (mat-1-2.east)
+  (x) {\centering Feature Map};
+\node[] at (mat-2-1)
+  (y) {\centering 1};
+\node[] at (mat-2-2)
+  (y) {\centering 2};
+\node[] at (mat-3-2)
+  (y) {\centering 3};
+\node[] at (mat-3-1)
+  (y) {\centering 4};
+
+\node[] at (mat-4-7)
+  (y) {\centering 4};
+
+\foreach \ai in {2,...,3}
+{\foreach \aii in {1,...,2}
+  \node[circle, line width=1pt, draw, inner sep=10pt] at (mat-\ai-\aii) {};
+}
+\foreach \ai in {2,...,3}
+{\foreach \aii in {1,...,2}
+  \draw[->] (mat-\ai-\aii) -- (mat-4-7);
+}
+\end{tikzpicture}
+    \caption{2x2 Max-Poll-Schicht mit eine Schritweite von 2}
+    \label{fig:pool1}
+\end{figure}
+Man kann Max-Polling verstehen als eine reduzierung von Informationen.
+Es nimmt das wichtigste Merkmal in einem gewissen Bereich und wirft die weniger wichtigeren Merkmale weg,
+so dass es weniger Merkmale gibt und die darauf folgenden Verbindungen es einfacher haben.
+
+\subsection{Convolution und Fullyconnected}
+Um das Netzwerk zu interpretieren muss man eine fully-connected Schicht am Schluss haben.
+Diese wird angehängt indem jedes Neuron von der convolution bzw max-poll Schicht mit jedem Neuron der fully-connected Schicht verbunden wird.
+Es spielt keine Rolle, dass die Neuronen 2-Dimensional angeordnet sind.
+
+Das trainieren des Netzwerk ist immer noch genau gleich.
+Es wird immer noch mit stochastic gradient descent und backpropagation trainiert,
+allerdings müssen die Gleichungen der backpropagation für die Convolution und Max-Polling angepasst werden.
+
+\section{Dropout}
+\begin{figure}[h]
+    \centering
+\begin{tikzpicture}[
+plain/.style={
+  draw=none,
+  fill=none,
+  },
+net/.style={
+  matrix of nodes,
+  nodes={
+    draw,
+    circle,
+    inner sep=10pt
+    },
+  nodes in empty cells,
+  column sep=2cm,
+  row sep=-9pt
+  },
+>=latex
+]
+\matrix[net] (mat)
+{
+|[plain]|  & |[plain]|  & |[plain]|   \\
+& |[plain]|& |[plain]|  \\
+|[plain]| &|[plain]|& |[plain]|  \\
+& |[plain]|&& |[plain]| \\
+  |[plain]| && |[plain]|& \\
+& |[plain]| & \\
+  |[plain]| && |[plain]| & \\
+& |[plain]| &|[plain]|& |[plain]|  \\
+  |[plain]| & |[plain]|& |[plain]|  \\
+& |[plain]|& |[plain]|  \\     };
+\foreach \ai in {2,4,...,10}
+{\foreach \aii in {5, 7}
+  \draw[->] (mat-\ai-1) -- (mat-\aii-2);
+}
+\foreach \ai in {5,7}
+{\foreach \aii in {4,6,8}
+  \draw[->] (mat-\ai-2) -- (mat-\aii-3);
+}
+\foreach \ai in {4,6}
+{\foreach \aii in {5, 7}
+  \draw[->] (mat-\ai-3) -- (mat-\aii-4);
+}
+
+\node[circle, draw,dotted, inner sep=10pt] at (mat-3-2) {};
+\node[circle, draw,dotted, inner sep=10pt] at (mat-9-2) {};
+\node[circle, draw,dotted, inner sep=10pt] at (mat-8-3) {};
+
+\foreach \ai in {2,4,...,10}
+{\foreach \aii in {3,9}
+  \draw[->, dotted] (mat-\ai-1) -- (mat-\aii-2);
+  \
+}
+\foreach \ai in {3,9}
+{\foreach \aii in {4,6,8}
+  \draw[->, dotted] (mat-\ai-2) -- (mat-\aii-3);
+}
+\foreach \ai in {8}
+{\foreach \aii in {5, 7}
+  \draw[->, dotted] (mat-\ai-3) -- (mat-\aii-4);
+}
+
+\end{tikzpicture}
+    \caption{Neuronales Netzwerk mit Dropout}
+    \label{fig:dropout1}
 \end{figure}
 
 \chapter{Lösungsansatz}
