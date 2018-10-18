@@ -514,7 +514,7 @@ anchor=north west,
 \end{figure}
 Die Funktion $f(x) = \max(0, x)$ (siehe Abbildung~\ref{fig:activation2}).
 löst das Problem des Vanishing gradient und praktisch alle Neuronalen Netzwerke benutzen Relu als ihre Aktivierungsfunktion,
-da es die besten Ergebnisse erbringt.
+da es die besten Ergebnisse erbringt.\cite{activations}
 Ein Nachteil ist, dass sie nur in den Versteckten Schichten gut funktioniert,
 da der Ausgabewert des Netzwerks in einem unbestimmten Bereich ist.
 \subsection{Softmax}
@@ -829,7 +829,7 @@ net/.style={
   \draw[->] (mat-\ai-\aii) -- (mat-4-7);
 }
 \end{tikzpicture}
-    \caption{2x2 Max-Poll-Schicht mit eine Schritweite von 2}
+    \caption{2x2 Max-Poll-Schicht mit eine Schrittweite von 2}
     \label{fig:pool1}
 \end{figure}
 Man kann Max-Polling verstehen als eine reduzierung von Informationen.
@@ -845,7 +845,17 @@ Das trainieren des Netzwerk ist immer noch genau gleich.
 Es wird immer noch mit stochastic gradient descent und backpropagation trainiert,
 allerdings müssen die Gleichungen der backpropagation für die Convolution und Max-Polling angepasst werden.
 
-\section{Dropout}
+\section{Regularization}
+Um ein Netzwerk zu trainieren hat man meisten nur eine endliche Anzahl an Daten an denen das Netzwerk lernen kann.
+Aus dem Grund werden die gleichen Daten mehrmals zum trainieren verwendet.
+Dadurch kann ein Problem entstehen.
+Mit der Zeit lernt das Netzwerk nicht die Merkmale der Daten und könnte sie auf neue unbekannte Daten anwenden,
+sondern es lernt die gegebenen Daten so gut, dass es die Daten einfach auswendig lernt und die Daten nicht mehr an ihren gemeinsamen Merkmalen erkennt,
+sondern an ihren ganz spezifischen, so das neue Daten nicht mehr richtig erkannt werden.
+Dieses Phänomen ist als \textit{overfitting} bekannt.
+\subsection{Dropout}
+
+
 \begin{figure}[h]
     \centering
 \begin{tikzpicture}[

@@ -39,10 +39,10 @@ class Analysis(object):
         tn = np.count_nonzero(a == 0)  # True Negative
         fp = np.count_nonzero(a == 1)  # False Positive
         fn = np.count_nonzero(a == 2)  # False Negative
-        accuracy = (tp + tn) / (tp + tn + fp + fn)
-        precision = tp / (tp + fp)
-        recall = tp / (tp + fn)
-        f1_score = 2 * (recall * precision) / (recall + precision)
+        accuracy = (tp + tn) / (tp + tn + fp + fn + 1e-8)
+        precision = tp / (tp + fp + 1e-8)
+        recall = tp / (tp + fn + 1e-8)
+        f1_score = 2 * (recall * precision) / (recall + precision + 1e-8)
         return f1_score, recall, precision, accuracy
 
     def accuracy_or_f1score(self, x, y):

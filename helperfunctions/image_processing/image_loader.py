@@ -28,27 +28,35 @@ DICTIONARIES = [
 ]
 
 
-def _get_img(path_to_img, cords, padding_w, padding_h, colour):
+def _get_img(path_to_img, cords, padding_w, padding_h, colour, full):
     padding_w += 16
     padding_h += 16
     if colour:
         img = cv2.imread(path_to_img)
     else:
-        img = np.expand_dims(cv2.imread(path_to_img, 0), axis=2)
-    if not cords:
-        cords = (865, 68)  # middle of all 3 possible positions
-    x_middle, y_middle = cords
+        img = cv2.imread(path_to_img, 0)
 
-    img = np.pad(img, [(padding_h, padding_h), (padding_w, padding_w), (0, 0)], mode="constant", constant_values=255)
-    img = img[y_middle:y_middle + 2*padding_h, x_middle:x_middle + 2*padding_w]
+    if not full:
+        if not colour:
+            img = np.expand_dims(img, axis=2)
+        if not cords:
+            cords = (865, 68)  # middle of all 3 possible positions
+        x_middle, y_middle = cords
+
+        img = np.pad(img, [(padding_h, padding_h), (padding_w, padding_w), (0, 0)], mode="constant", constant_values=255)
+        img = img[y_middle:y_middle + 2*padding_h, x_middle:x_middle + 2*padding_w]
+    else:
+        img = cv2.resize(img, (320, 180), cv2.INTER_AREA)
+        if not colour:
+            img = np.expand_dims(img, axis=2)
 
     img = np.transpose(img, (2, 0, 1)).astype(dtype="float32") / 255
     return np.expand_dims(img, axis=0)
 
 
-def _get_path_to_file(padding_w, padding_h, center, colour):
+def _get_path_to_file(padding_w, padding_h, center, colour, full):
     path_to_cache = os.path.join(os.path.dirname(__file__), "load_cache")
-    file_name = "w{}_h{}_ce{}_co{}.h5".format(padding_w, padding_h, center, colour)
+    file_name = "w{}_h{}_ce{}_co{}_f{}.h5".format(padding_w, padding_h, center, colour, full)
     path_to_file = os.path.join(path_to_cache, file_name)
     return path_to_file
 
@@ -67,7 +75,7 @@ def _save_cache(path_to_file, inputs, labels):
     return False
 
 
-def _load_imgs(padding_w, padding_h, center, colour):
+def _load_imgs(padding_w, padding_h, center, colour, full):
     inputs = []
     labels = []
     print("Load Images. Total Directories: {}".format(len(DICTIONARIES)))
@@ -78,7 +86,7 @@ def _load_imgs(padding_w, padding_h, center, colour):
         if center:
             cords = None
         for img_name in tqdm(os.listdir(path), desc=dictionary["name"]):
-            inputs.append(_get_img(os.path.join(path, img_name), cords, padding_w, padding_h, colour))
+            inputs.append(_get_img(os.path.join(path, img_name), cords, padding_w, padding_h, colour, full))
             if dictionary["cords"]:
                 labels.append([[0, 1]])
             else:
@@ -88,16 +96,18 @@ def _load_imgs(padding_w, padding_h, center, colour):
     return inputs, labels
 
 
-def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False, cache=False, colour=True):
-    path_to_file = _get_path_to_file(padding_w, padding_h, center, colour)
+def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False,
+                 cache=False, colour=True, full=False, shuffle_set=True):
+    path_to_file = _get_path_to_file(padding_w, padding_h, center, colour, full)
 
     inputs, labels = _load_cache(path_to_file)
     if inputs.shape[0] == 0 and labels.shape[0] == 0:
-        inputs, labels = _load_imgs(padding_w, padding_h, center, colour)
+        inputs, labels = _load_imgs(padding_w, padding_h, center, colour, full)
         if cache:
             _save_cache(path_to_file, inputs, labels)
 
-    inputs, labels = shuffle(inputs, labels)
+    if shuffle_set:
+        inputs, labels = shuffle(inputs, labels)
 
     split = int(inputs.shape[0] * split)
 
@@ -105,5 +115,5 @@ def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False, cache=Fals
 
 
 if __name__ == "__main__":
-    v_x, v_y, t_x, t_y = load_ads_cnn(split=0.2)
+    v_x, v_y, t_x, t_y = load_ads_cnn(split=0.2, full=True)
     print(v_x.shape, v_y.shape, t_x.shape, t_y.shape)
