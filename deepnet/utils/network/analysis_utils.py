@@ -27,7 +27,7 @@ class Analysis(object):
         return np.mean(np.argmax(x, axis=1) == np.argmax(y, axis=1))
 
     @staticmethod
-    def mcc(x, y):
+    def get_mcc(x, y):
         """
         Computes the accuracy with values, that went already
         through the network
@@ -36,17 +36,17 @@ class Analysis(object):
         :return: accuracy: flout
         """
         a = np.argmax(x, axis=1) + np.argmax(y, axis=1) * 2
-        tp = np.count_nonzero(a == 3)  # True Positive
-        tn = np.count_nonzero(a == 0)  # True Negative
-        fp = np.count_nonzero(a == 1)  # False Positive
-        fn = np.count_nonzero(a == 2)  # False Negative
+        tp = int(np.count_nonzero(a == 3))  # True Positive
+        tn = int(np.count_nonzero(a == 0))  # True Negative
+        fp = int(np.count_nonzero(a == 1))  # False Positive
+        fn = int(np.count_nonzero(a == 2))  # False Negative
         accuracy = (tp + tn) / (tp + tn + fp + fn)
-        mcc = (tp * tn - fp * fn) / (math.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn)))
+        mcc = (tp * tn - fp * fn) / (math.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)) + 1e-8)
         return mcc, accuracy
 
     def accuracy_or_mcc(self, x, y):
         if self.network.is_binary:
-            return self.mcc(x, y)[0]
+            return self.get_mcc(x, y)[0]
         else:
             return self.accuracy(x, y)
 
@@ -135,7 +135,7 @@ class Analysis(object):
         :return: print: results
         """
         accuracy = self.accuracy(x, y)
-        print("Evaluation with {} data:\n"
+        print("Evaluation of {} inputs:\n"
               "loss: {:.5f} | accuracy: {:.5f}".format(
             int(x.shape[0]), float(loss), float(accuracy),
         ))
@@ -150,8 +150,8 @@ class Analysis(object):
         :param loss: flout
         :return: print: results
         """
-        mcc, accuracy = self.mcc(x, y)
-        print("Evaluation with {} data:\n"
+        mcc, accuracy = self.get_mcc(x, y)
+        print("Evaluation of {} inputs:\n"
               "loss: {:.5f} | accuracy: {:.5f} | MCC: {:.5f}".format(
             int(x.shape[0]), float(loss), float(accuracy), float(mcc)
         ))

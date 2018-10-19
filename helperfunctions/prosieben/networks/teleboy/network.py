@@ -53,28 +53,11 @@ if __name__ == "__main__":
 
     v_x, v_y, t_x, t_y = load_ads_cnn(split=0, full=True, shuffle_set=False, colour=False)
     net.evaluate(t_x, t_y)
-    # No Boarder
-    # Evaluation with 4495 data:
-    # loss: 0.16581 | accuracy: 0.90189 | precision: 1.00000 | recall: 0.90189 | f1_score: 0.94842
-
-    # Boarder above, below
-    # Evaluation with 813 data:
-    # loss: 0.19359 | accuracy: 0.92743 | precision: 1.00000 | recall: 0.92743 | f1_score: 0.96235
-
-    # Boarder side
-    # Evaluation with 427 data:
-    # loss: 0.10214 | accuracy: 0.94145 | precision: 1.00000 | recall: 0.94145 | f1_score: 0.96984
-
-    # No Logo
-    # Evaluation with 2095 data:
-    # loss: 0.41319 | accuracy: 0.89833 | precision: 0.00000 | recall: 0.00000 | f1_score: 0.00000
-
-    # All
-    # Evaluation with 7830 data:
-    # loss: 0.23141 | accuracy: 0.90575 | precision: 0.96072 | recall: 0.90846 | f1_score: 0.93386
+    # Evaluation of 7830 inputs:
+    # loss: 0.23141 | accuracy: 0.90575 | MCC: 0.77403
 
     for img in VideoCapture(channel=354, colour=False):
         cv2.imshow("image", img)
         img = np.expand_dims(img.transpose(2, 0, 1), axis=0) / 255
-        print("{:.2f}".format(float(net.feedforward(img)[0, 1])))
+        print("\r{:.2f}".format(float(net.feedforward(img)[0, 1])))
         cv2.waitKey(1)

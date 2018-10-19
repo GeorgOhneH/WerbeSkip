@@ -291,9 +291,10 @@ net/.style={
     \caption{Neuronales Netzwerk mit 2 versteckten Schichten}
     \label{fig:network2}
 \end{figure}
-Jeder Neuron von der vorigen Schicht ist mit jedem Neuron der nachfolgenden Schicht verbunden.
-Dies ist ein klassisches feedforawrd Netzwerk.
-Wichtig zu beachten ist, dass keine Schleifen vorkommen.
+Jeder Neuron von der vorigen Schicht ist mit jedem Neuron der nachfolgenden Schicht verbunden,
+welches als \textit{völlig verbundene Schicht} bezeichnet werden.
+Dies ist ein klassisches feedforward Netzwerk,
+welches nur Verbindungen nach vorne hat und so keine Schleifen entstehen können.
 
 \subsection{Beschriftung}
 
@@ -740,7 +741,7 @@ net/.style={
 
 Das entscheidende am Filter ist, dass er die gleichen Gewichte und Bias verwendet für die Verbindung, d.h bei einem
 Filter von 5x5 gibt is $(5*5=)$25 verschiedene Gewichte und einen Bias.
-Wenn nun der Filter bewegt wird werden die gleichen Gewichte und der der gleiche Bias verwendet.
+Wenn der Filter bewegt wird werden immer die gleichen Gewichte und der der gleiche Bias verwendet.
 Als Gleichung bei einem 3x3 Filter:
 
 \[a^{l+1}_{j,k} = f\left(\sum_{p=0}^{2}\sum_{m=0}^{2}w^l_{p,m}a^l_{j+p,k+m} + b^l\right)\]
@@ -749,7 +750,8 @@ wobei $a_{x, y}$ der Neuron an der Position $x, y$ ist und $f$ eine Aktivierungs
 Dadurch das immer die gleichen Gewichte und der gleiche Bias für jeden Filter benutzt werden,
 wird überall das gleiche Merkmal erkannt auch wenn es sich an einem anderen Ort befindet,
 deswegen wird die Ausgabe von dem Filter als \textit{Feature Map} bezeichnet.
-Normalerweise will man mehr als nur ein Merkmal erkennen und deswegen werden mehrere Filter verwendet (siehe Abbildung~\ref{fig:conv4}).
+Normalerweise will man mehr als nur ein Merkmal erkennen und deswegen werden mehrere Filter verwendet,
+wodurch mehrere Feature Maps entstehen (siehe Abbildung~\ref{fig:conv4}).
 
 \begin{figure}[h]%
     \centering
@@ -772,12 +774,13 @@ Normalerweise will man mehr als nur ein Merkmal erkennen und deswegen werden meh
     \caption{Convolution Schicht mit 3 Feature Maps}%
 \end{figure}
 
-\subsection{Max pooling}
-Neben den Convolution Schichten gibt es auch die Max-Polling-Schicht\footnote{Es gibt noch andere Polling-Schichten, die aber in dieser Arbeit nicht verwendet wurden},
-die Idee vom Polling ist, dass es die Informationen vereinfacht.
+\subsection{Max Pooling}
+Neben den Convolution Schichten gibt es auch die maxpool Schicht\footnote{Es gibt noch andere pooling Schichten, die aber in dieser Arbeit nicht verwendet wurden},
+die Idee vom Pooling ist, dass es die Informationen zusammenfasst.
 
-Max-Polling nimmt eine Feature Map als Eingabe und lässt auch etwas ähnliches wie ein Filter drüber laufen,
-nur der funktioniert nicht wie ein Neuron, sondern die Ausgabe ist der grösste Wert von den verbundenen Neuronen (siehe Abbildung~\ref{fig:pool1} ).
+max polling nimmt eine Feature Map als Eingabe und lässt auch etwas ähnliches wie ein Filter drüber laufen.
+Der Filter bewegt sich genau gleich wie ein Normaler mit den Unterschied das es keine lernbaren Parameter hat und
+die Ausgabe des Filters der grösste Wert von den Eingaben ist (siehe Abbildung~\ref{fig:pool1} ).
 \begin{figure}[h]
     \centering
     \begin{tikzpicture}[
@@ -829,33 +832,34 @@ net/.style={
   \draw[->] (mat-\ai-\aii) -- (mat-4-7);
 }
 \end{tikzpicture}
-    \caption{2x2 Max-Poll-Schicht mit eine Schrittweite von 2}
+    \caption{2x2 maxpool Schicht mit eine Schrittweite von 2}
     \label{fig:pool1}
 \end{figure}
-Man kann Max-Polling verstehen als eine reduzierung der vorhanden Informationen.
+Man kann max pooling verstehen als eine reduzierung der vorhanden Informationen.
 Es nimmt das wichtigste Merkmal in einem gewissen Bereich und wirft die weniger wichtigeren Merkmale weg,
-so dass es weniger Merkmale gibt und die darauf folgenden Verbindungen es einfacher haben.
+so dass es weniger Neuronen gibt und die darauf folgenden Neuronen es einfacher haben.
 
-\subsection{Convolution und Fullyconnected}
-Um das Netzwerk zu interpretieren muss man eine fully-connected Schicht am Schluss haben.
-Diese wird angehängt indem jedes Neuron von der convolution bzw max-poll Schicht mit jedem Neuron der fully-connected Schicht verbunden wird.
+\subsection{Convolution und Völlig Verbundene Schichten}
+Um das Netzwerk zu interpretieren muss man eine völlig verbundenen Schicht am Schluss haben,
+da man eine 2-Dimensionale Schicht nicht interpretieren kann.\footnote{Es gibt auch Netzwerke, bei denen man eine convolution Schicht als Ausgabeschicht hat\cite{fullconvolution}}
+Diese wird angehängt indem jedes Neuron von der convolution bzw maxpool Schicht mit jedem Neuron der völlig verbundenen Schicht verbunden wird.
 Es spielt keine Rolle, dass die Neuronen 2-Dimensional angeordnet sind.
 
 Das trainieren des Netzwerk ist immer noch genau gleich.
-Es wird immer noch mit stochastic gradient descent und backpropagation trainiert,
-allerdings müssen die Gleichungen der backpropagation für die Convolution und Max-Polling angepasst werden.
+Es wird immer noch stochastic gradient descent und backpropagation benutzt,
+allerdings müssen die Gleichungen der backpropagation für die Convolution und max pooling angepasst werden.
 
 \section{Regularization}
 Um ein Netzwerk zu trainieren hat man meisten nur eine endliche Anzahl an Daten an denen das Netzwerk lernen kann.
 Aus dem Grund werden die gleichen Daten mehrmals zum trainieren verwendet.
 Dadurch kann ein Problem entstehen.
-Mit der Zeit lernt das Netzwerk nicht die Merkmale der Daten und könnte sie auf neue unbekannte Daten anwenden,
-sondern es lernt die gegebenen Daten so gut, dass es die Daten einfach auswendig lernt und die Daten nicht mehr an ihren gemeinsamen Merkmalen erkennt,
-sondern an ihren ganz spezifischen, so das neue Daten nicht mehr richtig erkannt werden.
+Mit der Zeit kennt das Netzwerk die trainings Daten so gut, dass es die trainings Daten einfach auswendig lernt
+und die Daten nicht mehr an ihren gemeinsamen Merkmalen und zusammenhängen erkennt,
+sondern an ihren ganz spezifischen Merkmalen die nur für die trainings Daten zutreffen,
+so das unbekannte Daten nicht mehr richtig erkannt werden.
 Dieses Phänomen ist als \textit{overfitting} bekannt.
 \subsection{Dropout}
-Beim trainieren eines Netzwerkes werden die Neuronen mit einer bestimmten Wahrscheinlichkeit temporär deaktiviert bzw ignoriert (siehe Abbildung~\ref{fig:dropout1}),
-aber sonst verhält sich das Netzwerk identisch und passt die Gewichte und Biases an.
+Beim trainieren eines Netzwerkes werden Neuronen mit einer bestimmten Wahrscheinlichkeit temporär deaktiviert bzw ignoriert (siehe Abbildung~\ref{fig:dropout1}).
 Bei jeder neuen Eingabe zum trainieren werden neue zufällige Neuronen ausgewählt,
 dabei sind die eingabe und ausgabe Neuronen ausgenommen.
 
@@ -929,13 +933,13 @@ net/.style={
 
 Wenn das genug oft wiederholt wurde, wurden bestimmte Gewichte und Biases gelernt,
 unter der Bedingung das ein Teil der Neuronen deaktiviert sind.
-Das heist wenn man das Netzwerk dann benutzt werden mehr Neuronen gleichzeitig Aktiv sein,
+Das heist wenn man das Netzwerk dann benutzt werden mehr Neuronen gleichzeitig Aktiv sein als beim trainieren,
 um das Auszugleichen wird die Ausgabe des Neuron mit der Wahrscheinlichkeit, mit der es deaktiviert wird, multipliziert.
 
 Dropout hilft gegen overfitting,
 da sich ein Neuron nicht auf bestimmte andere Neuronen verlassen kann,
-wodurch es gezwungen mit vielen zufälligen Verbindungen etwas nützliches zu lernen.
-Anders gesagt das Netzwerk wird robust gegen den Verlust von einzelnen Merkmalen.
+wodurch es gezwungen ist mit vielen zufälligen Verbindungen etwas nützliches anzufangen.
+Anders gesagt das Netzwerk wird robust gegen den Verlust von einzelnen Merkmalen und kann sich nicht auf ein einzelnes Merkmale fokussieren.
 
 \section{Auswertung}
 
@@ -994,10 +998,6 @@ Alle diese Schwierigkeiten machen das erkennen eines Logo's ohne ein Neuronales 
 Ein Neuronales Netzwerk hingegen löst das Probleme ziemlich elegant.
 
 \section{Das Netzwerk trainieren}
-\subsection{Farbe}
-Die erste Frage, die sich stellt ist, ob man das Netzwerk mit farbigen oder mit schwarz-weiss Bildern trainieren will.
-Dazu wird ein eigen gesammeltes Datensatz benutzt, das 7830 Prosieben Bilder besteht.
-Aus dem wurde die Logos ausgeschnitten mit einem Rand von 10 Pixeln.
 
 
 
