@@ -12,6 +12,7 @@ import deepdish as dd
 
 if __name__ == "__main__":
     gen = LogoGenerator(epochs=1, mini_batch_size=64, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy")
+    v_x, v_y, t_x, t_y = load_ads_cnn(split=1, full=True, volume=0.1, colour=False)
 
     net = Network()
 
@@ -43,9 +44,9 @@ if __name__ == "__main__":
     net.add(FullyConnectedLayer(2))
     net.add(SoftMax())
 
-    optimizer = Adam(learning_rate=0.02)
+    optimizer = Adam(learning_rate=0.05)
     net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load('network.h5')
     # v_x, v_y, t_x, t_y = load_ads_cnn(split=0, full=True, shuffle_set=False, colour=True)
     # net.evaluate(t_x, t_y)
-    net.fit_generator(generator=gen, save_step=1000, snapshot_step=300)
+    net.fit_generator(generator=gen, save_step=1000, snapshot_step=300, validation_set=(v_x, v_y))

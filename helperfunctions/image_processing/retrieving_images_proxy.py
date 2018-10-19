@@ -1,4 +1,5 @@
 import requests
+from requests.auth import HTTPProxyAuth
 import json
 import cv2
 import numpy as np
@@ -10,10 +11,13 @@ import queue
 
 
 class VideoCapture(object):
-    def __init__(self, channel: int, rate_limit=30, convert_network=False):
-        self.proxies = {}
+    def __init__(self, channel: int, rate_limit=30, convert_network=False, colour=True):
+        self.proxies = {'https': 'https://pi:76x*LdZMx&Oux^%#IDCy@proxy.mikrounix.com'}
+
+        print(requests.get("https://www.google.com/", proxies=self.proxies))
 
         self.pipe = None
+        self.colour = colour
         self.images = queue.Queue()
         self.m3u8_update_thread = None
         self.get_images_t = None
@@ -33,7 +37,7 @@ class VideoCapture(object):
 
     def setup_cookies(self):
         url = "https://www.teleboy.ch/api/anonymous/verify"
-        response = self.session.get(url=url, proxies=self.proxies)
+        response = self.session.get(url=url, proxies=self.proxies, auth=self.auth)
         data = response.json()
         token = data["data"]["_token"]
 
@@ -46,7 +50,7 @@ class VideoCapture(object):
 
     def get_cap_url(self, channel):
         url = "https://www.teleboy.ch/api/anonymous/live/{}".format(channel)
-        response = self.session.get(url=url, proxies=self.proxies)
+        response = self.session.get(url=url, proxies=self.proxies, auth=self.auth)
         j = json.loads(response.content)
         master_url = j["data"]["stream"]["url"]
 
@@ -54,7 +58,7 @@ class VideoCapture(object):
             'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:12.0) Gecko/20100101 Firefox/12.0'
         }
 
-        response = self.session.get(master_url, verify=False, headers=header, proxies=self.proxies)
+        response = self.session.get(master_url, verify=False, headers=header, proxies=self.proxies, auth=self.auth)
         data = response.content.decode("UTF-8")
         cap_url = data.split("\n")[2]
         return cap_url
@@ -66,9 +70,14 @@ class VideoCapture(object):
 
         self.update_m3u8_file()
 
+        if self.colour:
+            pix_fmt = 'bgr24'
+        else:
+            pix_fmt = 'gray'
+
         cmd_out = ['ffmpeg ',
                    '-i', os.path.join(self.PATH_TO_CACHE, self.M3U8_NAME),  # Indicated input comes from pipe
-                   '-pix_fmt', 'gray',
+                   '-pix_fmt', pix_fmt,
                    '-c', 'copy',
                    '-vcodec', 'rawvideo',
                    '-probesize', '32',
@@ -84,7 +93,7 @@ class VideoCapture(object):
         self.get_images_t.start()
 
     def update_m3u8_file(self):
-        text = requests.get(self.cap_url, proxies=self.proxies).text
+        text = requests.get(self.cap_url, proxies=self.proxies, auth=self.auth).text
         if text != self.last_m3u8:
             if len(self.ts_files) > 5:
                 for file_name in self.ts_files[:-4]:
@@ -96,7 +105,7 @@ class VideoCapture(object):
                 if ".ts" in file_name and not os.path.exists(path_to_ts_file):
                     self.ts_files.append(path_to_ts_file)
                     file_url = self.cap_url[:-10] + file_name
-                    data = requests.get(file_url, proxies=self.proxies).content
+                    data = requests.get(file_url, proxies=self.proxies, auth=self.auth).content
                     with open(path_to_ts_file, mode="wb") as f:
                         f.write(data)
             with open(os.path.join(self.PATH_TO_CACHE, self.M3U8_NAME), mode="w") as f:
@@ -108,14 +117,18 @@ class VideoCapture(object):
             self.update_m3u8_file()
 
     def get_images_thread(self):
+        if self.colour:
+            depth = 3
+        else:
+            depth = 1
         while True:
             qsize = self.images.qsize()
             if qsize > 5 * self.rate_limit:
                 for _ in range(qsize - 3*self.rate_limit):
                     self.images.get()
 
-            raw_image = self.pipe.stdout.read(180 * 320 * 1)
-            frame = np.fromstring(raw_image, dtype='uint8').reshape((180, 320, 1)) / 255
+            raw_image = self.pipe.stdout.read(180 * 320 * depth)
+            frame = np.fromstring(raw_image, dtype='uint8').reshape((180, 320, depth)) / 255
 
             if self.convert_network:
                 frame = np.expand_dims(frame.transpose((2, 0, 1)), axis=0)
@@ -131,6 +144,6 @@ class VideoCapture(object):
 
 
 if __name__ == "__main__":
-    for frame in VideoCapture(channel=354, rate_limit=30):
+    for frame in VideoCapture(channel=354, rate_limit=30, colour=True):
         cv2.imshow("img", frame)
         cv2.waitKey(1)

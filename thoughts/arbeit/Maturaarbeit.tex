@@ -832,7 +832,7 @@ net/.style={
     \caption{2x2 Max-Poll-Schicht mit eine Schrittweite von 2}
     \label{fig:pool1}
 \end{figure}
-Man kann Max-Polling verstehen als eine reduzierung von Informationen.
+Man kann Max-Polling verstehen als eine reduzierung der vorhanden Informationen.
 Es nimmt das wichtigste Merkmal in einem gewissen Bereich und wirft die weniger wichtigeren Merkmale weg,
 so dass es weniger Merkmale gibt und die darauf folgenden Verbindungen es einfacher haben.
 
@@ -854,7 +854,10 @@ sondern es lernt die gegebenen Daten so gut, dass es die Daten einfach auswendig
 sondern an ihren ganz spezifischen, so das neue Daten nicht mehr richtig erkannt werden.
 Dieses Phänomen ist als \textit{overfitting} bekannt.
 \subsection{Dropout}
-
+Beim trainieren eines Netzwerkes werden die Neuronen mit einer bestimmten Wahrscheinlichkeit temporär deaktiviert bzw ignoriert (siehe Abbildung~\ref{fig:dropout1}),
+aber sonst verhält sich das Netzwerk identisch und passt die Gewichte und Biases an.
+Bei jeder neuen Eingabe zum trainieren werden neue zufällige Neuronen ausgewählt,
+dabei sind die eingabe und ausgabe Neuronen ausgenommen.
 
 \begin{figure}[h]
     \centering
@@ -923,6 +926,20 @@ net/.style={
     \caption{Neuronales Netzwerk mit Dropout}
     \label{fig:dropout1}
 \end{figure}
+
+Wenn das genug oft wiederholt wurde, wurden bestimmte Gewichte und Biases gelernt,
+unter der Bedingung das ein Teil der Neuronen deaktiviert sind.
+Das heist wenn man das Netzwerk dann benutzt werden mehr Neuronen gleichzeitig Aktiv sein,
+um das Auszugleichen wird die Ausgabe des Neuron mit der Wahrscheinlichkeit, mit der es deaktiviert wird, multipliziert.
+
+Dropout hilft gegen overfitting,
+da sich ein Neuron nicht auf bestimmte andere Neuronen verlassen kann,
+wodurch es gezwungen mit vielen zufälligen Verbindungen etwas nützliches zu lernen.
+Anders gesagt das Netzwerk wird robust gegen den Verlust von einzelnen Merkmalen.
+
+\section{Auswertung}
+
+
 
 \chapter{Lösungsansatz}
 \label{ch:lösungsansatz}

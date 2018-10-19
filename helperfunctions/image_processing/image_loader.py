@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 import deepdish as dd
 from deepnet.utils import shuffle
+import random
 
 # Rations:
 # No Boarder: 16:9
@@ -75,7 +76,7 @@ def _save_cache(path_to_file, inputs, labels):
     return False
 
 
-def _load_imgs(padding_w, padding_h, center, colour, full):
+def _load_imgs(padding_w, padding_h, center, colour, full, volume):
     inputs = []
     labels = []
     print("Load Images. Total Directories: {}".format(len(DICTIONARIES)))
@@ -85,7 +86,10 @@ def _load_imgs(padding_w, padding_h, center, colour, full):
         cords = dictionary["cords"]
         if center:
             cords = None
-        for img_name in tqdm(os.listdir(path), desc=dictionary["name"]):
+        files = os.listdir(path)
+        random.shuffle(files)
+        files = files[:int(len(files)*volume)]
+        for img_name in tqdm(files, desc=dictionary["name"]):
             inputs.append(_get_img(os.path.join(path, img_name), cords, padding_w, padding_h, colour, full))
             if dictionary["cords"]:
                 labels.append([[0, 1]])
@@ -97,12 +101,12 @@ def _load_imgs(padding_w, padding_h, center, colour, full):
 
 
 def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False,
-                 cache=False, colour=True, full=False, shuffle_set=True):
+                 cache=False, colour=True, full=False, shuffle_set=True, volume=1):
     path_to_file = _get_path_to_file(padding_w, padding_h, center, colour, full)
 
     inputs, labels = _load_cache(path_to_file)
     if inputs.shape[0] == 0 and labels.shape[0] == 0:
-        inputs, labels = _load_imgs(padding_w, padding_h, center, colour, full)
+        inputs, labels = _load_imgs(padding_w, padding_h, center, colour, full, volume)
         if cache:
             _save_cache(path_to_file, inputs, labels)
 

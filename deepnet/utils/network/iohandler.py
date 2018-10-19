@@ -40,7 +40,7 @@ class IOHandler(object):
 
         name = "accuracy"
         if self.network.is_binary:
-            name = "f1_score"
+            name = "MCC"
 
         return "train {}: {:.5f}".format(name, numpy.mean(self.network.train_accuracy[-self._last_print:]))
 
@@ -62,7 +62,7 @@ class IOHandler(object):
 
         name = "accuracy"
         if self.network.is_binary:
-            name = "f1_score"
+            name = "MCC"
 
         return "validate {}: {:.5f}".format(name, value)
 

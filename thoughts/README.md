@@ -400,3 +400,8 @@ nicht geschlossen.
 
 ## 02.09.2018
 Maturaarbeit hinzugefügt
+
+## 19.10.2018
+Hab den f1 score ersetzt mit [der Matthews correlation coefficient](https://en.wikipedia.org/wiki/Matthews_correlation_coefficient),
+da MCC einfach besser ist als der f1 score, da der die fasch negativen und falsch positiven besser berücksichtigt.
+

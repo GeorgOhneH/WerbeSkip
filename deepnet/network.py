@@ -308,7 +308,7 @@ class Network(object):
         loss = self._cost.function(x, y)
         self.train_loss.append(float(loss))
 
-        accuracy = self._analysis.accuracy_or_f1score(x, y)
+        accuracy = self._analysis.accuracy_or_mcc(x, y)
         self.train_accuracy.append(float(accuracy))
 
         delta = self._cost.delta(x, y)

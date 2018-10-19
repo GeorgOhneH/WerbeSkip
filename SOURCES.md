@@ -37,6 +37,8 @@ https://www.youtube.com/watch?v=tIeHLnjs5U8
 https://sudeepraja.github.io/Neural/
 ## Evaluation
 http://blog.exsilio.com/all/accuracy-precision-recall-f1-score-interpretation-of-performance-measures/
+
+https://en.wikipedia.org/wiki/Matthews_correlation_coefficient
 ## Softmax
 https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/
 ## Convolution

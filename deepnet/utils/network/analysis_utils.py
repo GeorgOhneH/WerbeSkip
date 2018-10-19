@@ -1,4 +1,5 @@
 import numpywrapper as np
+import math
 
 
 class Analysis(object):
@@ -26,7 +27,7 @@ class Analysis(object):
         return np.mean(np.argmax(x, axis=1) == np.argmax(y, axis=1))
 
     @staticmethod
-    def f1score(x, y):
+    def mcc(x, y):
         """
         Computes the accuracy with values, that went already
         through the network
@@ -39,15 +40,13 @@ class Analysis(object):
         tn = np.count_nonzero(a == 0)  # True Negative
         fp = np.count_nonzero(a == 1)  # False Positive
         fn = np.count_nonzero(a == 2)  # False Negative
-        accuracy = (tp + tn) / (tp + tn + fp + fn + 1e-8)
-        precision = tp / (tp + fp + 1e-8)
-        recall = tp / (tp + fn + 1e-8)
-        f1_score = 2 * (recall * precision) / (recall + precision + 1e-8)
-        return f1_score, recall, precision, accuracy
+        accuracy = (tp + tn) / (tp + tn + fp + fn)
+        mcc = (tp * tn - fp * fn) / (math.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn)))
+        return mcc, accuracy
 
-    def accuracy_or_f1score(self, x, y):
+    def accuracy_or_mcc(self, x, y):
         if self.network.is_binary:
-            return self.f1score(x, y)[0]
+            return self.mcc(x, y)[0]
         else:
             return self.accuracy(x, y)
 
@@ -92,7 +91,7 @@ class Analysis(object):
         x = self.network.feedforward(x)
 
         loss = self.network.cost.function(x, y)
-        accuracy = self.accuracy_or_f1score(x, y)
+        accuracy = self.accuracy_or_mcc(x, y)
 
         self.network.validate_accuracy.append(float(accuracy))
         self.network.validate_loss.append(float(loss))
@@ -144,15 +143,15 @@ class Analysis(object):
     def binary_evaluation(self, x, y, loss):
         """
         computes the accuracy. the precision, the recall
-        and the f1 score and prints them out
+        and the mcc and prints them out
 
         :param x: ndarray
         :param y: ndarray
         :param loss: flout
         :return: print: results
         """
-        f1_score, recall, precision, accuracy = self.f1score(x, y)
+        mcc, accuracy = self.mcc(x, y)
         print("Evaluation with {} data:\n"
-              "loss: {:.5f} | accuracy: {:.5f} | precision: {:.5f} | recall: {:.5f} | f1_score: {:.5f}".format(
-            int(x.shape[0]), float(loss), float(accuracy), float(precision), float(recall), float(f1_score)
+              "loss: {:.5f} | accuracy: {:.5f} | MCC: {:.5f}".format(
+            int(x.shape[0]), float(loss), float(accuracy), float(mcc)
         ))
