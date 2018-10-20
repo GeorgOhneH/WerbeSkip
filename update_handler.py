@@ -7,12 +7,17 @@ from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMa
 from deepnet.optimizers import Adam
 import json
 import websocket
-import _thread as thread
+from threading import Thread
+from settings_secret import websocket_token
 import time
+import os
 
 
 class WerbeSkip(object):
     def __init__(self):
+        self.PATH_TO_NET = os.path.join(os.path.dirname(__file__), "helperfunctions\prosieben\\networks\\teleboy\\teleboy.h5")
+        print(self.PATH_TO_NET)
+        self.ws = None
         self.network = self.init_network()
         # Prosieben: 354
         # SRF: 303
@@ -30,10 +35,12 @@ class WerbeSkip(object):
 
         net.input((1, 180, 320))
 
-        net.add(ConvolutionLayer(n_filter=16, width_filter=12, height_filter=8, stride=4, zero_padding=0, padding_value=1))
+        net.add(
+            ConvolutionLayer(n_filter=16, width_filter=12, height_filter=8, stride=4, zero_padding=0, padding_value=1))
         net.add(BatchNorm())
         net.add(ReLU())
-        net.add(ConvolutionLayer(n_filter=64, width_filter=6, height_filter=4, stride=1, zero_padding=2, padding_value=1))
+        net.add(
+            ConvolutionLayer(n_filter=64, width_filter=6, height_filter=4, stride=1, zero_padding=2, padding_value=1))
         net.add(BatchNorm())
         net.add(ReLU())
         net.add(MaxPoolLayer(width_filter=3, height_filter=3, stride=2))
@@ -56,12 +63,12 @@ class WerbeSkip(object):
 
         optimizer = Adam(learning_rate=0.001)
         net.regression(optimizer=optimizer, cost=CrossEntropyCost())
-        net.load("helperfunctions\prosieben\\networks\\teleboy\\teleboy.h5")
+        net.load(self.PATH_TO_NET)
         return net
 
     def producer(self):
         channel = self.get_prediction()
-        message = {"command": "update", "room": 'main', "channel": channel, 'token': 'NWcVm69HTM4kQ2giE7JQ20buzQmu7uGcfNxftTC1'}
+        message = {"command": "update", "room": 'main', "channel": channel, "token": websocket_token}
         return message
 
     def get_prediction(self):
@@ -97,38 +104,37 @@ class WerbeSkip(object):
             self.result.pop(0)
             self.predictions.pop(0)
 
-    def on_message(self, ws, message):
+    def on_message(self, message):
         error = json.loads(message).get('error', None)
         if error:
             print('GOT ERROR:', error)
 
-    def on_error(self, ws, error):
+    def on_error(self, error):
         print(error)
 
-    def on_close(self, ws):
+    def on_close(self):
         print("### closed ###")
         time.sleep(10)
         self.run()
 
-    def on_open(self, ws):
-        def run(*args):
+    def on_open(self):
+        def run():
             while True:
                 message = self.producer()
-                ws.send(json.dumps(message))
+                self.ws.send(json.dumps(message))
 
-        thread.start_new_thread(run, ())
+        Thread(target=run).start()
 
     def run(self):
-        websocket.enableTrace(True)
-        ws = websocket.WebSocketApp("ws://127.0.0.1:8000/chat/stream/",
-                                    on_message=self.on_message,
-                                    on_error=self.on_error,
-                                    on_close=self.on_close)
-        ws.on_open = self.on_open
-        ws.run_forever()
+        websocket.enableTrace(False)
+        self.ws = websocket.WebSocketApp("ws://127.0.0.1:8000/chat/stream/",
+                                         on_message=self.on_message,
+                                         on_error=self.on_error,
+                                         on_close=self.on_close)
+        self.ws.on_open = self.on_open
+        self.ws.run_forever()
 
 
 if __name__ == "__main__":
     x = WerbeSkip()
     x.run()
-

@@ -1,7 +1,7 @@
 # WerbeSkip
 A Webserver to detect ads on TV
 
-Build with Machine Learning, Django and Vue
+Build with Neural Networks, Django and Vue
 
 ## Installation
 Note: Cloning this repository may take a while, because it's very large

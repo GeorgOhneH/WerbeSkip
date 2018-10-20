@@ -1,26 +1,20 @@
 FROM node:alpine
+FROM python:3
+ENV PYTHONUNBUFFERED 1
 RUN apk update && apk upgrade
 
-WORKDIR /app
+RUN mkdir /code
+WORKDIR /code
+ADD . /code
 
 # Install python, pip and python packages
-RUN apk add python3 curl
-COPY requirements.txt requirements.txt
-RUN curl https://bootstrap.pypa.io/get-pip.py | python3 \
-  && rm -rf /var/cache/apk/* \
-  && pip3 install --upgrade pip \
-  && pip3 install -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Run the following commands for deployment
-COPY package.json package.json
 RUN npm set progress=false && npm install -s --no-progress
-COPY . .
 RUN npm run build
-RUN python3 format_index_html.py
-RUN python3 manage.py collectstatic --noinput
+RUN python format_index_html.py
+RUN python manage.py collectstatic --noinput
 
 # EXPOSE port to be used
 EXPOSE 8000
-
-# Set command to run as soon as container is up
-CMD python3 manage.py runserver 0.0.0.0:8000 && redis-server && update_handler.py

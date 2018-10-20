@@ -1,6 +1,7 @@
 from django.conf import settings
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from settings_secret import websocket_token
 
 from .exceptions import ClientError
 from .utils import get_room_or_error
@@ -101,7 +102,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         """
         room_name = content['room']
         token = content.get('token', None)
-        if token != 'NWcVm69HTM4kQ2giE7JQ20buzQmu7uGcfNxftTC1':
+        if token != websocket_token:
             raise ClientError("ROOM_ACCESS_DENIED")
         # Check they are in this room
         if room_name not in self.rooms:

@@ -11,6 +11,7 @@ helperfunctions/prosieben/networks/example2/wrong_predictions
 *.ts
 thoughts/arbeit/auxil/
 thoughts/arbeit/out/Maturaarbeit.synctex.gz
+settings_secret.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
