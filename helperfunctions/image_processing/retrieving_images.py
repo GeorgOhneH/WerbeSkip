@@ -80,7 +80,7 @@ class VideoCapture(object):
         else:
             pix_fmt = 'gray'
 
-        cmd_out = ['ffmpeg ',
+        cmd_out = ['ffmpeg',
                    '-i', os.path.join(self.PATH_TO_CACHE, self.M3U8_NAME),
                    '-pix_fmt', pix_fmt,
                    '-c', 'copy',

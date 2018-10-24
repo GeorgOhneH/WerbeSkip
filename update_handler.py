@@ -15,10 +15,15 @@ import os
 
 class WerbeSkip(object):
     def __init__(self):
-        self.PATH_TO_NET = os.path.join(os.path.dirname(__file__), "helperfunctions\prosieben\\networks\\teleboy\\teleboy.h5")
-        print(self.PATH_TO_NET)
+        self.PATH_TO_NET = os.path.join(os.path.dirname(__file__),
+                                        "helperfunctions/prosieben/networks/teleboy/teleboy.h5")
         self.ws = None
         self.network = self.init_network()
+        self.docker = bool(os.environ.get("DJANGO_DEBUG", False))
+        if self.docker:
+            self.ip = "192.168.99.100:8000"
+        else:
+            self.ip = "127.0.0.1:8000"
         # Prosieben: 354
         # SRF: 303
         self.cap = VideoCapture(channel=354, colour=False, rate_limit=1, convert_network=True)
@@ -114,20 +119,22 @@ class WerbeSkip(object):
 
     def on_close(self):
         print("### closed ###")
-        time.sleep(10)
-        self.run()
 
     def on_open(self):
-        def run():
-            while True:
-                message = self.producer()
-                self.ws.send(json.dumps(message))
+        while True:
+            def run():
+                while True:
+                    message = self.producer()
+                    self.ws.send(json.dumps(message))
 
-        Thread(target=run).start()
+            t = Thread(target=run)
+            t.start()
+            t.join()
+            time.sleep(10)
 
     def run(self):
         websocket.enableTrace(False)
-        self.ws = websocket.WebSocketApp("ws://127.0.0.1:8000/chat/stream/",
+        self.ws = websocket.WebSocketApp("ws://" + self.ip + "/chat/stream/",
                                          on_message=self.on_message,
                                          on_error=self.on_error,
                                          on_close=self.on_close)

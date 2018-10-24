@@ -1,25 +1,24 @@
+# docker-compose up
 version: '3'
 services:
   db:
-    image: postgres
+    image: postgres:11-alpine
   redis:
-    image: redis
-    command: redis-server
-    ports:
-      - '6379:6379'
+    image: redis:5-alpine
   web:
+    image: werbeskip
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/code
+    command: sh docker-entrypoint.sh
     ports:
       - 8000:8000
     depends_on:
       - redis
+      - db
   updater:
+    image: werbeskip
     build: .
     command: python update_handler.py
     depends_on:
       - redis
+      - db
       - web
-
