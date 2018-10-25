@@ -25,9 +25,11 @@ class IOHandler(object):
         self._last_print = 1
 
     def _s_epoch(self) -> str:
+        print(type(self.network.train_loss), type(self._last_print), type(numpy))
         return "epoch {} of {}".format(self.network.current_epoch + 1, self.network.total_epoch)
 
     def _s_progress(self) -> str:
+        print(type(self.network.train_loss), type(self._last_print), type(numpy))
         return "progress: {:.3f}".format(self.network.progress)
 
     def _s_tl(self) -> str:
@@ -35,6 +37,7 @@ class IOHandler(object):
         return "train loss: {:.5f}".format(numpy.mean(self.network.train_loss[-self._last_print:]))
 
     def _s_ta(self) -> str:
+        print(type(self.network.train_loss), type(self._last_print), type(numpy))
         name = "accuracy"
         if self.network.is_binary:
             name = "MCC"

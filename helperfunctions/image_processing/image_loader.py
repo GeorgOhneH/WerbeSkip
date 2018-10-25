@@ -55,9 +55,9 @@ def _get_img(path_to_img, cords, padding_w, padding_h, colour, full):
     return np.expand_dims(img, axis=0)
 
 
-def _get_path_to_file(padding_w, padding_h, center, colour, full):
+def _get_path_to_file(padding_w, padding_h, center, colour, full, volume):
     path_to_cache = os.path.join(os.path.dirname(__file__), "load_cache")
-    file_name = "w{}_h{}_ce{}_co{}_f{}.h5".format(padding_w, padding_h, center, colour, full)
+    file_name = "w{}_h{}_ce{}_co{}_f{}_v{}.h5".format(padding_w, padding_h, center, colour, full, volume)
     path_to_file = os.path.join(path_to_cache, file_name)
     return path_to_file
 
@@ -102,7 +102,7 @@ def _load_imgs(padding_w, padding_h, center, colour, full, volume):
 
 def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False,
                  cache=False, colour=True, full=False, shuffle_set=True, volume=1):
-    path_to_file = _get_path_to_file(padding_w, padding_h, center, colour, full)
+    path_to_file = _get_path_to_file(padding_w, padding_h, center, colour, full, volume)
 
     inputs, labels = _load_cache(path_to_file)
     if inputs.shape[0] == 0 and labels.shape[0] == 0:
