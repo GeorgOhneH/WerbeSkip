@@ -88,7 +88,7 @@ class AdsGenerator(object):
         while not np.all(np.array(self.result[-self.filter_size:]) == self.result[-1]):
             self.run()
 
-        return self.imgs[-self.filter_size][0, :, 35:-1, 0:276], self.dict_labels[self.result[-self.filter_size]]
+        return self.imgs[-self.filter_size][0, :, 36:-1, 0:275], self.dict_labels[self.result[-self.filter_size]]
 
     def run(self):
         img = next(self.cap)
