@@ -31,6 +31,7 @@ class IOHandler(object):
         return "progress: {:.3f}".format(self.network.progress)
 
     def _s_tl(self) -> str:
+        print(type(self.network.train_loss), type(self._last_print), type(numpy))
         return "train loss: {:.5f}".format(numpy.mean(self.network.train_loss[-self._last_print:]))
 
     def _s_ta(self) -> str:
