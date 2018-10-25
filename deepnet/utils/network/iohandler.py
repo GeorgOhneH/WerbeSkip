@@ -32,11 +32,11 @@ class IOHandler(object):
         return "progress: {:.3f}".format(self.network.progress)
 
     def _s_tl(self) -> str:
-        self.network.train_loss = list(np.nan_to_num(self.network.train_loss))
+        self.network.train_loss = list(numpy.nan_to_num(self.network.train_loss))
         return "train loss: {:.5f}".format(numpy.mean(self.network.train_loss[-self._last_print:]))
 
     def _s_ta(self) -> str:
-        self.network.train_accuracy = list(np.nan_to_num(self.network.train_accuracy))
+        self.network.train_accuracy = list(numpy.nan_to_num(self.network.train_accuracy))
 
         name = "accuracy"
         if self.network.is_binary:
@@ -45,7 +45,7 @@ class IOHandler(object):
         return "train {}: {:.5f}".format(name, numpy.mean(self.network.train_accuracy[-self._last_print:]))
 
     def _s_vl(self) -> str:
-        self.network.validate_loss = list(np.nan_to_num(self.network.validate_loss))
+        self.network.validate_loss = list(numpy.nan_to_num(self.network.validate_loss))
         value = numpy.mean(self.network.validate_loss[-self._last_print:])
 
         if numpy.isnan(value):
@@ -54,7 +54,7 @@ class IOHandler(object):
         return "validate loss: {:.5f}".format(value)
 
     def _s_va(self) -> str:
-        self.network.validate_accuracy = list(np.nan_to_num(self.network.validate_accuracy))
+        self.network.validate_accuracy = list(numpy.nan_to_num(self.network.validate_accuracy))
         value = numpy.mean(self.network.validate_accuracy[-self._last_print:])
 
         if numpy.isnan(value):
