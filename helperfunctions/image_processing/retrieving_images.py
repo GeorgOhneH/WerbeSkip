@@ -62,7 +62,6 @@ class VideoCapture(object):
         header = {
             'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:12.0) Gecko/20100101 Firefox/12.0'
         }
-
         response = self.session.get(master_url, verify=False, headers=header, proxies=self.proxies)
         data = response.content.decode("UTF-8")
         cap_url = data.split("\n")[2]
@@ -86,7 +85,7 @@ class VideoCapture(object):
                    '-c', 'copy',
                    '-vcodec', 'rawvideo',
                    '-probesize', '32',
-                   '-loglevel', 'error',
+                   '-loglevel', 'info',
                    '-c:v', 'rawvideo',
                    '-f', 'image2pipe',
                    '-r', str(self.rate_limit),

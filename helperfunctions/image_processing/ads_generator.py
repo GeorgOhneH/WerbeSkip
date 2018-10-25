@@ -15,7 +15,7 @@ class AdsGenerator(object):
         self.PATH_TO_NET = os.path.join(os.path.split(os.path.dirname(__file__))[0],
                                         "prosieben/networks/teleboy/teleboy.h5")
 
-        self.cap = VideoCapture(channel=354, colour=False, convert_network=True)
+        self.cap = VideoCapture(channel=354, colour=False, convert_network=True, proxy=False)
         self.mini_batch_size = mini_batch_size
         self.epochs = epochs
         self.progress = 0

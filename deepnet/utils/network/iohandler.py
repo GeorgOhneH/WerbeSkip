@@ -1,7 +1,6 @@
 import platform
 import ctypes
 import numpy
-import numpywrapper as np
 import time
 
 
