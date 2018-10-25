@@ -14,6 +14,7 @@
 \usepackage{mathtools}
 \usepackage{listings}
 \usepackage{url}
+\usepackage{pdfpages}
 \usepackage{tabto}
 \usepackage{tikz}
 \usetikzlibrary{matrix,chains,positioning,decorations.pathreplacing,arrows,calc}
@@ -62,18 +63,17 @@ Er versuchte das Logo mithilfe von Bedingungen und Schleifen auszudrücken, aber
 
 Als ich auf der Suche nach einer Idee für eine Maturaarbeit war erinnerte ich mich wieder an das Problem und an einen neuen Lösungsansatz,
 nämlich Neuronale Netzwerke, welche Heute überall verwendet werden und extrem Mächtig sind.
-Die Idee war aber nicht nur ein Logo zu erkennen sondern auch genau verstehen wie ein Neuronales Netzwerk funktioniert
+Die Idee war aber nicht nur ein Logo zu erkennen sondern auch genau verstehen wie ein neuronales Netzwerk funktioniert
 und deshalb habe ich mein eigenes Neuronale Netzwerk programmiert.
 \section{Aufbau der Arbeit}
 \label{sec:aufbauDerArbeit}
 
 \chapter{Problemstellung}
 Das Ziel dieser Arbeit ist einen Algorithmus zu programmieren der Bilder als Werbung erkennen kann.
-Dafür wrd ein Neuronales Netzwerk benutzt, das sich auf die Bilderkennung beschränkt.
-\section{Werbung}
+Dafür wird ein neuronales Netzwerk benutzt, das sich auf die Bilderkennung beschränkt.
+\section{Logo}
 Wie schon gesagt wird bei Werbung das Senderlogo nicht eingeblendet und deswegen kann das Problem
 vereinfacht werden auf die Frage ob das Senderlogo eingeblendet ist oder nicht (siehe Abbildung~\ref{fig:logo1}).
-
 \begin{figure}[h]%
     \centering
     \subfloat[Werbung]{{\includegraphics[width=7cm]{assets/images/prosieben_kein_logo.png} }}%
@@ -82,36 +82,77 @@ vereinfacht werden auf die Frage ob das Senderlogo eingeblendet ist oder nicht (
     \caption{Kein Senderlogo bei Werbung}%
     \label{fig:logo1}%
 \end{figure}
+Man könnte meinen, dass das Logo erkennen relativ simple ist.
+Man könnte einfach Schauen ob der Bereich, wo das Logo sein sollte, heller ist als ausserhalb.
+
+\begin{figure}[h]%
+    \centering
+    \subfloat[]{{\includegraphics[width=3cm]{assets/images/logo_beispiel1.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3cm]{assets/images/logo_beispiel3.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3cm]{assets/images/logo_beispiel4.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=3cm]{assets/images/logo_beispiel5.png} }}%
+    \caption{Logo mit verschiedenen Hintergründen}%
+    \label{fig:logo2}%
+\end{figure}
+
+Ein Problem des Logo's ist, dass es nicht komplett auf das normale Bild eingespielt wird, sondern man kann leicht hindurch sehen (siehe Abbildung~\ref{fig:logo2}a),
+dadurch kann man das Logo nicht an gleichen Pixel erkennen.
+Die grösste Schwierigkeit ist aber, dass bei manchen Hintergründen, vor allem bei weissen, das Logo abgeschnitten oder kaum bis gar nicht sichtbar ist.
+Bei Abbildung~\ref{fig:logo2} (b) ist das Logo abgeschnitten, bei (c) ist es kaum sichtbar und bei (d) ist komplett verschwunden.
+
+Ein andere Schwierigkeit ist, dass das Logo nicht unbedingt immer am gleichen Ort sein muss.
+Zum Beispiel hat Prosieben 3 verschiedene Positionen (siehe Abbildung~\ref{fig:logo3}).
+\begin{figure}[h]%
+    \centering
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_above.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_boarder_side.png} }}%
+    \qquad
+    \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_no_boarder.png} }}%
+    \caption{Logo an verschiedenen Positionen}%
+    \label{fig:logo3}%
+\end{figure}
+Alle diese Schwierigkeiten machen das erkennen eines Logo's ohne ein neuronales Netzwerk extrem schwer.
+Ein neuronales Netzwerk hingegen löst das Probleme ziemlich elegant.
+
+Eine weiter interessante Frage auf die eingegangen wird ist, ob ein neuronales Netzwerk auch ohne ein Logo Werbung erkennen kann.
 
 \section{Neuronales Netzwerk}
 Neuronale Netzwerke sind ein sehr umfangreiches Thema und deswegen begrenze ich mich auf Netzwerke die für die Bilderkennung entscheidend sind.
 Darunter sind klassische feedforward und convolution Netzwerke.
-Auf recurrent neuronale Netzwerke\footnote{Ein Neuronales Netzwerk, das geeignet für Sequenzen ist} wird nicht näher eingegangen.
+Auf recurrent neuronale Netzwerke\footnote{Ein neuronales Netzwerk, das geeignet für Sequenzen ist} wird nicht näher eingegangen.
 
 
 \chapter{Neuronales Netzwerk}
 \label{ch:neuronalesNetzwerk}
-Dieses ganze Kapitel bezieht sich auf das Buch von Michael A. Nielsen\cite{neuralbook}, ausser es ist anders deklariert.
+Dieses ganze Kapitel bezieht sich auf das Buch von Michael A. Nielsen\cite{neuralbook}, ausser es ist anders angegeben.
 \section{Konzept}\label{sec:konzept}
 Wenn man ein normales Programm schreiben will muss man das Problem in viele kleinere aufteilen, bis der Computer fähig ist,
 es zu lösen.
-In einem Neuronale Netzwerk wird dem Computer nicht gesagt wie es das Problem lösen kann, sondern ein Neuronales Netzwerk
-versteht das Problem, indem wir es Beispieldaten geben und es daran lernen kann, bis es seine eigene Lösung gefunden hat.
+In einem Neuronale Netzwerk wird dem Computer nicht gesagt wie es das Problem lösen kann, sondern ein neuronales Netzwerk
+versteht das Problem, indem es beispiel Daten bekommt und an ihnen lernen kann, bis es seine eigene Lösung gefunden hat.
 Zum Beispiel, wir wollen einem Netzwerk beibringen ob in einem Bild ein Auto vorkommt,
-dazu geben wir dem Neuronale Netzwerk viele Bilder, mit und ohne Auto.
-Mit jedem Bild, dass das Neuronale Netzwerk bekommt, lernt es besser wie ein Auto ausschaut.
+dazu geben wir dem neuronalem Netzwerk viele Bilder, mit und ohne Auto.
+Mit jedem Bild, dass das neuronale Netzwerk bekommt, lernt es besser wie ein Auto ausschaut.
 
-Das Konzept eines Neuronales Netzwerk ist nicht etwas neuses.
-Im Jahre 1957 hat Frank Rosenblatt ein erste Idee eines Neuronales Netzwerk vorgestellt, aber erst in den letzten
-Jahren ist der grosse Hype ausgebrochen, dies liegt daran, dass man erst jetzt die nötigen Daten
+Das Konzept eines neuronales Netzwerk ist nicht etwas Neues.
+Im Jahre 1957 hat Frank Rosenblatt ein erste Idee eines neuronales Netzwerk vorgestellt.
+Die Idee war aus mathematischen Funktionen unser Gehirn zu modellieren.
+Indem man die biologischen Neuronen und Synapsen als mathematische Funktion ausdrückt.
+
+Es ist aber erst in den letzen Jahren ist der grosse Hype für neuronale Netzwerke ausgebrochen,
+dies liegt daran, dass man erst jetzt die nötigen Daten
 und Rechenleistung zu verfügung hat.
 
 \section{Neuron}\label{sec:neuron}
-User Gehirn kann Entscheidungen treffe, da wir billionen von Neuronen haben, die miteinander verbunden sind und sich
+User Gehirn kann Entscheidungen treffen, da wir Billionen von Neuronen haben, die miteinander verbunden sind und sich
 verständigen können.
-Aber ein Neuron an sich ist praktisch nutzlos, aber in grosser Anzahl können sie komplexeste Probleme lösen.
+Ein Neuron an sich ist praktisch nutzlos, aber in grosser Anzahl können sie komplexeste Probleme lösen.
 
-Nach dem gleichen Prinzip funktioniert ein Neuronales Netzwerk
+Nach dem gleichen Prinzip funktioniert ein neuronales Netzwerk,
 Es besteht aus vielen Neuronen (daher der Name) die miteinander verbunden sind.
 
 
@@ -139,7 +180,7 @@ start chain=2,node distance=13mm
   {$w_2$};
 \node[on chain=2,init] (sigma)
   {$\displaystyle\Sigma$};
-\node[on chain=2,squa,label=above:{\parbox{2cm}{\centering Activate \\ function}},join=by -latex, minimum size=0.9cm]
+\node[on chain=2,squa,label=above:{\parbox{2cm}{\centering Aktivierungsfunktion}},join=by -latex, minimum size=0.9cm]
   {$f$};
 \node[on chain=2,label=above:Ausgabe,join=by -latex]
   {$y$};
@@ -167,18 +208,21 @@ start chain=2,node distance=13mm
     \label{fig:neuron1}
 \end{figure}
 
-Ein Neuron in einem Neuronales Netzwerk wird als Mathematische funktion definiert wie Abbildung~\ref{fig:neuron1}
+Ein Neuron in einem neuronales Netzwerk wird als mathematische Funktion definiert wie Abbildung~\ref{fig:neuron1}
 verdeutlicht.
 Ein Neuron hat $n$ verschiedene Eingaben, die als $x_j$ bezeichnet werden und mit einem spezifischen Gewicht $w_j$ multipliziert werden.
-Die Ausgabe erfolgt indem man alle gewichteten Eingaben, mit einem Bias $b$, addiert und durch eine so genannte
+Die Ausgabe erfolgt, indem man alle gewichteten Eingaben, mit einem Bias $b$, addiert und durch eine so genannte
 Aktivierungsfunktion $f$ durchlaufen läst.
+Eine klassische Aktivierungsfunktion ist die Sigmoid Funktion $f(x) = \frac{1}{1 + e^{-x}}$, welche den Wert zwischen 0 und 1 normalisiert.
 Als Gleichung:
 \[y =f\left(\sum_{j=1}^{n} x_j w_j + b\right)\]
 Die Gewichte $w_j$ und der Bias $b$ des Neurons sind die Parameter, die angepasst werden und somit das Neuron lernfähig machen.
 
-Eine Aktivierungsfunktion ist nötig, da ohne eine wäre ein Neuronales Netzwerk eine komplett lineare funktion, welches
-nur lineare Probleme lösen könnte.\cite{activations}
-Die meisten Probleme sind viel komplexer als das man sie linear darstellen könnte und deswegen ist eine Aktivierungsfunktion von nötig.
+Eine Aktivierungsfunktion ist nötig, da ohne eine wäre ein neuronales Netzwerk eine komplett lineare funktion, welches
+nur lineare Probleme lösen könnte\cite{activations}, da in einem Netzwerk nur multipliziert und addiert wird.
+Durch die Aktivierungsfunktion kommt eine nicht lineare Funktion hinzu, welche das Netzwerk komplizierter machen,
+aber auch mächtiger, da es so Verbindungen lernen kann, die man nicht vorher nicht herstellen konnte.
+Ohne diese Aktivierungsfunktion wäre das Netzwerk nicht in der Lage komplizierte zusammen hänge wie auf Bilder oder Sprache zu erkennen.\cite{activations}
 Es wird näher auf die Aktivierungsfunktion eingegangen im Abschnitt~\ref{sec:aktivierungsfunktionen}
 
 \section{Architektur}
@@ -226,15 +270,15 @@ net/.style={
   \draw[->] (mat-\ai-2) -- (mat-6-3);
 \draw[->] (mat-6-3) -- node[above] {Ausgabe} +(2.5cm,0);
 \end{tikzpicture}
-    \caption{Mögliche architektur eines Neuronalen Netzwerk}
+    \caption{Mögliche Architektur eines Neuronalen Netzwerk}
     \label{fig:network1}
 \end{figure}
 
 Eine mögliche Architektur kann wie in  Abbildung~\ref{fig:network1} ausschauen.
 Ein Netzwerk wird generell immer in verschiedene Schichten unterteilt.
-Die linke Schicht wird als eingabe Schicht bezeichnet und die Neuronen in dieser Schicht werden eingabe Neuronen genannt.
-Analog da zu wird die rechte Schicht ausgabe Schicht genannt, die die ausgabe Neuronen beinhaltet.
-Die mittleren Schichten, die von der Anzahl variieren können, werden versteckte Schichten genannt.
+Die linke Schicht wird als Eingabe Schicht bezeichnet und die Neuronen in dieser Schicht werden Eingabe Neuronen genannt.
+Analog dazu wird die rechte Schicht Ausgabe Schicht genannt, die die Ausgabe Neuronen beinhaltet.
+Die mittleren Schichten, die von der Anzahl her variieren können, werden versteckte Schichten genannt.
 Die Anzahl der Neuronen in jeder Schicht kann auch variieren.
 Abbildung~\ref{fig:network2} zeigt eine andere mögliche Architektur für ein Netzwerk, welches 2 versteckte
 Schichten hat.
@@ -291,17 +335,19 @@ net/.style={
     \caption{Neuronales Netzwerk mit 2 versteckten Schichten}
     \label{fig:network2}
 \end{figure}
-Jeder Neuron von der vorigen Schicht ist mit jedem Neuron der nachfolgenden Schicht verbunden,
+Jedes Neuron der vorigen Schicht ist mit jedem Neuron der nachfolgenden Schicht verbunden,
 welches als \textit{völlig verbundene Schicht} bezeichnet werden.
 Dies ist ein klassisches feedforward Netzwerk,
-welches nur Verbindungen nach vorne hat und so keine Schleifen entstehen können.
+welches nur Verbindungen nach vorne hat und so keine Schleifen entstehen können\footnote{Es gibt auch Architekturen in denen Schleifen vorkommen,
+aber auf diese wird nicht näher eingegangen}.
 
 \subsection{Beschriftung}
 
 Um eine allgemeine Gleichung zu bestimmen, muss man zuerst die Elemente des Netzwerks benennen.
 Wir bezeichnen das Gewicht $w^l_{k,j}$ für die Verbindung des $k^{ten}$ Neuron der $(l-1)^{ten}$ Schicht
 zu dem $j^{ten}$ Neuron der $l^{ten}$ Schicht.
-Ähnlich dazu bezeichnen wir die Ausgabe des Neurons als $a^l_j$ und der bias des Neurons als $b^l_j$ (siehe Abbildung~\ref{fig:network3}).
+Ähnlich dazu bezeichnen wir die Ausgabe des Neurons als $a^l_j$ und der Bias des Neurons als $b^l_j$ (siehe Abbildung~\ref{fig:network3}).
+\footnote{Das $l$ dient nur zur Indexierung und nicht als Potenz}
 
 \begin{figure}[h]
     \centering
@@ -327,34 +373,38 @@ net/.style={
 {
 |[plain]| \parbox{2cm}{\centering Schicht 1} & |[plain]| \parbox{2cm}{\centering Schicht 2} & |[plain]| \parbox{2cm}{\centering Schicht 3} \\
 & |[plain]| \\
-|[plain]| & \\
-& |[plain]| \\
+|[plain]| \\
+& &|[plain]| \\
   |[plain]| & |[plain]| \\
 & & \\
   |[plain]| & |[plain]| \\
-& |[plain]| \\
-  |[plain]| & \\
+& &|[plain]| \\
+  |[plain]| \\
 & |[plain]| \\    };
 \foreach \ai in {2,4,...,10}
-{\foreach \aii in {3,6,9}
+{\foreach \aii in {4,6,8}
   \draw[->] (mat-\ai-1) -- (mat-\aii-2) coordinate[midway](center1\ai\aii);
 }
-\foreach \ai in {3,6,9}
+\foreach \ai in {4,6,8}
   \draw[->] (mat-\ai-2) -- (mat-6-3) coordinate[midway](center2\ai);
 
 
-\node[] at (mat-8-1)
-  (x3) {$b^1_4$};
-\node[] at (mat-3-2)
+\node[] at (mat-4-2)
   (x3) {$a^2_1$};
+\node[] at (mat-6-2)
+  (x3) {$a^2_2$};
+\node[] at (mat-8-2)
+  (x3) {$a^2_3$};
+\node[] at (mat-6-3)
+  (x3) {$a^3_1$};
 
-\node (h1) at (-1.5, 2.2) {$w^2_{1,2}$};
+\node (h1) at (-1.5, 2.2) {$w^2_{2,1}$};
 
-\draw[->] (h1) -- (center126);
+\draw[->] (h1) -- (center144);
 
 \node (h2) at (3, 1.5) {$w^3_{3,1}$};
 
-\draw[->] (h2) -- (center29);
+\draw[->] (h2) -- (center28);
 
 \end{tikzpicture}
     \caption{Bezeichnung der Parameter}
@@ -365,52 +415,59 @@ Mit dieser Notation kann eine Gleichung für das Netzwerk aufgestellt werden, we
 \[a^l_j = f\left(\sum_{k} a^{l-1}_k w^l_{k,j} + b^l_j\right)\]
 
 \section{Wie das Netzwerk lernt}\label{sec:lernen}
-Bis jetzt ging es nur darum wie ein Neuronales Netzwerk aufgebaut ist.
-In dem Abschnitt geht wie ein Neuronales Netzwerk, anhand von Daten, lernen kann
+Bis jetzt ging es nur darum wie ein neuronales Netzwerk aufgebaut ist.
+In dem Abschnitt geht wie ein neuronales Netzwerk, anhand von Daten, lernen kann
 \subsection{Kostenfunktion}
 Damit ein Netzwerk lernen kann muss man dem Netzwerk zuerst sagen können wie gut oder wie schlecht es gerade ist.
-Dazu definieren wir eine Kostenfunktion $C$, die von allen Gewichten $w$ und allen biases $b$ abhängig ist.
-Das Netzwerk wird als Funktion $y(x)$ bezeichnet.
-Den Eingabewert wird als $x$ bezeichnet mit dem dazugehörige Label $l$.
-Beachte, dass $x$ und $l$ Vektoren sind.
-Zum Beispiel würde ein Bild, das 10x10 Pixel gross ist, einen ($10 * 10 =$)100-dimensionaler Vektor haben
-und das Label, wenn es 3 ausgabe Neuronen gibt, einem 3-dimensional Vektor.
+Dazu definieren wir eine Kostenfunktion $C$, die von allen Gewichten $w$ und allen Biases $b$ abhängig ist.
+Der Ausgabewert des kompletten Netzwerk wird als $y$ bezeichnet und die entsprechende gewünschte Ausgabe als $l$.
+Beachte, dass $y$ und $l$ Vektoren sind.
+Zum Beispiel würde ein Bild, das 10x10 Pixel gross ist, als einen ($10 * 10 =$)100-dimensionaler Vektor dargestellt werden,
+wobei jeder Eintrag im Vektor der Grauwert eines Pixels ist.
+Die Dimension vom ausgabe Vektor $y$ und des gewünschten ausgabe Vektor $l$ entspricht der Anzahl Neuronen in der letzten Schicht des Netzwerks,
+wobei jedes Neuron etwas bestimmten Aussagt.
+Zum Beispiel könnte ein Neuron für das vorkommen eines Auto, im Bild, stehen, wobei 0 für kein Auto und 1 für ein Auto steht.
 
-\[C(w,b) = \sum_{j}(y(x)_j - l_j)^2\]
+\[C(w,b) = \sum_{j}(y_j - l_j)^2\]
 
 Das Ziel des Netzwerkes ist diese Kostenfunktion zu minimieren, bis so viele beispiel Daten wie möglich $C \approx 0$ entsprechen,
-dies geschieht wenn die Ausgabe des Netzwerks und des Label ähnlich sind.
-\subsection{Stochastic Gradient Descent}
-Um diese Kostenfunktion zu minimieren wird ein Algorithmus names \textit{Stochastic Gradient Descent} benutzt.
-Das Konzept basiert darauf, dass man eine Funktion, in abhängigkeit einer Variablen, ableiten kann und so die Steigung
-and diesem Punkt berechnen kann und die Variable richtung Minimum anpasst.
+dies geschieht wenn die Ausgabe des Netzwerks und die gewünschte Ausgabe ähnlich ist.
+\subsection{Gradient Descent}
+Um diese Kostenfunktion zu minimieren wird ein Algorithmus names \textit{Gradient Descent} benutzt.
+Das Konzept basiert darauf, dass man eine Funktion, in Abhängigkeit einer Variablen, ableiten kann und so die Steigung (eng. gradient),
+an diesem Punkt, berechnen kann und die Variable richtung Minimum anpasst.
 
-**Bild Einfügen**
+\begin{figure}[h]%
+    \centering
+    \includegraphics[width=10cm]{C:/Jetbrains/PyCharm/WerbeSkip/thoughts/arbeit/assets/python/gradient_empty.pdf} %
+    \caption{Kostenfunktion in abhängigkeit von $x$}%
+    \label{fig:grad1}%
+\end{figure}
 
-Zum Beispiel hat man eine Kostenfunktion $C(a,b)$ die von $a$ und $b$ abhängig ist.
-Wenn man diese Graphisch abbildet (siehe Abbildung~REF).
+Zum Beispiel hat man eine Kostenfunktion $C(x)$ die von $x$ abhängig ist (siehe Abbildung~\ref{fig:grad1}).
 
-Die Variablen $a$ und $b$ werden am Anfang zufällige Werte zugeteilt und das Ziel ist sie so anzupassen,
-dass man das Minimum der Kostenfunktion findet.
-Um das Minimum zu finden kann man sich einen Ball vorstellen, der in das Minimum herunterrollt.
+Die Variable $x$ wird am Anfang einen zufällige Werte zugewiesen,
+welches dem Orangen Punkt auf der Abbildung~\ref{fig:grad1} entspricht und das Ziel ist $s$ so anzupassen,
+dass man ein Minimum der Kostenfunktion findet.
+Um ein Minimum zu finden kann man sich einen Ball vorstellen, der in ein Minimum herunterrollt.
 Um dies zu berechnen muss man die Steigung, mithilfe einer Ableitung, herausfinden und die Variable in die
-gegensätzliche Richtung bewegen (siehe Abbildung~REF).
-
-**Bild Einfügen**
-
-Für Bewegung ergibt sich:
-\begin{gather*}
-    a \rightarrow a^\prime\ = a - \mu\frac{\partial C}{\partial a}\\
-    b \rightarrow b^\prime\ = b - \mu\frac{\partial C}{\partial b}\\
-\end{gather*}
+gegensätzliche Richtung bewegen.
+\[a \rightarrow a^\prime\ = a - \eta\frac{\partial C}{\partial a}\]
 wobei $\mu$ eine kleine positive Zahl (learning rate genannt) ist, die die Geschwindigkeit der Bewegung steuert.
 Ausserdem beachte, dass der Ball keine Beschleunigung hat.
-Wenn man diese Gleichung nun immer wieder anwendend gelangt man zum Minimum der Kostenfunktion.
+Wenn man diese Gleichung iterativ anwendend gelangt man früher oder später zum lokalen Minimum der Kostenfunktion (siehe Abbildung~\ref{fig:grad2}).
 
-Der Algorithmus funktioniert auch bei mehr als nur 2 Variablen und sieht fürs Neuronale Netzwerk identisch aus.
+\begin{figure}[h]%
+    \centering
+    \includegraphics[width=10cm]{C:/Jetbrains/PyCharm/WerbeSkip/thoughts/arbeit/assets/python/gradient_full.pdf} %
+    \caption{8-malige Anwendung des gradient descent}%
+    \label{fig:grad2}%
+\end{figure}
+
+Der Algorithmus funktioniert auch bei mehr als nur einer abhängigen Variable und lässt sich für die Gewichte und Biases des Netzwerkes genau gleich berechnen.
 \begin{gather*}
-    w^l_{k,j} \rightarrow w^{l^\prime}_{k,j} = w^l_{k,j} - \mu\frac{\partial C}{\partial w^l_{k,j}}\\
-    b^l_j \rightarrow b^{l^\prime}_j = b^l_j - \mu\frac{\partial C}{\partial b^l_j}\\
+    w^l_{k,j} \rightarrow w^{l^\prime}_{k,j} = w^l_{k,j} - \eta\frac{\partial C}{\partial w^l_{k,j}}\\
+    b^l_j \rightarrow b^{l^\prime}_j = b^l_j - \eta\frac{\partial C}{\partial b^l_j}\\
 \end{gather*}
 Durch dieses Verfahren kann zwar relativ einfach das Minimum gefunden werden, dabei ist aber zu beachten, dass es sich um ein lokales
 Minimum handelt und kein globales.
@@ -419,7 +476,7 @@ Minimum handelt und kein globales.
 Der Algorithmus um $\frac{\partial C}{\partial w^l_{k,j}}$ und $\frac{\partial C}{\partial b^l_j}$ zu berechnen wird als
 Backpropagation bezeichnet und ist der mathematisch schwerste Teil dieser Arbeit.
 Es ist aber nicht unbedingt nötig für das Verständnis eines Neuronale Netzwerkes.
-Es wird auch nicht näher auf die Beweise der Gleichungen eingegangen (oder soll ich???),
+Es wird auch nicht näher auf die Beweise der Gleichungen eingegangen,
 da es sonst komplizierter wird und im Grunde ist es nur die Anwendung der Kettenregel.
 
 Um die Übersicht zu behalten wird eine Zwischenmenge $\delta^l_j$ eingeführt, welches als \textit{Fehler} bezeichnet wird.
@@ -927,7 +984,7 @@ net/.style={
 }
 
 \end{tikzpicture}
-    \caption{Neuronales Netzwerk mit Dropout}
+    \caption{neuronales Netzwerk mit Dropout}
     \label{fig:dropout1}
 \end{figure}
 
@@ -941,13 +998,33 @@ da sich ein Neuron nicht auf bestimmte andere Neuronen verlassen kann,
 wodurch es gezwungen ist mit vielen zufälligen Verbindungen etwas nützliches anzufangen.
 Anders gesagt das Netzwerk wird robust gegen den Verlust von einzelnen Merkmalen und kann sich nicht auf ein einzelnes Merkmale verlassen.
 
-\section{Auswertung}
+\subsection{Batch Normalization}
+Eine weitere Methode um overfitting zu vermeiden ist die \textit{Batch Normalization}.
+Die Eingaben für ein Netzwerk werden normalisiert,
+damit die Wahl der learning rate nicht auch noch von den Eingaben abhängig ist.
+Batch Normalization führt diese Idee weiter und normalisiert nicht die Eingabe,
+sondern die Ausgabe der versteckten Schichten
+so dass in den versteckten Schichten extrem hohen Werte vermieden werden.\cite{batchnorm}
+Ähnlich wie bei Dropout bringt Batch Normalization eine leichte Störung in das Netzwerk,
+welches gegen overfitting hilft\cite{batchnorm}
 
+Die Schichten werden normalisiert indem beim trainieren mehrere Eingaben gleichzeitig durch das Netzwerk laufen und
+die Ausgabe eines Neurones mit dem Mittelwert der Eingaben subtrahieren und mit der Standardabweichung der Eingaben dividieren.\cite{batchnorm}
+\begin{gather*}
+    \mu = \frac{1}{m}\sum^m_{i=1}x_{i}\\
+    \sigma = \frac{1}{m}\sum^m_{i=1}(x_i - \mu)^2\\
+    \hat{x_i} = \frac{x_i - \mu}{\sqrt{\sigma}}\\
+\end{gather*}
+wobei $x_i$ die $i^{te}$ Eingabe ist.
 
+Ausserdem wird danach noch mit einem bestimmten Wert $\gamma_i$ multipliziert und einem bestimmten Wert $beta_i$ addiert.
+\[y_i = \gamma * \hat{x_i} + \beta \]
+wobei $\gamma$ und $\beta$ Parameter sind die beim Netzwerk trainiert werden, wie ein normales Gewicht.\cite{batchnorm}
+Die Parameter werden benutzt um dem Netzwerk die Option zu geben die normalisierung zu verändern oder sogar rückgängig zu machen, wenn es meint,
+dass es ohne besser funktioniert.\cite{batchnorm_paper}
 
 \chapter{Lösungsansatz}
 \label{ch:lösungsansatz}
-**experimental**
 \section{Logo}
 Um das Logo zu erkennen muss man zuerst verstehen wie es auf das Bild gelangt.
 Man könnte meinen das Logo wird einfach über das ander Bild gelegt wird,
@@ -972,7 +1049,7 @@ wodurch der Hintergrund hinter dem Logo auch eine Rolle spielt (siehe Abbildung~
     \qquad
     \subfloat[]{{\includegraphics[width=3.5cm]{assets/images/logo_beispiel6.png} }}%
     \caption{Logo mit verschiedenen Hintergründen}%
-    \label{fig:logo2}%
+    \label{fig:logo20}%
 \end{figure}
 Eine grosse Schwierigkeit ist, dass bei manchen Hintergründen, vor allem bei weissen, das Logo abgeschnitten oder kaum bis gar nicht sichtbar ist.
 Bei Abbildung~\ref{fig:logo2} (c) ist das Logo abgeschnitten, bei (d) ist es kaum sichtbar und bei (e) ist komplett verschwunden.
@@ -991,11 +1068,11 @@ Zum Beispiel hat Prosieben 3 verschiedene Positionen (siehe Abbildung~\ref{fig:l
     \qquad
     \subfloat[]{{\includegraphics[width=6cm]{assets/images/logo_no_boarder.png} }}%
     \caption{Logo an verschiedenen Positionen}%
-    \label{fig:logo3}%
+    \label{fig:logo30}%
 \end{figure}
 
-Alle diese Schwierigkeiten machen das erkennen eines Logo's ohne ein Neuronales Netzwerk extrem schwer.
-Ein Neuronales Netzwerk hingegen löst das Probleme ziemlich elegant.
+Alle diese Schwierigkeiten machen das erkennen eines Logo's ohne ein neuronales Netzwerk extrem schwer.
+Ein neuronales Netzwerk hingegen löst das Probleme ziemlich elegant.
 
 \section{Das Netzwerk trainieren}
 
