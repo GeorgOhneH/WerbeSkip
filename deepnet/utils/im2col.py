@@ -1,5 +1,4 @@
-# code from http://cs231n.github.io/convolutional-networks/
-
+# code from https://github.com/yunjey/cs231n/blob/master/assignment2/cs231n/im2col.py but modified
 import numpywrapper as np
 
 

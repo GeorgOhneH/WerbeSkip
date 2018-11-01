@@ -8,6 +8,7 @@ helperfunctions/prosieben/networkbackup.h5
 helperfunctions/prosieben/networks/example1/*
 helperfunctions/prosieben/networks/example2/*
 helperfunctions/prosieben/networks/no_logo/*
+helperfunctions/prosieben/networks/no_logo2/*
 helperfunctions/prosieben/networks/prediction1/*
 
 db.sqlite3

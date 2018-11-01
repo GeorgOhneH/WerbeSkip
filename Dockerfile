@@ -2,6 +2,7 @@
 FROM python:3.6
 ENV PYTHONUNBUFFERED 1
 ENV DJANGO_DEBUG false
+ENV PORT 80
 
 ADD ffmpeg /usr/local/bin
 
@@ -23,9 +24,31 @@ RUN npm install
 ADD requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY . .
+COPY build build
+COPY config config
+COPY static static
+COPY src src
+
+COPY .postcssrc.js .
+COPY favicon.ico .
+COPY index.html .
+COPY .babelrc .
 
 RUN npm run build
 
+COPY vuedj vuedj
+COPY app app
+COPY deepnet deepnet
+COPY helperfunctions helperfunctions
+COPY numpywrapper numpywrapper
+
+COPY format_index_html.py .
+COPY manage.py .
+COPY settings_secret.py .
+
 RUN python format_index_html.py
-RUN python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput --clear
+
+COPY docker-entrypoint.sh .
+COPY update_handler.py .
+

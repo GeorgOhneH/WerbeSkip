@@ -2,7 +2,6 @@ import platform
 import ctypes
 import numpy
 import time
-import numpywrapper as np
 
 
 class IOHandler(object):
@@ -32,34 +31,34 @@ class IOHandler(object):
         return "progress: {:.3f}".format(self.network.progress)
 
     def _s_tl(self) -> str:
-        return "train loss: {:.5f}".format(int(np.mean(self.network.train_loss[-self._last_print:])))
+        return "train loss: {:.5f}".format(numpy.mean(self.network.train_loss[-self._last_print:]))
 
     def _s_ta(self) -> str:
         name = "accuracy"
         if self.network.is_binary:
             name = "MCC"
 
-        return "train {}: {:.5f}".format(name, int(np.mean(self.network.train_accuracy[-self._last_print:])))
+        return "train {}: {:.5f}".format(name, numpy.mean(self.network.train_accuracy[-self._last_print:]))
 
     def _s_vl(self) -> str:
-        value = np.mean(self.network.validate_loss[-self._last_print:])
+        value = numpy.mean(self.network.validate_loss[-self._last_print:])
 
-        if np.isnan(value):
+        if numpy.isnan(value):
             return ""
 
-        return "validate loss: {:.5f}".format(int(value))
+        return "validate loss: {:.5f}".format(value)
 
     def _s_va(self) -> str:
-        value = np.mean(self.network.validate_accuracy[-self._last_print:])
+        value = numpy.mean(self.network.validate_accuracy[-self._last_print:])
 
-        if np.isnan(value):
+        if numpy.isnan(value):
             return ""
 
         name = "accuracy"
         if self.network.is_binary:
             name = "MCC"
 
-        return "validate {}: {:.5f}".format(name, int(value))
+        return "validate {}: {:.5f}".format(name, value)
 
     def _s_time(self) -> str:
         return "time {:.3f}".format(time.time() - self.start_time)

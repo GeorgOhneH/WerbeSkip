@@ -12,7 +12,7 @@ pip install -r requirements.txt
 echo 'Done...'
 
 echo 'Collect static'
-python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput --clear
 echo 'Done...'
 
 echo 'Run migrations'
@@ -25,7 +25,7 @@ echo 'Done...'
 echo 'Start Django'
 export PORT=8000
 echo 'Server runnning on port ' $PORT
-python manage.py runserver &
+python manage.py runserver 0.0.0.0:8000 &
 
 echo 'Start update_handler.py'
 python update_handler.py &

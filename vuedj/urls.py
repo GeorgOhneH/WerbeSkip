@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from app.views import index
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [

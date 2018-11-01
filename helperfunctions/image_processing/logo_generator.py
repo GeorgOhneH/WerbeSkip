@@ -9,6 +9,9 @@ from deepnet.utils import Generator
 
 
 class LogoGenerator(Generator):
+    """
+    after https://github.com/reduzent/watchteleboy
+    """
     def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1, channel="zattoo", colour=True):
         CHANNELS = {
             "zattoo": "prosieben/images/zattoo/important_images/logo32x32.png",
@@ -96,7 +99,6 @@ class LogoGenerator(Generator):
                                           "constant")
                     # applies screen blend effect
                     image_part = 1 - (1 - logo_padding) * (1 - image_part)
-
                 images = np.expand_dims(np.transpose(image_part, (2, 0, 1)), axis=0)
                 labels = np.array(self.dict_labels[use_logo]).reshape((1, -1))
                 mini_batches.append((images, labels))
@@ -108,7 +110,7 @@ class LogoGenerator(Generator):
 
 if __name__ == "__main__":
     import time
-    generator = LogoGenerator(epochs=1, mini_batch_size=256, padding_w=1000, padding_h=1000, n_workers=1)
+    generator = LogoGenerator(epochs=1, mini_batch_size=64, padding_w=151.5, padding_h=84.5, colour=True, channel="teleboy")
     for mini_batch in generator:
         print(mini_batch[0].shape)
         time.sleep(1)

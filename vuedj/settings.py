@@ -54,7 +54,8 @@ SECRET_KEY = django_key
 
 DEBUG = bool(django_debug)
 
-ALLOWED_HOSTS = ["192.168.99.100"]
+ALLOWED_HOSTS = ["192.168.99.100", "127.0.0.1", "192.168.50.132", "192.168.56.1",
+                 "192.168.99.1", "0.0.0.0", "165.227.147.105", "werbeskip.com", "www.werbeskip.com"]
 
 # Application definition
 
@@ -72,6 +73,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
   'django.middleware.security.SecurityMiddleware',
+  'whitenoise.middleware.WhiteNoiseMiddleware',
   'django.contrib.sessions.middleware.SessionMiddleware',
   'django.middleware.common.CommonMiddleware',
   'django.middleware.csrf.CsrfViewMiddleware',
@@ -151,6 +153,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

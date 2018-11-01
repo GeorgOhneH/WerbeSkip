@@ -6,10 +6,12 @@ from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMa
     Flatten
 from deepnet.optimizers import Adam
 import json
-import websocket
+import websockets
+import asyncio
 from threading import Thread
 from settings_secret import websocket_token
 import time
+import warnings
 import os
 
 
@@ -21,12 +23,12 @@ class WerbeSkip(object):
         self.network = self.init_network()
         self.docker = bool(os.environ.get("DJANGO_DEBUG", False))
         if self.docker:
-            self.ip = "192.168.99.100:8000"
+            self.ip = "104.248.102.130:80"
         else:
             self.ip = "127.0.0.1:8000"
         # Prosieben: 354
         # SRF: 303
-        self.cap = VideoCapture(channel=354, colour=False, rate_limit=1, convert_network=True)
+        self.cap = VideoCapture(channel=354, colour=False, rate_limit=1, convert_network=True, proxy=True)
 
         self.filters = []
         self.result = []
@@ -71,6 +73,11 @@ class WerbeSkip(object):
         net.load(self.PATH_TO_NET)
         return net
 
+    async def producer_handler(self, websocket, path):
+        while True:
+            message = self.producer()
+            await websocket.send(json.dumps(message))
+
     def producer(self):
         channel = self.get_prediction()
         message = {"command": "update", "room": 'main', "channel": channel, "token": websocket_token}
@@ -109,39 +116,39 @@ class WerbeSkip(object):
             self.result.pop(0)
             self.predictions.pop(0)
 
-    def on_message(self, message):
+    async def consumer_handler(self, websocket, path):
+        async for message in websocket:
+            await self.consumer(message)
+
+    def consumer(self, message):
+        print("message:", message)
         error = json.loads(message).get('error', None)
         if error:
-            print('GOT ERROR:', error)
+            print('GOT ERROR FROM SOCKET:', error)
 
-    def on_error(self, error):
-        print(error)
-
-    def on_close(self):
-        print("### closed ###")
-
-    def on_open(self):
-        while True:
-            def run():
-                while True:
-                    message = self.producer()
-                    self.ws.send(json.dumps(message))
-
-            t = Thread(target=run)
-            t.start()
-            t.join()
-            time.sleep(10)
+    async def handler(self, websocket, path):
+        consumer_task = asyncio.ensure_future(self.consumer_handler(websocket, path))
+        producer_task = asyncio.ensure_future(self.producer_handler(websocket, path))
+        done, pending = await asyncio.wait(
+            [consumer_task, producer_task],
+            return_when=asyncio.FIRST_COMPLETED,
+        )
+        for task in pending:
+            task.cancel()
 
     def run(self):
-        websocket.enableTrace(False)
-        self.ws = websocket.WebSocketApp("ws://" + self.ip + "/chat/stream/",
-                                         on_message=self.on_message,
-                                         on_error=self.on_error,
-                                         on_close=self.on_close)
-        self.ws.on_open = self.on_open
-        self.ws.run_forever()
+        async def hello():
+            async with websockets.connect('ws://' + self.ip + '/chat/stream/') as websocket:
+                print("connected")
+                await self.handler(websocket, path=None)
+        print("starting")
+        asyncio.get_event_loop().run_until_complete(hello())
 
 
 if __name__ == "__main__":
-    x = WerbeSkip()
-    x.run()
+    while True:
+        try:
+            x = WerbeSkip()
+            x.run()
+        except Exception as e:
+            warnings.warn("GOT ERROR FROM SCRIPT: {}".format(e))

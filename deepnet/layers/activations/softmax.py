@@ -12,6 +12,7 @@ class SoftMax(Layer):
     The method make_delta doesn't do anything, because
     the derivative/delta was already calculated in the
     CrossEntropyCost
+    after https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/
     """
 
     def forward(self, z):

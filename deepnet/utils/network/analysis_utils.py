@@ -29,6 +29,7 @@ class Analysis(object):
     @staticmethod
     def get_mcc(x, y):
         """
+        after https://en.wikipedia.org/wiki/Matthews_correlation_coefficient
         Computes the accuracy with values, that went already
         through the network
         :param x: ndarray

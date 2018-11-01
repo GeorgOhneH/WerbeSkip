@@ -6,6 +6,7 @@ import numpywrapper as np
 
 class BatchNorm(Layer):
     """
+    after https://wiseodd.github.io/techblog/2016/07/04/batchnorm/
     BatchNorm is layer, which normalises the values
 
     It normalises the values, so that they have a standard derivative of 1

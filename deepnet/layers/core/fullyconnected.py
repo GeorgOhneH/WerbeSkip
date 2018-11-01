@@ -5,6 +5,8 @@ import numpywrapper as np
 
 class FullyConnectedLayer(Layer):
     """
+    after https://sudeepraja.github.io/Neural/
+
     The FullyConnectedLayer saves the weights and biases of the layer
     As the name says it is fully connected, this means that every neuron
     from the previous layer is connect with every neuron of this layer

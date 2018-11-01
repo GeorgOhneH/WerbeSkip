@@ -13,5 +13,6 @@ Django==2.1.2
 django-nose==1.4.6
 channels==2.1.4
 channels_redis==2.3.1
-websocket-client==0.53.0
+websockets==6.0.0
 psycopg2==2.7.5
+whitenoise[brotli]==4.1

@@ -19,7 +19,6 @@ class Network(object):
     """
 
     """
-
     def __init__(self):
         self._use_gpu = False
         self._optimizer = None
@@ -34,6 +33,7 @@ class Network(object):
         self.current_epoch = 0
         self.total_epoch = 0
         self.progress = 0
+        self.total_training_time = 0
         self._plotter = Plotter(self)
         self._analysis = Analysis(self)
         self._iohandler = IOHandler(self)
@@ -396,6 +396,7 @@ class Network(object):
             layer.load([np.asarray(value) for value in parameter])
 
         meta = network["meta"]
+        self.total_training_time = meta["start_time"]
         self._iohandler.start_time = time.time() - meta["start_time"]
         self._iohandler.inputs = meta["inputs"]
         self.train_loss = meta["train_loss"]
@@ -412,6 +413,9 @@ class Network(object):
             print("Layer: {}".format(layer))
         print("Cost: {}".format(self._cost))
         print("Optimizer: {}".format(self._optimizer))
+
+    def print_infos(self):
+        print("Number of inputs: {}, Training time: {}".format(self._iohandler.inputs, self.total_training_time))
 
     def save_wrong_predictions(self, inputs: ndarray, labels: ndarray, directory: str, shape: tuple or list) -> None:
         """

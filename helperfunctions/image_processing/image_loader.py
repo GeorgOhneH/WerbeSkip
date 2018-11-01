@@ -29,7 +29,7 @@ DICTIONARIES = [
 ]
 
 
-def _get_img(path_to_img, cords, padding_w, padding_h, colour, full):
+def _get_img(path_to_img, cords, padding_w, padding_h, colour, full, cropped):
     padding_w += 16
     padding_h += 16
     if colour:
@@ -51,13 +51,16 @@ def _get_img(path_to_img, cords, padding_w, padding_h, colour, full):
         if not colour:
             img = np.expand_dims(img, axis=2)
 
+    if cropped and full:
+        img = img[38:-1, 0:269, :]
+
     img = np.transpose(img, (2, 0, 1)).astype(dtype="float32") / 255
     return np.expand_dims(img, axis=0)
 
 
-def _get_path_to_file(padding_w, padding_h, center, colour, full, volume):
+def _get_path_to_file(padding_w, padding_h, center, colour, full, volume, cropped):
     path_to_cache = os.path.join(os.path.dirname(__file__), "load_cache")
-    file_name = "w{}_h{}_ce{}_co{}_f{}_v{}.h5".format(padding_w, padding_h, center, colour, full, volume)
+    file_name = "w{}_h{}_ce{}_co{}_f{}_v{}_cp{}.h5".format(padding_w, padding_h, center, colour, full, volume, cropped)
     path_to_file = os.path.join(path_to_cache, file_name)
     return path_to_file
 
@@ -76,7 +79,7 @@ def _save_cache(path_to_file, inputs, labels):
     return False
 
 
-def _load_imgs(padding_w, padding_h, center, colour, full, volume):
+def _load_imgs(padding_w, padding_h, center, colour, full, volume, cropped):
     inputs = []
     labels = []
     print("Load Images. Total Directories: {}".format(len(DICTIONARIES)))
@@ -90,7 +93,7 @@ def _load_imgs(padding_w, padding_h, center, colour, full, volume):
         random.shuffle(files)
         files = files[:int(len(files)*volume)]
         for img_name in tqdm(files, desc=dictionary["name"]):
-            inputs.append(_get_img(os.path.join(path, img_name), cords, padding_w, padding_h, colour, full))
+            inputs.append(_get_img(os.path.join(path, img_name), cords, padding_w, padding_h, colour, full, cropped))
             if dictionary["cords"]:
                 labels.append([[0, 1]])
             else:
@@ -101,12 +104,12 @@ def _load_imgs(padding_w, padding_h, center, colour, full, volume):
 
 
 def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False,
-                 cache=False, colour=True, full=False, shuffle_set=True, volume=1):
-    path_to_file = _get_path_to_file(padding_w, padding_h, center, colour, full, volume)
+                 cache=False, colour=True, full=False, shuffle_set=True, volume=1., cropped=False):
+    path_to_file = _get_path_to_file(padding_w, padding_h, center, colour, full, volume, cropped)
 
     inputs, labels = _load_cache(path_to_file)
     if inputs.shape[0] == 0 and labels.shape[0] == 0:
-        inputs, labels = _load_imgs(padding_w, padding_h, center, colour, full, volume)
+        inputs, labels = _load_imgs(padding_w, padding_h, center, colour, full, volume, cropped)
         if cache:
             _save_cache(path_to_file, inputs, labels)
 
@@ -119,5 +122,5 @@ def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False,
 
 
 if __name__ == "__main__":
-    v_x, v_y, t_x, t_y = load_ads_cnn(split=0.2, full=True)
+    v_x, v_y, t_x, t_y = load_ads_cnn(split=0.2, full=True, cropped=True, volume=0.1)
     print(v_x.shape, v_y.shape, t_x.shape, t_y.shape)

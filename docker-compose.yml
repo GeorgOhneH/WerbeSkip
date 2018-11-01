@@ -6,17 +6,15 @@ services:
   redis:
     image: redis:5-alpine
   web:
-    image: werbeskip
-    build: .
+    image: zungenkatze/werbeskip
     command: sh docker-entrypoint.sh
     ports:
-      - 8000:8000
+      - 80:80
     depends_on:
       - redis
       - db
-  updater:
-    image: werbeskip
-    build: .
+  update_handler:
+    image: zungenkatze/werbeskip
     command: python update_handler.py
     depends_on:
       - redis

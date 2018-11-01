@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     net = Network()
 
-    net.use_gpu = True
+    net.use_gpu = False
 
     net.input((1, 180, 320))
 
@@ -50,6 +50,8 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("teleboy.h5")
+    net.print_infos()
+    # Number of inputs: 3648000, Training time: 1532431612.5441988 \\ time is wrong
 
     v_x, v_y, t_x, t_y = load_ads_cnn(split=0, full=True, shuffle_set=False, colour=False)
     net.evaluate(t_x, t_y)

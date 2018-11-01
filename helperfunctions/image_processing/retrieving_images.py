@@ -13,7 +13,7 @@ from settings_secret import proxy_username, proxy_password
 
 
 class VideoCapture(object):
-    def __init__(self, channel: int, rate_limit=30, convert_network=False, colour=True, proxy=False):
+    def __init__(self, channel: int, rate_limit=30, convert_network=False, colour=True, proxy=False, ffmpeg_log="error"):
         if proxy:
             parse_username = quote(proxy_username)
             parse_password = quote(proxy_password)
@@ -23,6 +23,7 @@ class VideoCapture(object):
 
         self.pipe = None
         self.colour = colour
+        self.ffmpeg_log = ffmpeg_log
         self.depth = 3 if colour else 1
         self.images = queue.Queue()
         self.m3u8_update_thread = None
@@ -85,7 +86,7 @@ class VideoCapture(object):
                    '-c', 'copy',
                    '-vcodec', 'rawvideo',
                    '-probesize', '32',
-                   '-loglevel', 'info',
+                   '-loglevel', self.ffmpeg_log,
                    '-c:v', 'rawvideo',
                    '-f', 'image2pipe',
                    '-r', str(self.rate_limit),
@@ -102,7 +103,8 @@ class VideoCapture(object):
         if text != self.last_m3u8:
             if len(self.ts_files) > 5:
                 for file_name in self.ts_files[:-4]:
-                    os.remove(file_name)
+                    if os.path.exists(file_name):
+                        os.remove(file_name)
                     self.ts_files.remove(file_name)
             self.last_m3u8 = text
             for file_name in text.splitlines():
@@ -135,8 +137,8 @@ class VideoCapture(object):
                     self.images.get()
 
             raw_image = self.pipe.stdout.read(180 * 320 * self.depth)
-
-            self.images.put(raw_image)
+            if raw_image:
+                self.images.put(raw_image)
 
     def __iter__(self):
         return self
