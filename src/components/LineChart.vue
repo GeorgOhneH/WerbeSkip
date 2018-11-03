@@ -3,12 +3,12 @@
 
   export default {
     extends: Line,
-    mixins: [mixins.reactiveProp],
-    data() {
-      return {
-        options: {
+    props: ['xmax', 'xmin','data', 'name'],
+    methods: {
+      options() {
+        return {
           responsive: true,
-          maintainAspectRatio: true,
+          maintainAspectRatio: (!this.styles),
           animation: {
             duration: 1000,
             easing: 'linear'
@@ -22,11 +22,16 @@
             display: false
           },
           tooltips: {
-            enabled: false
+            enabled: false,
           },
           scales: {
             xAxes: [{
+              type: 'linear',
               display: false, //this will remove all the x-axis grid lines
+              ticks: {
+                min: this.xmin,
+                max: this.xmax,
+              }
             }],
             yAxes: [{
               display: false, //this will remove all the x-axis grid lines
@@ -40,11 +45,19 @@
       }
     },
     mounted() {
-      if (this.styles) {
-        this.options.maintainAspectRatio = false
-      }
-      this.renderChart(this.chartData, this.options)
+      this.renderChart(this.data, this.options())
     },
+    watch: {
+      name() {
+        this.renderChart(this.data, this.options())
+      },
+      data() {
+        let chart = this.$data._chart
+        chart.data.datasets[0] = this.data.datasets[0]
+        chart.options = this.options()
+        chart.update()
+      }
+    }
   }
 </script>
 

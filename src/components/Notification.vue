@@ -30,11 +30,15 @@
             audio.play();
           }
         }
-        let notification = new Notification(this.channel, {
-          icon: 'https://media.cinergy.ch/t_station/' + this.id +'/icon160_light.png',
-          body: "Status: " + this.status.toString(),
-          vibrate: [200, 100, 200],
-        });
+        if (Notification.permission !== "granted") {
+          Notification.requestPermission();
+        } else {
+          let notification = new Notification(this.channel, {
+            icon: 'https://media.cinergy.ch/t_station/' + this.id + '/icon160_light.png',
+            body: "Status: " + this.status.toString(),
+            vibrate: [200, 100, 200],
+          });
+        }
       },
       requestPermission() {
         if (this.useNotification) {
@@ -49,12 +53,7 @@
       status() {
         if (this.useNotification) {
           // Let's check if the browser supports notifications
-          if (Notification.permission !== "granted") {
-            Notification.requestPermission();
-          }
-          else {
             this.notification()
-          }
         }
       },
       useNotification() {

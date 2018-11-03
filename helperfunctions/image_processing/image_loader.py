@@ -26,6 +26,9 @@ DICTIONARIES = [
     {"path": "prosieben/images/zattoo/classified/no_logo",
      "cords": None,
      "name": "no_logo", },
+    {"path": "prosieben/images/zattoo/classified/special",
+     "cords": (0, 0),
+     "name": "special", },
 ]
 
 
@@ -105,6 +108,20 @@ def _load_imgs(padding_w, padding_h, center, colour, full, volume, cropped):
 
 def load_ads_cnn(split=0.8, padding_w=10, padding_h=10, center=False,
                  cache=False, colour=True, full=False, shuffle_set=True, volume=1., cropped=False):
+    """
+    loads prosieben images
+    :param split: spits image to validate and test set
+    :param padding_w: width
+    :param padding_h: height
+    :param center: use middle of the three logos
+    :param cache: save to cache
+    :param colour: colour or not
+    :param full: full image padding and center doesn't have an effect
+    :param shuffle_set: shuffles set
+    :param volume: percentage used of directories
+    :param cropped: for ads generator
+    :return: (v_x, v_y, t_x, t_y)
+    """
     path_to_file = _get_path_to_file(padding_w, padding_h, center, colour, full, volume, cropped)
 
     inputs, labels = _load_cache(path_to_file)

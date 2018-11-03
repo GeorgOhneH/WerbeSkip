@@ -7,6 +7,9 @@ from tqdm import tqdm
 
 
 def visualize_prediction(network, images, logo_w, logo_h, stride=1):
+    """
+    uses a network for every pixel on an image (isn't useful)
+    """
     size, depth, width, height = images.shape
 
     padding_w = (logo_w-1)//2

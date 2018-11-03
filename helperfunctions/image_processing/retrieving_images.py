@@ -13,6 +13,10 @@ from settings_secret import proxy_username, proxy_password
 
 
 class VideoCapture(object):
+    """
+    after https://github.com/reduzent/watchteleboy
+    gets live images from teleboy
+    """
     def __init__(self, channel: int, rate_limit=30, convert_network=False, colour=True, proxy=False, ffmpeg_log="error"):
         if proxy:
             parse_username = quote(proxy_username)
@@ -126,19 +130,25 @@ class VideoCapture(object):
 
     def m3u8_thread(self):
         while True:
-            time.sleep(0.5)
-            self.update_m3u8_file()
+            try:
+                time.sleep(0.5)
+                self.update_m3u8_file()
+            except Exception as e:
+                print("GOT EXCEPTION IN M3U8:", e)
 
     def get_images_thread(self):
-        while True:
-            qsize = self.images.qsize()
-            if qsize > 5 * self.rate_limit:
-                for _ in range(qsize - 3*self.rate_limit):
-                    self.images.get()
+        try:
+            while True:
+                qsize = self.images.qsize()
+                if qsize > 5 * self.rate_limit:
+                    for _ in range(qsize - 3*self.rate_limit):
+                        self.images.get()
 
-            raw_image = self.pipe.stdout.read(180 * 320 * self.depth)
-            if raw_image:
-                self.images.put(raw_image)
+                raw_image = self.pipe.stdout.read(180 * 320 * self.depth)
+                if raw_image:
+                    self.images.put(raw_image)
+        except Exception as e:
+            print("GOT EXCEPTION IN PIPE:", e)
 
     def __iter__(self):
         return self

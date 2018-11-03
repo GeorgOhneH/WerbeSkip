@@ -11,6 +11,9 @@ import cv2
 
 
 class AdsGenerator(object):
+    """
+    Generator to crop and label prosieben images
+    """
     def __init__(self, epochs, mini_batch_size, ffmpeg_log="info"):
         self.PATH_TO_NET = os.path.join(os.path.split(os.path.dirname(__file__))[0],
                                         "prosieben/networks/teleboy/teleboy.h5")

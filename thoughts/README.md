@@ -407,3 +407,6 @@ da MCC einfach besser ist als der f1 score, da der die fasch negativen und falsc
 
 ## 24.10.2018
 Habe ein Docker setup hinzugefügt
+
+## 01.11.2018
+Web server läuft jetzt auf der cloude unter [werbeskip.com](http://werbeskip.com)

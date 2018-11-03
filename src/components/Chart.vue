@@ -1,8 +1,11 @@
 <template>
-  <div ref="container" v-resize="onResize">
+  <div ref="container" >
     <line-chart
-      :chart-data="datacollection"
+      :data="datacollection"
       :styles="styles"
+      :xmax="xmax"
+      :xmin="xmin"
+      :name="name"
     ></line-chart>
   </div>
 </template>
@@ -15,17 +18,16 @@
     components: {
       LineChart
     },
-    props: ['ads', 'styles'],
+    props: ['ads', 'styles', 'name'],
     data() {
       return {
-        limit: 0,
+        limit: 1,
         croppedAds: [],
         bluePrint: {
-          labels: [],
           datasets: [
             {
-              borderColor: '#3cba54',
-              steppedLine: true,
+              borderColor: (this.ads[this.ads.length-1].y) ? this.$color.green : this.$color.red,
+              steppedLine: 'after',
               fill: false,
               data: [],
               borderWidth: 1.5,
@@ -36,26 +38,42 @@
     },
     computed: {
       datacollection() {
-        let datacollection = Object.assign({}, this.bluePrint)
+        if (this.croppedAds.length !== 0) {
+          let datacollection = Object.assign({}, this.bluePrint)
 
-        datacollection.labels = this.croppedAds
-        datacollection.datasets[0].data = this.croppedAds
+          datacollection.datasets[0].data = this.croppedAds
 
-        if (this.croppedAds[this.croppedAds.length - 1]) {
-          datacollection.datasets[0].borderColor = this.$color.green
+          if (this.croppedAds[this.croppedAds.length - 1].y) {
+            datacollection.datasets[0].borderColor = this.$color.green
+          }
+          else {
+            datacollection.datasets[0].borderColor = this.$color.red
+          }
+          return datacollection
         }
-        else {
-          datacollection.datasets[0].borderColor = this.$color.red
+        return this.bluePrint
+      },
+      xmax() {
+        if (this.croppedAds.length !== 0) {
+          return this.croppedAds[this.croppedAds.length - 1].x
+        } else {
+          return 1
         }
-        return datacollection
+      },
+      xmin() {
+        if (this.croppedAds.length !== 0) {
+          return this.croppedAds[0].x + 0.2
+        } else {
+          return 0
+        }
       },
     },
     mounted() {
-      this.onResize()
+      this.onMounted()
     },
     methods: {
-      onResize() {
-        this.setLimit(this.$refs.container.clientWidth)
+      onMounted() {
+        this.setLimit(this.$refs.container.clientWidth * 10)
       },
       setLimit(newLimit) {
         this.limit = newLimit
@@ -63,12 +81,19 @@
       },
       setAds() {
         this.croppedAds = this.ads.slice(-this.limit)
-      }
+      },
     },
     watch: {
+      name() {
+        this.setAds()
+      },
       ads() {
-        this.croppedAds.push(this.ads[this.ads.length-1])
-        if (this.croppedAds.length > this.limit) {
+        if (this.croppedAds[this.croppedAds.length-1].y !== this.ads[this.ads.length-1].y) {
+          this.croppedAds.push(this.ads[this.ads.length - 1])
+        } else {
+          this.$set(this.croppedAds, this.croppedAds.length -1, {x: this.croppedAds[this.croppedAds.length-1].x + 1, y: this.ads[this.ads.length-1].y})
+        }
+        if (this.croppedAds[this.croppedAds.length-1].x - this.croppedAds[0].x > this.limit) {
           this.croppedAds.shift()
         }
       }

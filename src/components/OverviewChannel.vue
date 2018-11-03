@@ -11,7 +11,7 @@
               <div class="over-element">
                 <h2 class="ads px-4 py-2">{{ title }}</h2>
               </div>
-              <chart :ads="channel.ads"></chart>
+              <chart :ads="channel.ads" :name="channel.name"></chart>
             </v-flex>
           </v-layout>
         </v-container>
@@ -32,7 +32,8 @@
     props: ['channel'],
     computed: {
       title() {
-        if (this.channel.ads[this.channel.ads.length - 1]) {
+        console.log(this.channel)
+        if (this.channel.ads[this.channel.ads.length - 1].y) {
           return 'No Ads'
         }
         else {

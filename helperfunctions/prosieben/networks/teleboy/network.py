@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     net = Network()
 
-    net.use_gpu = False
+    net.use_gpu = True
 
     net.input((1, 180, 320))
 

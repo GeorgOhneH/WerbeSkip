@@ -31,7 +31,7 @@
 
         <v-list-tile-action>
           <v-fade-transition>
-            <v-icon v-if="channel.ads[channel.ads.length-1]" :style="{color: $color.green}">lens</v-icon>
+            <v-icon v-if="channel.ads[channel.ads.length-1].y" :style="{color: $color.green}">lens</v-icon>
             <v-icon v-else :style="{color: $color.red}">lens</v-icon>
           </v-fade-transition>
         </v-list-tile-action>

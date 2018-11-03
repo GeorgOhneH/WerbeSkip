@@ -1086,7 +1086,7 @@ Aber für ein convolution Netzwerk spielt es keine grosse Rolle und ich will den
     \label{fig:logo8}%
 \end{figure}
 Die grösse von einem Bild ist 320x180 Pixel, da ein grössers Bild unnötig viele Informationen enthält,
-was dazu führt, dass das Netzwerk länger zum lernen braucht.
+was dazu führt, dass das Netzwerk länger lernen müsste.
 Ein kleineres Bild, würde das Logo noch kleiner machen und nicht mehr erkennbar (siehe Abbildung~\ref{fig:logo6}).
 \begin{figure}[h]%
     \centering
@@ -1106,59 +1106,104 @@ Damit sichergestellt ist, dass das neue Netzwerk nicht wieder das Logo erkennt, 
 wird das Bild so zugeschnitten, dass das Logo nicht mehr auf dem Bild vorhanden ist.
 
 
-
-
 \chapter{Umsetzung}
 \label{ch:umsetzung}
 Der ganze Code kann auf Github unter https://github.com/GeorgOhneH/WerbeSkip gefunden werden.
 Die verwendete Programmiersprache ist Python 3.
-
-Das Neuronale Netzwerk baut hauptsächlich auf Numpy auf, ein Bibliothek für wissenschaftliche Datenverarbeitung.
-Für die bearbeitung der Bilder wurden OpenCV 2 verwendet und für die Website, Django, ein Web framework und VueJS, ein Javascript framework.
 \section{Neuronales Netzwerk}
-Der Code für diesen Teil befindet sich im Ordner "deepnet"
+Der Code für diesen Teil befindet sich im Ordner deepnet
+\medskip
 
 Die Grundidee der Implementation für das neuronales Netzwerk ist, dass alles ein Objekt ist und man leicht neue Schichten und Funktionen hinzufügen kann.
 Die Benutzerschnittstelle ist angelegt an Keras, eine Bibliothek für Neuronale Netzwerke.
-Als Grundbaustein wird Numpy, ein Bibliothek für wissenschaftliche Datenverarbeitung, benutzt,
-da die Funktionen sehr gut optimiert sind.
+Als Grundbaustein wird Numpy, ein Bibliothek für wissenschaftliche Datenverarbeitung benutzt.
 Da die Geschwindigkeit ein entscheidender Punkt ist, ist alles was möglich ist als eine matrix multiplikation implementiert.
 
-\section{Aufbau}
-Die Klasse "Network" in "network.py"
+\subsection{Aufbau}
+\paragraph{Schichten}
+Jede Type von Schicht ist als eine Klasse implementiert, welche von einer Basisklasse erbt, damit jede Schicht gleich behandelt werden kann.
+Die Schichten speichern selber, die Daten, die sie für die backpropagation brauchen.
+\paragraph{Kostenfunktionen}
+Jede Kostenfunktion ist auch eine Klasse und erbt auch von einer Basisklasse.
+Jede Kostenfunktion benötigt die implementation von der Funktion und deren Ableitung.
+\paragraph{Optimierer}
+Ein Optimierer enthält die Funktionen für des gradient descent, bzw. eine Variante davon,
+da es gewisse Varianten gibt die den Process des lernen noch verbessern können,
+z.B wird noch eine simulierte Beschleunigung in den gradient descent mit einbezogen.\cite{optimization}
+Auch die Optimierer Klasse erbt von einer Basisklasse.
+Jede Schicht bekommt einen Optimierer, um die Gewichte und Biases anzupassen.
+\paragraph{Netzwerk}
+Dies ist die Haputklasse, die alle die Schichten, Kostenfunktionen und Optmierer zusammen setzt und sie sich so untereinander verständigen können
+Ausserdem implementiert die Klasse noch diverse Funktionen, die zur Auswertung des neuronale Netzwerk hilfreich sind.
 
 \subsection{Benutzung}
+Beispiel Code kann unter deepnet/examples gefunden werden
+\medskip
+
 Um das Programm zu benutzen muss man zuerst die eingabe Dimensionen von den Bildern bestimmen.
 Bei einer nur völlig verbundenen Netzwerk ist das eine Zahl, die Anzahl Neuronen in der Eingabe Schicht.
 Wenn es ein convolution Netzwerk ist, dann ist die erste Zahl die Anzahl feature map bzw. die Anzahl Farbkanäle im Bild,
 die Zweite die Höhe des Bildes und die Dritte die Breite des Bildes.
 Danach müssen die verschiedenen Schichten bestimmt werden, darunter sind auch die Aktivierungsfunktionen, da sie auch als eine Schicht implementiert sind.
 Als nächstes muss die Kostenfunktion und der Optimierer definiert werden.
-Der Optimierer beschreibt eine Variante des gradient descent,
-da es gewisse Varianten gibt die den Process des lernen noch verbessern können,
-z.B wird noch eine Beschleunigung in den gradient descent mit einbezogen.\cite{optimization}
-Am Schluss muss das Netzwerk noch trainiert werden, indem die trainings Daten dem Netzwerk gegeben werden.
+Am Schluss muss das neuronale Netzwerk noch trainiert werden, indem die trainings Daten dem Netzwerk gegeben werden.
 Die trainings Daten müssen ein numpy array sein mit der gleichen Form, wie die eingabe Dimensionen mit dem Unterschied,
 dass die erste Dimension die Anzahl der Bilder ist.
 Die training Daten können auch als Generator eingegeben werden.
 
-\subsection{Ablauf beim trainieren}
-Als erstes werden alle Schichten initialisiert, d.h die Gewicht und Biases werden zufälligen Werten zugeteilt.
-Eine kleine Menge von Daten werden gleichzeitig durch das Netzwerk gelassen.
-Beim vorwärts Durchlauf speichert jede Schicht die Werte die es braucht um den Fehler der Schicht zu berechnen.
-Danach wird der Fehler in jeder Schicht berechnet und anschliessend werden die Gewichte und Biases angepasst.
-Dieser Process wir dann wiederholt bis alle Daten mehrmals durch das Netzwerk gelaufen sind.
-
-
 \subsection{Grafikkarten unterstützung}
-Die Geschwindigkeit des Programmes spielt eine entscheidende Rolle für ein neuronales Netzwerk und die Geschwindigkeit der CPU\footnote{Central processing unit} ist nicht schnell genug.
+Die Geschwindigkeit des Programmes spielt eine entscheidende Rolle für ein
+neuronales Netzwerk und die Geschwindigkeit der CPU\footnote{Central processing unit} ist nicht ausreichend.
 Um die GPU\footnote{Grafikkarte} zu benutzen, wird Cupy verwendet.
 Da Cupy genau die gleichen Funktionen wie Numpy hat, kann es einfach mit Numpy ausgetauscht werden.
-Die GPU ist so viel schneller als die CPU, da alles mit matrix Multiplikationen implementiert ist und die GPU auf matrix Multiplikationen spezialisiert ist.
+Die GPU ist so viel schneller als die CPU, da alles mithilfe von matrix Multiplikationen implementiert ist und
+die GPU auf matrix Multiplikationen spezialisiert ist.
+
+\subsection{Bild bearbeitung}
+Der Code kann unter helperfunctions/image\_processing gefunden werden
+\medskip
+
+Der Ordner enthält die Funktionen für die Formatierung der Bilder, damit sie vom Netzwerk benutzt werden können.
+Um die Bilder zu bearbeiten wird OpenCV 2 und Numpy verwendet.
+
+Die grösste Herausforderung war die Beschaffung der live Bilder für einem Sender.
+Um die sender Bilder zu erhalten, wird der Teleboy Stream angezapft, nach einem Beispiel von Github.\cite{gittele} und
+wird durch ffmpeg\footnote{Programm für das Aufnehmen, Konvertieren und Streamen von Audio und Video} dekodiert.
 
 \section{Webserver}
+Der Code kann unter src gefunden werden
+\medskip
 
+Um das fertige Programm auch zu benutzen wird eine Webseite verwendet.
+Für das Backend des Servers wird Django\footnote{Ein web framework} und Django Channels verwendet, wodurch ein Websocket benutzt werden kann,
+so dass die Verbindung mit dem Server immer offen ist und die Information ob Werbung läuft sofort übermittelt werden kann.
 
+Für das Frontend wird VueJs und VuetifyJS verwendet und es ist als eine Single Page Application implementiert.
+
+\chapter{Ergebnisse}
+\section{Auswertung}
+\subsection{Datensatz}
+Um die Leistung der Netzwerke richtig zu Bewerten, wird ein selbst erstellter Datensatz verwendet,
+welches aus insgesamt 7830 Prosieben Bildern besteht.
+Aus den 7830 Bildern sind 4495 Bilder mit Logo und ohne Rand, 813 mit Logo und einem schwarzen Rand oben und unten,
+813 mit Logo und einem schwarzen Rand auf beiden Seiten und 2095 Bilder ohne Logo und ohne Rand.
+Ausserdem enthält der Datensatz noch 400 Bilder, die nicht das klassische Prosieben Logo enthält. (siehe Abbildung~\ref{fig:logo_spec})
+\begin{figure}[h]%
+    \centering
+    \includegraphics[width=7cm]{assets/images/logo_special.png}%
+    \caption{Kein klassisches Prosieben Logo}%
+    \label{fig:logo_spec}%
+\end{figure}
+\subsection{Methoden}
+\paragraph{loss} Die einfachste Methode das Netzwerk auszuwerten ist der Wert der Kostenfunktion anzuschauen, welcher als \textit{loss} bezeichnet wird.
+So tiefer der loss ist umso besser besser ist das Netzwerk.
+
+\paragraph{Treffsicherheit} Eine andere relativ einfache Methode ist die Treffsicherheit des Netzwerks zu bestimmen,
+indem man die richtig erkannten Bilder durch die totale Anzahl Bilder teilt.
+
+\paragraph{Matthews correlation coefficient} Das Problem
+
+\section{Neuronales Netzwerk mithilfe des Logo's}
 
 
 \chapter{Reflexion}
@@ -1174,7 +1219,7 @@ Die GPU ist so viel schneller als die CPU, da alles mit matrix Multiplikationen 
 \clearpage
 \phantomsection
 \addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
-
+Abbildung aus dem Kapitel~\ref{ch:neuronalesNetzwerk} sind von Michael A. Nielsen Buch\cite{neuralbook} inspiriert.
 \listoffigures
 
 \appendix

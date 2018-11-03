@@ -10,7 +10,7 @@ from deepnet.utils import Generator
 
 class LogoGenerator(Generator):
     """
-    after https://github.com/reduzent/watchteleboy
+    makes images with and without logo and labels them
     """
     def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1, channel="zattoo", colour=True):
         CHANNELS = {

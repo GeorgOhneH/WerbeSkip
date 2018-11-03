@@ -16,6 +16,7 @@
     <v-data-iterator
       :items="listChannels"
       :rows-per-page-items="rowsPerPageItems"
+      rows-per-page-text="Kanäle pro Seite"
       content-tag="v-layout"
       :search="search"
       no-data-text=""
@@ -48,7 +49,7 @@
       OverviewChannel
     },
     data: () => ({
-        rowsPerPageItems: [4, 8, 12],
+        rowsPerPageItems: [4, 8, 12,],
         pagination: {
           rowsPerPage: 2
         },
