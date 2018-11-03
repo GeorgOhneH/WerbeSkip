@@ -57,12 +57,12 @@
         if (this.croppedAds.length !== 0) {
           return this.croppedAds[this.croppedAds.length - 1].x
         } else {
-          return 1
+          return 2
         }
       },
       xmin() {
         if (this.croppedAds.length !== 0) {
-          return this.croppedAds[0].x + 0.2
+          return this.croppedAds[0].x + 5
         } else {
           return 0
         }

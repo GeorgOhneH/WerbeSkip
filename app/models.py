@@ -24,3 +24,17 @@ class Room(models.Model):
         messages as they are generated.
         """
         return "room-%s" % self.id
+
+
+class Channel(models.Model):
+    name = models.CharField(max_length=255)
+    teleboy_id = models.IntegerField()
+
+    def __str__(self):
+        return self.name
+
+
+class Logo(models.Model):
+    status = models.BooleanField()
+    timestamp = models.IntegerField(default=0)
+    channel = models.ForeignKey(Channel, on_delete=models.CASCADE)

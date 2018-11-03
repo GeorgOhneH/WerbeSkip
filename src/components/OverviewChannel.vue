@@ -32,7 +32,6 @@
     props: ['channel'],
     computed: {
       title() {
-        console.log(this.channel)
         if (this.channel.ads[this.channel.ads.length - 1].y) {
           return 'No Ads'
         }

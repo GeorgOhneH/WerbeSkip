@@ -31,12 +31,17 @@
       ]),
       messageReceived(data) {
         data = JSON.parse(data)
-        if (data.channel !== undefined) {
+        if (data.login !== undefined) {
+          this.initChannels(data.channel)
+        } else {
           this.updateChannels(data.channel)
+
         }
       },
-      updateChannels(getRawChannels) {
+      initChannels(getRawChannels) {
         this.$store.commit('initChannels', getRawChannels)
+      },
+      updateChannels(getRawChannels) {
         this.$store.commit('addToChannels', getRawChannels)
       },
     }

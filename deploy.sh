@@ -14,7 +14,7 @@ echo 'Done...'
 echo 'Collect static'
 python manage.py collectstatic --noinput --clear
 echo 'Done...'
-
+python manage.py makemigrations
 echo 'Run migrations'
 python manage.py migrate
 echo 'Done...'

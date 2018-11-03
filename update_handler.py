@@ -73,6 +73,10 @@ class WerbeSkip(object):
         net.load(self.PATH_TO_NET)
         return net
 
+    async def init_db(self, websocket):
+        message = {"command": "init", "channel": {"Prosieben": {"id": 354}}, "token": websocket_token}
+        await websocket.send(json.dumps(message))
+
     async def producer_handler(self, websocket, path):
         while True:
             message = self.producer()
@@ -140,6 +144,7 @@ class WerbeSkip(object):
         async def hello():
             async with websockets.connect('ws://' + self.ip + '/chat/stream/') as websocket:
                 print("connected")
+                await self.init_db(websocket)
                 await self.handler(websocket, path=None)
         print("starting")
         asyncio.get_event_loop().run_until_complete(hello())

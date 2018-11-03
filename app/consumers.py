@@ -4,7 +4,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from settings_secret import websocket_token
 
 from .exceptions import ClientError
-from .utils import get_room_or_error
+from .utils import get_room_or_error, do_inti_db, update_db, get_db
 
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
@@ -26,6 +26,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await self.accept()
         # Store which rooms the user has joined on this connection
         self.rooms = set()
+        self.last_channel = {}
 
         await self.join_room('main')
 
@@ -42,6 +43,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 await self.join_room(content["room"])
             if command == "update":
                 await self.send_room(content)
+            if command == "init":
+                await self.init_db(content)
         except ClientError as e:
             # Catch any errors and send it back
             await self.send_json({"error": e.code})
@@ -57,13 +60,20 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             except ClientError:
                 pass
 
+    async def init_db(self, content):
+
+        token = content.get('token', None)
+        if token != websocket_token:
+            raise ClientError("ROOM_ACCESS_DENIED")
+
+        await do_inti_db(content["channel"])
+
     ##### Command helper methods called by receive_json
 
     async def join_room(self, room_name):
         """
         Called by receive_json when someone sent a join command.
         """
-        # The logged-in user is in our scope thanks to the authentication ASGI middleware
         room = await get_room_or_error(room_name)
         # Store that we're in the room
         self.rooms.add(room_name)
@@ -72,10 +82,14 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             room.group_name,
             self.channel_name,
         )
+
+        channel = await get_db(room_name, 3600)
+
         # Instruct their client to finish opening the room
         await self.send_json({
             "room": room.title,
             "login": not self.scope['user'].is_anonymous,
+            "channel": channel,
         })
 
     async def leave_room(self, room_name):
@@ -108,6 +122,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         if room_name not in self.rooms:
             raise ClientError("ROOM_ACCESS_DENIED")
         # Get the room and send to the group about it
+        await update_db(content["channel"], self.last_channel)
+        self.last_channel = content["channel"]
         room = await get_room_or_error(room_name)
         await self.channel_layer.group_send(
             room.group_name,
