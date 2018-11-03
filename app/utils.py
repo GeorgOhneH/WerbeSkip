@@ -60,9 +60,12 @@ def _update_db(channel_name, status):
 def get_db(room_name, duration):
     result = {}
     for channel in Channel.objects.all():
-        result[str(channel.name)] = []
+        result[channel.name] = []
         for logo in channel.logo_set.filter(timestamp__gt=int(time.time())-duration):
-            result[str(channel.name)].append({"ad": bool(logo.status), "x": int(logo.timestamp-int(time.time())), "id": int(channel.teleboy_id)})
+            if len(result[channel.name]) == 0:
+                result[channel.name].append(
+                    {"ad": logo.status, "x": -duration, "id": channel.teleboy_id})
+            result[channel.name].append({"ad": logo.status, "x": logo.timestamp-int(time.time()), "id": channel.teleboy_id})
     return result
 
 

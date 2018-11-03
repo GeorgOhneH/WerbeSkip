@@ -79,7 +79,7 @@ export default new Vuex.Store({
         } else {
           channel.ads.push({x: last_point.x + 1, y: ad})
         }
-        if (channel.ads.length > 20000) {
+        if (channel.ads.length > 2000) {
           channel.ads.shift()
         }
       }
