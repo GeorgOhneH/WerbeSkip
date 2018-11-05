@@ -24,6 +24,7 @@
           tooltips: {
             enabled: false,
           },
+          events: [],
           scales: {
             xAxes: [{
               type: 'linear',

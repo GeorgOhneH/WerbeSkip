@@ -54,7 +54,7 @@ SECRET_KEY = django_key
 
 DEBUG = bool(django_debug)
 
-ALLOWED_HOSTS = ["192.168.99.100", "127.0.0.1", "192.168.50.132", "192.168.56.1",
+ALLOWED_HOSTS = ["192.168.99.100", "127.0.0.1", "192.168.50.132", "192.168.56.1", '104.248.102.130',
                  "192.168.99.1", "0.0.0.0", "165.227.147.105", "werbeskip.com", "www.werbeskip.com"]
 
 # Application definition

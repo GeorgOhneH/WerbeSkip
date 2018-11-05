@@ -8,9 +8,7 @@ from deepnet.optimizers import Adam
 import json
 import websockets
 import asyncio
-from threading import Thread
 from settings_secret import websocket_token
-import time
 import warnings
 import os
 
@@ -20,6 +18,7 @@ class WerbeSkip(object):
         self.PATH_TO_NET = os.path.join(os.path.dirname(__file__),
                                         "helperfunctions/prosieben/networks/teleboy/teleboy.h5")
         self.ws = None
+        self.loop = None
         self.network = self.init_network()
         self.docker = bool(os.environ.get("DJANGO_DEBUG", False))
         if self.docker:
@@ -147,7 +146,8 @@ class WerbeSkip(object):
                 await self.init_db(websocket)
                 await self.handler(websocket, path=None)
         print("starting")
-        asyncio.get_event_loop().run_until_complete(hello())
+        self.loop = asyncio.get_event_loop()
+        self.loop.run_until_complete(hello())
 
 
 if __name__ == "__main__":
@@ -156,4 +156,8 @@ if __name__ == "__main__":
             x = WerbeSkip()
             x.run()
         except Exception as e:
+            x.loop.stop()
+            x.cap.pipe.kill()
+            x.cap.m3u8_update_thread.stop()
+            x.cap.get_images_thread.stop()
             warnings.warn("GOT ERROR FROM SCRIPT: {}".format(e))

@@ -1,12 +1,11 @@
 import requests
-from requests.auth import HTTPProxyAuth
 import json
 import cv2
 import numpy as np
 import time
 import os
 import subprocess as sp
-from threading import Thread
+import threading
 import queue
 from urllib.parse import quote
 from settings_secret import proxy_username, proxy_password
@@ -31,7 +30,7 @@ class VideoCapture(object):
         self.depth = 3 if colour else 1
         self.images = queue.Queue()
         self.m3u8_update_thread = None
-        self.get_images_t = None
+        self.get_images_thread = None
         self.last_m3u8 = None
         self.convert_network = convert_network
         self.rate_limit = rate_limit  # frames per second
@@ -97,10 +96,10 @@ class VideoCapture(object):
                    '-']
 
         self.pipe = sp.Popen(cmd_out, bufsize=10 ** 8, stdout=sp.PIPE, cwd=self.PATH_TO_CACHE)
-        self.m3u8_update_thread = Thread(target=self.m3u8_thread)
-        self.get_images_t = Thread(target=self.get_images_thread)
+        self.m3u8_update_thread = M3U8Updater(m3u8_function=self.update_m3u8_file)
+        self.get_images_thread = GetImages(self.images, self.rate_limit, self.pipe, self.depth)
         self.m3u8_update_thread.start()
-        self.get_images_t.start()
+        self.get_images_thread.start()
 
     def update_m3u8_file(self):
         text = requests.get(self.cap_url, proxies=self.proxies).text
@@ -128,28 +127,6 @@ class VideoCapture(object):
             with open(os.path.join(self.PATH_TO_CACHE, self.M3U8_NAME), mode="w") as f:
                 f.write(new_text)
 
-    def m3u8_thread(self):
-        while True:
-            try:
-                time.sleep(0.5)
-                self.update_m3u8_file()
-            except Exception as e:
-                print("GOT EXCEPTION IN M3U8:", e)
-
-    def get_images_thread(self):
-        try:
-            while True:
-                qsize = self.images.qsize()
-                if qsize > 5 * self.rate_limit:
-                    for _ in range(qsize - 3*self.rate_limit):
-                        self.images.get()
-
-                raw_image = self.pipe.stdout.read(180 * 320 * self.depth)
-                if raw_image:
-                    self.images.put(raw_image)
-        except Exception as e:
-            print("GOT EXCEPTION IN PIPE:", e)
-
     def __iter__(self):
         return self
 
@@ -162,4 +139,60 @@ class VideoCapture(object):
             frame = np.expand_dims(frame.transpose((2, 0, 1)), axis=0)
 
         return frame
+
+
+class M3U8Updater(threading.Thread):
+    def __init__(self, m3u8_function):
+        super().__init__(daemon=True)
+        self.m3u8_function = m3u8_function
+        self._stop_event = threading.Event()
+
+    def run(self):
+        while True:
+            try:
+                time.sleep(0.5)
+                self.m3u8_function()
+                if self.stopped():
+                    break
+            except Exception as e:
+                print("GOT EXCEPTION IN M3U8:", e)
+
+    def stop(self):
+        self._stop_event.set()
+
+    def stopped(self):
+        return self._stop_event.is_set()
+
+
+class GetImages(threading.Thread):
+    def __init__(self, images, rate_limit, pipe, depth):
+        super().__init__(daemon=True)
+        self.depth = depth
+        self.pipe = pipe
+        self.rate_limit = rate_limit
+        self.images = images
+        self._stop_event = threading.Event()
+
+    def run(self):
+        while True:
+            try:
+                qsize = self.images.qsize()
+                if qsize > 5 * self.rate_limit:
+                    for _ in range(qsize - 3*self.rate_limit):
+                        self.images.get()
+
+                raw_image = self.pipe.stdout.read(180 * 320 * self.depth)
+                if raw_image:
+                    self.images.put(raw_image)
+
+                if self.stopped():
+                    break
+            except Exception as e:
+                print("GOT EXCEPTION IN PIPE:", e)
+
+    def stop(self):
+        self._stop_event.set()
+
+    def stopped(self):
+        return self._stop_event.is_set()
 

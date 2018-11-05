@@ -83,7 +83,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             self.channel_name,
         )
 
-        channel = await get_db(room_name, 20000)
+        channel = await get_db(room_name, 100000)
 
         # Instruct their client to finish opening the room
         await self.send_json({

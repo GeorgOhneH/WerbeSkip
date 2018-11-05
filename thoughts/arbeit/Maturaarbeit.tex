@@ -13,6 +13,7 @@
 \usepackage{wrapfig}
 \usepackage{mathtools}
 \usepackage{listings}
+\usepackage{multirow}
 \usepackage{url}
 \usepackage{pdfpages}
 \usepackage{tabto}
@@ -63,8 +64,7 @@ Er versuchte das Logo mithilfe von Bedingungen und Schleifen auszudrücken, aber
 
 Als ich auf der Suche nach einer Idee für eine Maturaarbeit war erinnerte ich mich wieder an das Problem und an einen neuen Lösungsansatz,
 nämlich Neuronale Netzwerke, welche Heute überall verwendet werden und extrem Mächtig sind.
-Die Idee war aber nicht nur ein Logo zu erkennen sondern auch genau verstehen wie ein neuronales Netzwerk funktioniert
-und deshalb habe ich mein eigenes Neuronale Netzwerk programmiert.
+Die Idee war aber nicht nur ein Logo zu erkennen sondern auch genau verstehen wie ein neuronales Netzwerk funktioniert und warum es so Mächtig ist.
 \section{Aufbau der Arbeit}
 \label{sec:aufbauDerArbeit}
 
@@ -82,8 +82,8 @@ vereinfacht werden auf die Frage ob das Senderlogo eingeblendet ist oder nicht (
     \caption{Kein Senderlogo bei Werbung}%
     \label{fig:logo1}%
 \end{figure}
-Man könnte meinen, dass das Logo erkennen relativ simple ist.
-Man könnte einfach Schauen ob der Bereich, wo das Logo sein sollte, heller ist als ausserhalb.
+Man könnte meinen, dass das erkennen eines Logo's relativ simple ist.
+Zum Beispiel könnte man Schauen ob der Bereich, wo das Logo sein sollte, heller ist als ausserhalb.
 
 \begin{figure}[h]%
     \centering
@@ -100,7 +100,7 @@ Man könnte einfach Schauen ob der Bereich, wo das Logo sein sollte, heller ist 
 
 Ein Problem des Logo's ist, dass es nicht einfach über das normale Bild eingespielt wird, sondern man kann leicht hindurch sehen (siehe Abbildung~\ref{fig:logo2}a),
 dadurch kann man das Logo nicht an gleichen Pixel erkennen.
-Die grösste Schwierigkeit ist aber, dass bei manchen Hintergründen, vor allem bei weissen, das Logo abgeschnitten oder kaum bis gar nicht sichtbar ist.
+Die grösste Schwierigkeit ist aber, dass bei manchen Hintergründen, vor allem bei Weissen, das Logo abgeschnitten oder kaum bis gar nicht sichtbar ist.
 Bei Abbildung~\ref{fig:logo2} (b) ist das Logo abgeschnitten, bei (c) ist es kaum sichtbar und bei (d) ist komplett verschwunden.
 
 Ein andere Schwierigkeit ist, dass das Logo nicht unbedingt immer am gleichen Ort sein muss.
@@ -276,7 +276,7 @@ net/.style={
 
 Eine mögliche Architektur kann wie in  Abbildung~\ref{fig:network1} ausschauen.
 Ein Netzwerk wird generell immer in verschiedene Schichten unterteilt.
-Die linke Schicht wird als Eingabe Schicht bezeichnet und die Neuronen in dieser Schicht werden Eingabe Neuronen genannt.
+Die linke Schicht wird als eingabe Schicht bezeichnet und die Neuronen in dieser Schicht werden Eingabe Neuronen genannt.
 Analog dazu wird die rechte Schicht Ausgabe Schicht genannt, die die Ausgabe Neuronen beinhaltet.
 Die mittleren Schichten, die von der Anzahl her variieren können, werden versteckte Schichten genannt.
 Die Anzahl der Neuronen in jeder Schicht kann auch variieren.
@@ -834,7 +834,7 @@ Der Grund warum die Filter nicht alle das gleiche Merkmal erkennen, liegt an der
 \end{figure}
 
 Die feature map kann noch grösser gemacht werden, indem ein Rand von Neuronen, mit dem Wert 0, hinzugefügt wird.\cite{conv}
-Das führt dazu, dass sich der Filter über die normale feature map hinweg bewegt.
+Das führt dazu, dass sich der Filter über die normale feature map hinweg bewegt, was in machen Fällen erwünscht ist.
 
 \subsection{Max Pooling}
 Neben den Convolution Schichten gibt es auch die maxpool Schicht\footnote{Es gibt noch andere pooling Schichten, die aber in dieser Arbeit nicht verwendet wurden},
@@ -1036,7 +1036,7 @@ Man könnte meinen das Logo wird einfach über das ander Bild gelegt wird,
 aber das Logo wird eingespielt indem es mit dem Bild negativ multipliziert wird,
 d.h die das Bild und das Logo werden invertiert, multipliziert und dann wieder invertiert.\cite{wiki:blend}
 \[f(a,b) = 1 - (1-a)(1-b)\]
-wobei $a$ das Bild ist und $b$ das Logo und die Werte von jedem Pixel von 0 (Schwarz) bis 1 (Weiss) gehen.
+wobei $a$ ein Bild ist und $b$ das Logo und die Werte von jedem Pixel von 0 (Schwarz) bis 1 (Weiss) gehen.
 
 Das bewirkt, dass man leicht durch das Logo hindurchsehen kann,
 wodurch der Hintergrund hinter dem Logo auch eine Rolle spielt (siehe Abbildung~\ref{fig:logo5}a,b).
@@ -1065,20 +1065,20 @@ sich im ursprünglichen Zustand befindet.
 Aus dem Grund kann man das Logo komplett herausfiltern und wieder verwenden wenn man das Logo mit einem schwarzen Hintergrund findet (siehe Abbildung~\ref{fig:logo5}f).
 
 \section{Werbung erkennen mit Logo}
-Um ein Netzwerk zu trainieren braucht man eine sehr viele Daten, die kategorisiert sind.
-Eine Option wäre die Bilder vom Sender selber zu kategorisiert, das Problem dabei, ist das es eine sehr lange und sehr langweilig arbeit wäre,
-da man um die millionen Bilder bräuchte.
-Die andere möglichkeit ist die Bilder selber zu generieren.
-Alles was man braucht ist das Logo, welches einen schwarzen Hintergrund hat, und viele andere Bilder auf die man das Logo darauf machen kann.
-\begin{itemize}
-\item  Das Logo wird findet man indem man lang genug im Sender darauf wartet
-\item Die anderen Bilder bekommt man aus dem Open Images Dataset V3\cite{openimages}, welches um die 9 millionen Bilder enthält.
-Ein Problem mit dem Datensatz ist, dass es nur normale Fotos enthält.
-Im Fernsehen ist oft Text oder eine Einblendung auf dem Bild.
-\end{itemize}
+Um ein Netzwerk zu trainieren braucht man sehr viele Daten, die schon kategorisiert sind.
+Eine Option, diese zu beschaffen, wäre die Bilder vom Sender selber zu kategorisiert, das Problem dabei, ist das es eine sehr lange und sehr langweilig arbeit wäre,
+da man um die millionen Bilder kategorisieren müsste.
+Die andere Möglichkeit ist die Bilder selber zu generieren,
+indem man das Logo, auf einen schwarzen Hintergrund, auf viele andere Bilder darauf multipliziert.
+Das Logo, auf einen schwarzen Hintergrund, findet man indem man lang genug im Sender darauf wartet.
+Die anderen Bilder bekommt man aus dem Open Images Dataset V3\cite{openimages}, welches um die 9 millionen Bilder enthält.
+Da diese Bilder des Open Images Dataset nicht in der richtigen Grösse vorhanden sind, werden sie zerteilt in die richtige Grösse.
+Die Bilder könnten auch auf die richtige Grösse skaliert werden.
+Das Problem dabei ist, dass dadurch viel weniger Bilder pro Sekunden erzeugt werden und das den ganzen Process des Lernen deutlich verlangsamen würde.
+
 Das Logo kann nun mit dem Bild negativ multipliziert, so dass das Logo an einem zufälligen Ort auf dem Bild erscheint (siehe Abbildung~\ref{fig:logo8}).
 Man könnte sich auch überlegen, ob man das Logo nur an Position einspielt, wo es auch im Sender vorkommt.
-Aber für ein convolution Netzwerk spielt es keine grosse Rolle und ich will den Algorithmus so allgemein wie möglich halten.
+Aber für ein convolution Netzwerk spielt es keine grosse Rolle und der Algorithmus sollte so allgemein wie möglich sein.
 \begin{figure}[h]%
     \centering
     \includegraphics[width=6cm]{assets/images/logo_on_random_image.png}%
@@ -1087,20 +1087,20 @@ Aber für ein convolution Netzwerk spielt es keine grosse Rolle und ich will den
 \end{figure}
 Die grösse von einem Bild ist 320x180 Pixel, da ein grössers Bild unnötig viele Informationen enthält,
 was dazu führt, dass das Netzwerk länger lernen müsste.
-Ein kleineres Bild, würde das Logo noch kleiner machen und nicht mehr erkennbar (siehe Abbildung~\ref{fig:logo6}).
+Ein kleineres Bild, würde das Logo noch kleiner machen und kaum noch erkennbar (siehe Abbildung~\ref{fig:logo6}).
 \begin{figure}[h]%
     \centering
     \includegraphics[width=5cm]{assets/images/logo17x11.png}%
-    \caption{Prosieben Logo (17x11 Pixel) von einem 320x180 Pixel Bild}%
+    \caption{Prosieben Logo (17x11 Pixel) herausgenommen aus einem 320x180 Pixel Bild}%
     \label{fig:logo6}%
 \end{figure}
 
 Mit diesen selber generierten Bildern kann man ohne Probleme ein neuronales Netzwerk trainieren, welches das Logo erkennen kann.
 \section{Werbung erkennen ohne Logo}
-Um Werbung zu erkennen ohne ein Logo braucht es die richtige sender Bilder.
-Da ich diese nicht selber kategorisieren will benutze ich das neuronale Netzwerk das mit dem Logo die Werbung erkennt, um die sender Bilder zu kategorisieren.
-Ein Problem dabei ist, dass das Netzwerk nicht perfekt ist, um das ein bisschen auszugleichen wird die durchschnittliche Prognose des Netzwerk genommen,
-da Werbung bzw. das normale Programm immer ein weile am Stück läuft.
+Um Werbung zu erkennen ohne ein Logo braucht es die richtige Senderbilder, da Werbebilder nicht generiert werden können.
+Da ich die Senderbilder nicht selber kategorisieren will benutze ich das neuronale Netzwerk das mithilfe des Logo die Werbung erkennt, um die Senderbilder zu kategorisieren.
+Ein Problem dabei ist, dass das Netzwerk nicht perfekt ist, um das ein bisschen auszugleichen wird die durchschnittliche Vorhersage des Netzwerk genommen,
+da Werbung bzw. das normale Programm immer ein weile am Stück läuft, bevor es wechselt
 
 Damit sichergestellt ist, dass das neue Netzwerk nicht wieder das Logo erkennt, sondern die Werbung,
 wird das Bild so zugeschnitten, dass das Logo nicht mehr auf dem Bild vorhanden ist.
@@ -1111,72 +1111,80 @@ wird das Bild so zugeschnitten, dass das Logo nicht mehr auf dem Bild vorhanden 
 Der ganze Code kann auf Github unter https://github.com/GeorgOhneH/WerbeSkip gefunden werden.
 Die verwendete Programmiersprache ist Python 3.
 \section{Neuronales Netzwerk}
-Der Code für diesen Teil befindet sich im Ordner deepnet
+Der Code für diesen Teil befindet sich im Ordner \textit{deepnet}.
 \medskip
 
-Die Grundidee der Implementation für das neuronales Netzwerk ist, dass alles ein Objekt ist und man leicht neue Schichten und Funktionen hinzufügen kann.
-Die Benutzerschnittstelle ist angelegt an Keras, eine Bibliothek für Neuronale Netzwerke.
-Als Grundbaustein wird Numpy, ein Bibliothek für wissenschaftliche Datenverarbeitung benutzt.
+Die Grundidee der Implementation für das neuronales Netzwerk ist, dass es Objekt Orientiert ist und man leicht neue Schichten und Funktionen hinzufügen kann.
+Die Benutzerschnittstelle ist angelegt an Keras, eine Bibliothek für neuronale Netzwerke.
+Als Grundbaustein wird Numpy, ein Bibliothek für wissenschaftliche Datenverarbeitung, benutzt.
 Da die Geschwindigkeit ein entscheidender Punkt ist, ist alles was möglich ist als eine matrix multiplikation implementiert.
 
 \subsection{Aufbau}
 \paragraph{Schichten}
 Jede Type von Schicht ist als eine Klasse implementiert, welche von einer Basisklasse erbt, damit jede Schicht gleich behandelt werden kann.
-Die Schichten speichern selber, die Daten, die sie für die backpropagation brauchen.
+Jede Schichten implementieren jeweils den vorwärts und den rückwärts (backpropagation) Gangs des Netzwerks
+Die Schichten sind unabhängig, bekommen aber immer die Ausgabe der vorigen Schicht, bzw. der hintern Schicht bei der backpropagation.
+Die Werte die sie brauchen für die backpropagation, werden intern in jeder Schicht gespeichert.
 \paragraph{Kostenfunktionen}
 Jede Kostenfunktion ist auch eine Klasse und erbt auch von einer Basisklasse.
 Jede Kostenfunktion benötigt die implementation von der Funktion und deren Ableitung.
 \paragraph{Optimierer}
 Ein Optimierer enthält die Funktionen für des gradient descent, bzw. eine Variante davon,
-da es gewisse Varianten gibt die den Process des lernen noch verbessern können,
+da es gewisse Varianten des gradient descent gibt die den Process des lernen noch beschleunigen können,
 z.B wird noch eine simulierte Beschleunigung in den gradient descent mit einbezogen.\cite{optimization}
 Auch die Optimierer Klasse erbt von einer Basisklasse.
-Jede Schicht bekommt einen Optimierer, um die Gewichte und Biases anzupassen.
+Der Optimierer wird an jede Schicht weiter geleitet um die Gewichte und Biases anzupassen.
 \paragraph{Netzwerk}
 Dies ist die Haputklasse, die alle die Schichten, Kostenfunktionen und Optmierer zusammen setzt und sie sich so untereinander verständigen können
+und ist die Benutzerschnittstelle
 Ausserdem implementiert die Klasse noch diverse Funktionen, die zur Auswertung des neuronale Netzwerk hilfreich sind.
 
 \subsection{Benutzung}
-Beispiel Code kann unter deepnet/examples gefunden werden
+Beispiel Code kann unter \textit{deepnet/examples} gefunden werden.
 \medskip
 
-Um das Programm zu benutzen muss man zuerst die eingabe Dimensionen von den Bildern bestimmen.
-Bei einer nur völlig verbundenen Netzwerk ist das eine Zahl, die Anzahl Neuronen in der Eingabe Schicht.
-Wenn es ein convolution Netzwerk ist, dann ist die erste Zahl die Anzahl feature map bzw. die Anzahl Farbkanäle im Bild,
+Um das Programm zu benutzen muss zuerst die eingabe Dimensionen von den Bildern bestimmen werden, welche der eingabe Schicht entspricht.
+Bei einer nur völlig verbundenen Netzwerk ist die Anzahl Neuronen, der eingabe Schicht.
+Wenn es ein convolution Netzwerk ist, dann besteht die eingabe Dimensionen aus 3 Zahlen.
+Die erste Zahl ist die Anzahl feature map, der eingabe Schicht, welche der Anzahl Farbkanäle im Bild entspricht,
 die Zweite die Höhe des Bildes und die Dritte die Breite des Bildes.
 Danach müssen die verschiedenen Schichten bestimmt werden, darunter sind auch die Aktivierungsfunktionen, da sie auch als eine Schicht implementiert sind.
 Als nächstes muss die Kostenfunktion und der Optimierer definiert werden.
 Am Schluss muss das neuronale Netzwerk noch trainiert werden, indem die trainings Daten dem Netzwerk gegeben werden.
 Die trainings Daten müssen ein numpy array sein mit der gleichen Form, wie die eingabe Dimensionen mit dem Unterschied,
-dass die erste Dimension die Anzahl der Bilder ist.
-Die training Daten können auch als Generator eingegeben werden.
+dass der numpy array noch an erster Stelle eine weiter Dimension hat, welcher die Anzahl der Bilder enthält.
+Die training Daten können auch als Generator übergeben werden.
 
 \subsection{Grafikkarten unterstützung}
+Der Code kann unter \textit{numpywrapper} gefunden werden.
+\medskip
+
 Die Geschwindigkeit des Programmes spielt eine entscheidende Rolle für ein
 neuronales Netzwerk und die Geschwindigkeit der CPU\footnote{Central processing unit} ist nicht ausreichend.
 Um die GPU\footnote{Grafikkarte} zu benutzen, wird Cupy verwendet.
-Da Cupy genau die gleichen Funktionen wie Numpy hat, kann es einfach mit Numpy ausgetauscht werden.
-Die GPU ist so viel schneller als die CPU, da alles mithilfe von matrix Multiplikationen implementiert ist und
+Da Cupy genau die gleichen Funktionen wie Numpy hat, kann es einfach mit Numpy ausgetauscht werden,
+Dazu wird ein selbst geschriebenes Module verwendet um einfach zwischen beide hin und her zuschalten.
+Die GPU ist schneller als die CPU, da alles mithilfe von matrix Multiplikationen implementiert ist und
 die GPU auf matrix Multiplikationen spezialisiert ist.
 
 \subsection{Bild bearbeitung}
-Der Code kann unter helperfunctions/image\_processing gefunden werden
+Der Code kann unter \textit{helperfunctions/image\_processing} gefunden werden.
 \medskip
 
-Der Ordner enthält die Funktionen für die Formatierung der Bilder, damit sie vom Netzwerk benutzt werden können.
-Um die Bilder zu bearbeiten wird OpenCV 2 und Numpy verwendet.
+Der Ordner enthält die Funktionen für die Beschaffung und Formatierung der Bilder, damit sie vom Netzwerk benutzt werden können.
+Um die Bilder zu bearbeiten wird OpenCV 2\footnote{Bibliothek von funktionen um Bilder zu bearbeiten} und Numpy verwendet.
 
-Die grösste Herausforderung war die Beschaffung der live Bilder für einem Sender.
+Die grösste Herausforderung war die Beschaffung der livestream Bilder von einem Sender.
 Um die sender Bilder zu erhalten, wird der Teleboy Stream angezapft, nach einem Beispiel von Github.\cite{gittele} und
 wird durch ffmpeg\footnote{Programm für das Aufnehmen, Konvertieren und Streamen von Audio und Video} dekodiert.
 
 \section{Webserver}
-Der Code kann unter src gefunden werden
+Der Code kann unter \textit{src} gefunden werden.
 \medskip
 
-Um das fertige Programm auch zu benutzen wird eine Webseite verwendet.
+Um das fertige Programm auch zu benutzen wird eine Webseite verwendet, die unter der URL \textit{werbeskip.com} erreichbar ist
 Für das Backend des Servers wird Django\footnote{Ein web framework} und Django Channels verwendet, wodurch ein Websocket benutzt werden kann,
-so dass die Verbindung mit dem Server immer offen ist und die Information ob Werbung läuft sofort übermittelt werden kann.
+so dass die Verbindung mit dem Server offen bleibt und die Seite immer auf dem aktuellen Stand ist..
 
 Für das Frontend wird VueJs und VuetifyJS verwendet und es ist als eine Single Page Application implementiert.
 
@@ -1185,9 +1193,10 @@ Für das Frontend wird VueJs und VuetifyJS verwendet und es ist als eine Single 
 \subsection{Datensatz}
 Um die Leistung der Netzwerke richtig zu Bewerten, wird ein selbst erstellter Datensatz verwendet,
 welches aus insgesamt 7830 Prosieben Bildern besteht.
-Aus den 7830 Bildern sind 4495 Bilder mit Logo und ohne Rand, 813 mit Logo und einem schwarzen Rand oben und unten,
+Aus den 7830 Bildern sind 4495 Bilder mit Logo und ohne Rand, 813 mit Logo und einem oberen und untern schwarzen Rand,
 813 mit Logo und einem schwarzen Rand auf beiden Seiten und 2095 Bilder ohne Logo und ohne Rand.
-Ausserdem enthält der Datensatz noch 400 Bilder, die nicht das klassische Prosieben Logo enthält. (siehe Abbildung~\ref{fig:logo_spec})
+Ausserdem enthält der Datensatz noch 400 Bilder, die nicht das klassische Prosieben Logo enthält (siehe Abbildung~\ref{fig:logo_spec}),
+welche exkludiert sind vom Datensatz.
 \begin{figure}[h]%
     \centering
     \includegraphics[width=7cm]{assets/images/logo_special.png}%
@@ -1198,13 +1207,68 @@ Ausserdem enthält der Datensatz noch 400 Bilder, die nicht das klassische Prosi
 \paragraph{loss} Die einfachste Methode das Netzwerk auszuwerten ist der Wert der Kostenfunktion anzuschauen, welcher als \textit{loss} bezeichnet wird.
 So tiefer der loss ist umso besser besser ist das Netzwerk.
 
-\paragraph{Treffsicherheit} Eine andere relativ einfache Methode ist die Treffsicherheit des Netzwerks zu bestimmen,
+\paragraph{Genauigkeit} Eine andere relativ einfache Methode ist die Genauigkeit des Netzwerks zu bestimmen,
 indem man die richtig erkannten Bilder durch die totale Anzahl Bilder teilt.
+Das Problem bei der Genauigkeit ist, dass sie nicht sehr Aussagekräftig ist,
+wenn das Datensatz nicht ausgeglichen ist.
+Zum Beispiel hat man ein Datensatz von 100 Bildern, 90 von den Bildern haben ein Logo und 10 haben keins.
+Wenn jetzt ein neuronales Netzwerk immer sagt, dass ein Logo auf dem Bild ist, ergebe das eine Genauigkeit von 90\%,
+was nach einem gutes Ergebnis ausschaut, aber das Netzwerk ist im Grunde nutzlos, da es das Logo nicht erkennt,
+sondern immer die gleiche Ausgabe ergibt.
 
-\paragraph{Matthews correlation coefficient} Das Problem
+\paragraph{Matthews correlation coefficient} Der Matthews correlation coefficient\cite{wiki:mcc} behebt genau dieses Problem.
+MCC\footnote{Matthews correlation coefficient} unterscheidet nicht nur zwischen Falschen und Wahren Vorhersagen des Netzwerk,
+sondern unterscheidet auch zwischen wahr positiv, wahr negativ, falsch positiv und falsch negativ (Siehe Tabelle~\ref{table:mcc}).
+\begin{table}[h]
+    \centering
+\begin{tabular}{cc|c|c|}
+\cline{3-4}
+                                                                                                        &                                                                           & \multicolumn{2}{c|}{Wahrer Zustand} \\ \cline{3-4}
+                                                                                                        &                                                                           & Zustand positiv   & Zustand negativ \\ \hline
+\multicolumn{1}{|c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}Vorausgesagt\\ Bedingung\end{tabular}}} & \begin{tabular}[c]{@{}c@{}}Vorhergesagter\\  Zustand positiv\end{tabular} & wahr positiv  & falsch positiv  \\ \cline{2-4}
+\multicolumn{1}{|c|}{}                                                                                  & \begin{tabular}[c]{@{}c@{}}Vorhergesagter\\ Zustand negativ\end{tabular}  & falsch negativ    & wahr negativ   \\ \hline
+\end{tabular}
+
+\caption{My table}
+\label{table:mcc}
+\end{table}
+MCC gibt einen Wert von -1 bis +1 zurück.
+Der Wert +1 repräsentiert eine perfekte Vorhersage,
+0 nicht besser als eine zufällige und -1 eine komplette Unstimmigkeit zwischen Netzwerk und dem Datensatz.
+Der MCC wird nach folgender Formel berechnet\cite{wiki:mcc}:
+\[MCC = \frac{WP \cdot WN - FP \cdot FN}{\sqrt{(WP+FP)(WP+FN)(WN+FP)(WN+FN)}}\]
+wobei WP die Anzahl der wahr positiven ist, WN die Anzahl der wahr negativen ist,
+FP die Anzahl der falsch positiven ist und FN die Anzahl der falsch negativen ist.
 
 \section{Neuronales Netzwerk mithilfe des Logo's}
-
+\subsection{Netzwerk Architektur}
+\begin{itemize}
+    \setlength\itemsep{0cm}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}
+    \item  Convolution, Filter: 16, Filterbreite: 12, Filterhöhe: 8, Schrittweite 4
+    \item BatchNorm
+    \item ReLU
+    \item Convolution, Filter: 64, Filterbreite: 6, Filterhöhe: 4, Schrittweite 1, Neuronenrand 2
+    \item BatchNorm
+    \item ReLU
+    \item Maxpool, Filterbreite: 3 Filterhöhe: 3, Schrittweite 1
+    \item Convolution, Filter: 128, Filterbreite: 4, Filterhöhe: 4, Schrittweite 1
+    \item BatchNorm
+    \item ReLU
+    \item Convolution, Filter: 128, Filterbreite: 3, Filterhöhe: 3, Schrittweite 2
+    \item BatchNorm
+    \item ReLU
+    \item Convolution, Filter: 256, Filterbreite: 3, Filterhöhe: 3, Schrittweite 1
+    \item BatchNorm
+    \item Dropout 25\%
+    \item Völlig verbundene Schicht, Neuronen: 512
+    \item BatchNorm
+    \item ReLU
+    \item Dropout 50\%
+    \item Völlig verbundene Schicht, Neuronen: 2
+    \item Softmax
+\end{itemize}
 
 \chapter{Reflexion}
 \label{ch:reflexion}
@@ -1219,8 +1283,8 @@ indem man die richtig erkannten Bilder durch die totale Anzahl Bilder teilt.
 \clearpage
 \phantomsection
 \addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
-Abbildung aus dem Kapitel~\ref{ch:neuronalesNetzwerk} sind von Michael A. Nielsen Buch\cite{neuralbook} inspiriert.
 \listoffigures
+Abbildung aus dem Kapitel~\ref{ch:neuronalesNetzwerk} sind von Michael A. Nielsen's Buch\cite{neuralbook} inspiriert.
 
 \appendix
 

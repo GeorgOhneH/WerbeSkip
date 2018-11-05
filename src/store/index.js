@@ -56,31 +56,32 @@ export default new Vuex.Store({
       if (state.listChannels.length === 0) {
         for (const [name, data] of Object.entries(dictChannels)) {
           let ads = []
-          for (const data_point of data) {
+          for (const data_point of data.ads) {
             ads.push({
               x: data_point.x,
               y: data_point.ad})
           }
-          ads.push({
-            x: 0,
-            y: data[data.length-1].ad})
 
-          state.listChannels.push({'name': name, 'ads': ads, 'id': data[0].id})
-          Vue.set(state.dictChannels, name, {'ads': ads, 'id': data[0].id})
+          state.listChannels.push({'name': name, 'ads': ads, 'id': data.id})
+          Vue.set(state.dictChannels, name, {'ads': ads, 'id': data.id})
         }
       }
     },
     addToChannels: (state, dictChannels) => {
       for (const channel of state.listChannels) {
         let ad = dictChannels[channel.name].ad
-        let last_point = channel.ads[channel.ads.length -1]
-        if (ad === last_point.y) {
-          Vue.set(channel.ads, channel.ads.length -1, {x: last_point.x + 1, y: ad})
+        if (channel.ads.length === 0) {
+          Vue.set(channel.ads, 0, {x: 1, y: ad})
         } else {
-          channel.ads.push({x: last_point.x + 1, y: ad})
-        }
-        if (channel.ads.length > 2000) {
-          channel.ads.shift()
+          let last_point = channel.ads[channel.ads.length - 1]
+          if (ad === last_point.y) {
+            Vue.set(channel.ads, channel.ads.length - 1, {x: last_point.x + 1, y: ad})
+          } else {
+            channel.ads.push({x: last_point.x + 1, y: ad})
+          }
+          if (channel.ads.length > 2000) {
+            channel.ads.shift()
+          }
         }
       }
     }

@@ -112,5 +112,5 @@ if __name__ == "__main__":
     import time
     generator = LogoGenerator(epochs=1, mini_batch_size=64, padding_w=151.5, padding_h=84.5, colour=True, channel="teleboy")
     for mini_batch in generator:
-        print(mini_batch[0].shape)
+        print(mini_batch[0][0])
         time.sleep(1)

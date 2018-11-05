@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" >
+  <div ref="container">
     <line-chart
       :data="datacollection"
       :styles="styles"
@@ -26,7 +26,7 @@
         bluePrint: {
           datasets: [
             {
-              borderColor: (this.ads[this.ads.length-1].y) ? this.$color.green : this.$color.red,
+              borderColor: (this.ads[this.ads.length - 1].y) ? this.$color.green : this.$color.red,
               steppedLine: 'after',
               fill: false,
               data: [],
@@ -80,14 +80,16 @@
         this.setAds()
       },
       setAds() {
-        this.croppedAds = this.ads.slice(0)
-        this.limitArray()
+        this.croppedAds = this.ads.slice()
+        if (this.croppedAds.length !== 0) {
+          this.limitArray()
+        }
       },
       limitArray() {
         for (const i in [...Array(this.croppedAds.length).keys()]) {
-          let current_i = this.croppedAds.length-1-i
+          let current_i = this.croppedAds.length - 1 - i
           let current_obj = this.croppedAds[current_i]
-          let last_obj = this.croppedAds[this.croppedAds.length-1]
+          let last_obj = this.croppedAds[this.croppedAds.length - 1]
           if (last_obj.x - current_obj.x > this.limit) {
             this.$set(this.croppedAds, current_i, {x: last_obj.x - this.limit, y: current_obj.y})
             for (const y in [...Array(current_i).keys()]) {
@@ -103,12 +105,17 @@
         this.setAds()
       },
       ads() {
-        if (this.croppedAds[this.croppedAds.length-1].y !== this.ads[this.ads.length-1].y) {
-          this.croppedAds.push(this.ads[this.ads.length - 1])
-        } else {
-          this.$set(this.croppedAds, this.croppedAds.length -1, {x: this.croppedAds[this.croppedAds.length-1].x + 1, y: this.ads[this.ads.length-1].y})
+        if (this.croppedAds.length !== 0) {
+          if (this.croppedAds[this.croppedAds.length - 1].y !== this.ads[this.ads.length - 1].y) {
+            this.croppedAds.push(this.ads[this.ads.length - 1])
+          } else {
+            this.$set(this.croppedAds, this.croppedAds.length - 1, {
+              x: this.croppedAds[this.croppedAds.length - 1].x + 1,
+              y: this.ads[this.ads.length - 1].y
+            })
+          }
+          this.limitArray()
         }
-        this.limitArray()
       }
     }
   }

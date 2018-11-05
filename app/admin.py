@@ -14,6 +14,6 @@ admin.site.register(
 )
 admin.site.register(
     Logo,
-    list_display=["id", "status", "channel"],
-    list_display_links=["id", "status", "channel"],
+    list_display=["id", "status", "timestamp", "channel"],
+    list_display_links=["id", "status", "timestamp", "channel"],
 )

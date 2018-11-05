@@ -40,9 +40,9 @@ async def update_db(channels, last_channel):
     for channel_name in channels.keys():
         last_status = last_channel.get(channel_name, {}).get("ad", None)
         status = channels[channel_name]["ad"]
-        if last_status == status:
+        if last_status == status or last_status is None:
             continue
-        await _update_db(channel_name, status)
+        await _update_db(channel_name, last_status)
 
 
 @database_sync_to_async
@@ -60,12 +60,15 @@ def _update_db(channel_name, status):
 def get_db(room_name, duration):
     result = {}
     for channel in Channel.objects.all():
-        result[channel.name] = []
+        result[channel.name] = {"ads": [], "id": channel.teleboy_id}
         for logo in channel.logo_set.filter(timestamp__gt=int(time.time())-duration):
-            if len(result[channel.name]) == 0:
-                result[channel.name].append(
-                    {"ad": logo.status, "x": -duration, "id": channel.teleboy_id})
-            result[channel.name].append({"ad": logo.status, "x": logo.timestamp-int(time.time()), "id": channel.teleboy_id})
+            if len(result[channel.name]["ads"]) == 0:
+                result[channel.name]["ads"].append({"ad": logo.status, "x": -duration})
+            result[channel.name]["ads"].append({"ad": logo.status, "x": logo.timestamp-int(time.time())})
+
+        if len(result[channel.name]["ads"]) != 0:
+            result[channel.name]["ads"].append({"ad": not result[channel.name]["ads"][-1]["ad"], "x": 0})
+
     return result
 
 
