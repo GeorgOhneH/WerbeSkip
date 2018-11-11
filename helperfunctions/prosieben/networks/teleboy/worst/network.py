@@ -49,5 +49,6 @@ if __name__ == "__main__":
 
     v_x, v_y, t_x, t_y = load_ads_cnn(split=0, full=True, shuffle_set=False, colour=False)
     net.evaluate(t_x, t_y)
+
     # Evaluation of 7830 inputs:
     # loss: 0.44525 | accuracy: 0.75300 | MCC: 0.28583

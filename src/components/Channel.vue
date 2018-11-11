@@ -67,7 +67,7 @@
         return this.channel === undefined && !this.loading;
       },
       ad() {
-        if (this.channel.ads[this.channel.ads.length - 1].y) {
+        if (this.channel.ads.lenght === 0 || this.channel.ads[this.channel.ads.length - 1].y) {
           return 'No Ads'
         }
         return 'Ads'

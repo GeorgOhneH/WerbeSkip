@@ -6,13 +6,23 @@ import requests
 import warnings
 import os
 from deepnet.utils import Generator
+from deepnet import Network
+import cv2
+from helperfunctions.image_processing.image_loader import load_ads_cnn
+from helperfunctions.image_processing.retrieving_images import VideoCapture
+from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, \
+    Flatten
+from deepnet.optimizers import Adam, SGD
+from deepnet.functions.costs import QuadraticCost, CrossEntropyCost
+import time
+import deepdish as dd
 
 
 class LogoGenerator(Generator):
     """
     makes images with and without logo and labels them
     """
-    def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1, channel="zattoo", colour=True):
+    def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1, channel="zattoo", colour=True, buffer_multiplier=2):
         CHANNELS = {
             "zattoo": "prosieben/images/zattoo/important_images/logo32x32.png",
             "teleboy": "prosieben/images/teleboy/important_images/logo17x11.png",
@@ -28,7 +38,7 @@ class LogoGenerator(Generator):
         self.padding_h = int(padding_h * 2)
         self.colour = colour
         self.init()
-        super().__init__(epochs, mini_batch_size, n_workers)
+        super().__init__(epochs, mini_batch_size, n_workers, buffer_multiplier)
 
     def init(self):
         if self.colour:
@@ -110,7 +120,43 @@ class LogoGenerator(Generator):
 
 if __name__ == "__main__":
     import time
-    generator = LogoGenerator(epochs=1, mini_batch_size=64, padding_w=151.5, padding_h=84.5, colour=True, channel="teleboy")
+
+    net = Network()
+
+    net.use_gpu = True
+
+    net.input((1, 180, 320))
+
+    net.add(ConvolutionLayer(n_filter=16, width_filter=12, height_filter=8, stride=4))
+    net.add(BatchNorm())
+    net.add(ReLU())
+    net.add(ConvolutionLayer(n_filter=64, width_filter=6, height_filter=4, stride=1))
+    net.add(BatchNorm())
+    net.add(ReLU())
+    net.add(MaxPoolLayer(width_filter=3, height_filter=3, stride=2))
+    net.add(ConvolutionLayer(n_filter=128, width_filter=4, height_filter=4, stride=1))
+    net.add(BatchNorm())
+    net.add(ReLU())
+    net.add(ConvolutionLayer(n_filter=256, width_filter=3, height_filter=3, stride=2))
+    net.add(BatchNorm())
+    net.add(ReLU())
+    net.add(ConvolutionLayer(n_filter=512, width_filter=3, height_filter=3, stride=1))
+    net.add(BatchNorm())
+    net.add(Dropout(0.8))
+    net.add(Flatten())
+    net.add(FullyConnectedLayer(2048))
+    net.add(BatchNorm())
+    net.add(ReLU())
+    net.add(Dropout(0.8))
+    net.add(FullyConnectedLayer(2))
+    net.add(SoftMax())
+
+    optimizer = Adam(learning_rate=0.01)
+    net.regression(optimizer=optimizer, cost=CrossEntropyCost())
+    net.load("C:\Jetbrains\PyCharm\WerbeSkip\helperfunctions\prosieben\\networks\\teleboy\\teleboy.h5")
+    generator = LogoGenerator(epochs=1, mini_batch_size=1, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy")
     for mini_batch in generator:
-        print(mini_batch[0][0])
+        cv2.imshow("test", mini_batch[0][0][0])
+        print(net.feedforward(mini_batch[0])[0][1], mini_batch[1][0][1])
+        cv2.waitKey(1)
         time.sleep(1)

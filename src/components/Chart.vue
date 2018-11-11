@@ -26,7 +26,7 @@
         bluePrint: {
           datasets: [
             {
-              borderColor: (this.ads[this.ads.length - 1].y) ? this.$color.green : this.$color.red,
+              borderColor: (this.ads.length === 0 || this.ads[this.ads.length - 1].y) ? this.$color.green : this.$color.red,
               steppedLine: 'after',
               fill: false,
               data: [],

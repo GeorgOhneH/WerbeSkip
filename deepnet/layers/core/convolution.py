@@ -1,6 +1,6 @@
 from deepnet.layers import Layer
 from deepnet.utils.im2col import *
-
+import time
 import numpywrapper as np
 
 
@@ -63,9 +63,8 @@ class ConvolutionLayer(Layer):
 
         self.a_col = im2col_indices(a, self.height_filter, self.width_filter, stride=self.stride,
                                     padding_w=self.zero_padding, padding_h=self.zero_padding, padding_value=self.padding_value)
-        weights_row = self.weights.reshape(self.n_filter, -1)
 
-        out = weights_row @ self.a_col + self.biases
+        out = self.weights.reshape(self.n_filter, -1) @ self.a_col + self.biases
         out = out.reshape(self.n_filter, self.height_out, self.width_out, self.mini_batch_size)
         out = out.transpose(3, 0, 1, 2)
         return out

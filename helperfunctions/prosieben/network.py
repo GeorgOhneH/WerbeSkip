@@ -11,7 +11,7 @@ import time
 import deepdish as dd
 
 if __name__ == "__main__":
-    gen = LogoGenerator(epochs=1, mini_batch_size=64, padding_w=151.5, padding_h=84.5, colour=True, channel="teleboy")
+    gen = LogoGenerator(epochs=1, mini_batch_size=1, padding_w=151.5, padding_h=84.5, colour=True, channel="teleboy")
     v_x, v_y, t_x, t_y = load_ads_cnn(split=1, full=True, volume=0.1, colour=True)
 
     net = Network()

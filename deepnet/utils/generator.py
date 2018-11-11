@@ -3,7 +3,8 @@ import numpy as np
 
 
 class Generator(object):
-    def __init__(self, epochs, mini_batch_size, n_workers=1):
+    def __init__(self, epochs, mini_batch_size, n_workers=1, buffer_multiplier=2):
+        self.buffer_multiplier = buffer_multiplier
         self.manager = Manager()
         self.n_workers = n_workers
         self.mini_batch_size = mini_batch_size
@@ -68,7 +69,7 @@ class Generator(object):
                     self.items += mini_batches
                 self.cv_produce.notify_all()
             with self.cv_stop_produce:
-                while self._items_len() > self.mini_batch_size*2:
+                while self._items_len() > self.mini_batch_size*self.buffer_multiplier:
                     self.cv_stop_produce.wait()
 
     def __len__(self):

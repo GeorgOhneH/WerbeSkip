@@ -32,7 +32,7 @@
     props: ['channel'],
     computed: {
       title() {
-        if (this.channel.ads[this.channel.ads.length - 1].y) {
+        if (this.channel.ads.length === 0 || this.channel.ads[this.channel.ads.length - 1].y) {
           return 'No Ads'
         }
         else {
