@@ -74,10 +74,11 @@ class WerbeSkip(object):
         message = {"command": "init", "channel": {"Prosieben": {"id": 354}}, "token": websocket_token}
         await websocket.send(json.dumps(message))
 
-    async def producer_handler(self, websocket, path):
+    async def producer_handler(self, websocket):
         while True:
             message = self.producer()
             await websocket.send(json.dumps(message))
+            asyncio.sleep(0)
 
     def producer(self):
         channel = self.get_prediction()
@@ -90,7 +91,7 @@ class WerbeSkip(object):
         prediction = self.network.feedforward(img)
 
         self.predictions.append(prediction[0, 1])
-        snippet = self.predictions[self.filter_size:]
+        snippet = self.predictions[-self.filter_size:]
         if np.any(np.array(snippet) > 0.9):  # checks if network is sure that it found a logo
             self.filters.append(1)
         else:
@@ -99,7 +100,7 @@ class WerbeSkip(object):
         last_filter = self.filters[-1]
         if np.all(np.array(self.filters[-self.chain_size:]) == last_filter):  # checks if the last values are the same
             if last_filter == 1:
-                if np.mean(self.predictions[self.chain_size:]) > 0.9:
+                if np.mean(self.predictions[-self.chain_size:]) > 0.9:
                     self.result.append(last_filter)
                 else:
                     self.result.append(self.result[-1])
@@ -117,7 +118,7 @@ class WerbeSkip(object):
             self.result.pop(0)
             self.predictions.pop(0)
 
-    async def consumer_handler(self, websocket, path):
+    async def consumer_handler(self, websocket):
         async for message in websocket:
             await self.consumer(message)
 
@@ -127,9 +128,9 @@ class WerbeSkip(object):
         if error:
             print('GOT ERROR FROM SOCKET:', error)
 
-    async def handler(self, websocket, path):
-        consumer_task = asyncio.ensure_future(self.consumer_handler(websocket, path))
-        producer_task = asyncio.ensure_future(self.producer_handler(websocket, path))
+    async def handler(self, websocket):
+        consumer_task = asyncio.ensure_future(self.consumer_handler(websocket))
+        producer_task = asyncio.ensure_future(self.producer_handler(websocket))
         done, pending = await asyncio.wait(
             [consumer_task, producer_task],
             return_when=asyncio.FIRST_COMPLETED,
@@ -142,20 +143,17 @@ class WerbeSkip(object):
             async with websockets.connect('ws://' + self.ip + '/chat/stream/') as websocket:
                 print("connected")
                 await self.init_db(websocket)
-                await self.handler(websocket, path=None)
+                await self.handler(websocket)
         print("starting")
         self.loop = asyncio.get_event_loop()
         self.loop.run_until_complete(hello())
 
 
 if __name__ == "__main__":
-    while True:
         try:
             x = WerbeSkip()
             x.run()
-        except Exception as e:
-            x.loop.stop()
-            x.cap.pipe.kill()
-            x.cap.m3u8_update_thread.stop()
-            x.cap.get_images_thread.stop()
-            warnings.warn("GOT ERROR FROM SCRIPT: {}".format(e))
+        finally:
+            x.cap.pipe.kill()  # not sure if pipe still runs after it shuts down or the programm exits
+            x.cap.m3u8_update_thread.stop()  # stopping gracefully
+            x.cap.get_images_thread.stop()  # stopping gracefully

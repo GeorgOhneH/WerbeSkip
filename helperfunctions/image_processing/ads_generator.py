@@ -8,6 +8,8 @@ from deepnet.optimizers import Adam
 from deepnet.functions.costs import CrossEntropyCost
 
 import cv2
+from collections import deque
+from random import randint
 
 
 class AdsGenerator(object):
@@ -18,7 +20,7 @@ class AdsGenerator(object):
         self.PATH_TO_NET = os.path.join(os.path.split(os.path.dirname(__file__))[0],
                                         "prosieben/networks/teleboy/teleboy.h5")
 
-        self.cap = VideoCapture(channel=354, colour=False, convert_network=True, proxy=False, ffmpeg_log=ffmpeg_log)
+        self.cap = VideoCapture(channel=354, colour=False, convert_network=True, proxy=False, ffmpeg_log=ffmpeg_log, rate_limit=1)
         self.mini_batch_size = mini_batch_size
         self.epochs = epochs
         self.progress = 0
@@ -29,6 +31,12 @@ class AdsGenerator(object):
         self.result = []
         self.predictions = []
         self.imgs = []
+
+        self.cache_logo = deque([])
+        self.cache_logo_future = []
+        self.cache_no_logo = deque([])
+        self.cache_no_logo_future = []
+        self.with_logo = False
 
         self.filter_size = 25
         self.chain_size = 5
@@ -86,12 +94,24 @@ class AdsGenerator(object):
         return 1000
 
     def get_mini_batches(self):
-        self.run()
+        if self.with_logo:
+            while len(self.cache_logo) == 0:
+                self.use_cache()
+                if len(self.cache_logo) == 0 and len(self.cache_logo_future) > 200:
+                    result = self.cache_logo_future.pop(randint(0, len(self.cache_logo_future)-1))
+                    return result
+            result = self.cache_logo.pop()
+        else:
+            while len(self.cache_no_logo) == 0:
+                self.use_cache()
+                if len(self.cache_no_logo) == 0 and len(self.cache_no_logo_future) > 200:
+                    result = self.cache_no_logo_future.pop(randint(0, len(self.cache_no_logo_future)-1))
+                    return result
+            result = self.cache_no_logo.pop()
 
-        while not np.all(np.array(self.result[-self.filter_size:]) == self.result[-1]):
-            self.run()
+        self.with_logo = not self.with_logo
 
-        return self.imgs[-self.filter_size][0, :, 38:-1, 0:269], self.dict_labels[self.result[-self.filter_size]]
+        return result
 
     def run(self):
         img = next(self.cap)
@@ -99,7 +119,7 @@ class AdsGenerator(object):
         prediction = self.network.feedforward(img)
 
         self.predictions.append(prediction[0, 1])
-        snippet = self.predictions[self.filter_size:]
+        snippet = self.predictions[-self.filter_size:]
         if np.any(np.array(snippet) > 0.9):  # checks if network is sure that it found a logo
             self.filters.append(1)
         else:
@@ -108,7 +128,7 @@ class AdsGenerator(object):
         last_filter = self.filters[-1]
         if np.all(np.array(self.filters[-self.chain_size:]) == last_filter):  # checks if the last values are the same
             if last_filter == 1:
-                if np.mean(self.predictions[self.chain_size:]) > 0.9:
+                if np.mean(self.predictions[-self.chain_size:]) > 0.9:
                     self.result.append(last_filter)
                 else:
                     self.result.append(self.result[-1])
@@ -126,9 +146,29 @@ class AdsGenerator(object):
             self.predictions.pop(0)
             self.imgs.pop(0)
 
+    def use_cache(self):
+        self.run()
+        while not np.all(np.array(self.result[-self.filter_size:]) == self.result[-1]):
+            self.run()
+
+        result = (self.imgs[-self.filter_size][0, :, 38:-1, 0:269], self.dict_labels[self.result[-self.filter_size]])
+        if self.result[-self.filter_size]:
+            if len(self.cache_logo) < 2000:
+                self.cache_logo.append(result)
+                for _ in range(2):
+                    if len(self.cache_logo_future) < 2000:
+                        self.cache_logo_future.append(result)
+        else:
+            if len(self.cache_no_logo) < 2000:
+                self.cache_no_logo.append(result)
+                for _ in range(5):
+                    if len(self.cache_no_logo_future) < 2000:
+                        self.cache_no_logo_future.append(result)
+
 
 if __name__ == "__main__":
-    for frame in AdsGenerator(1, 10):
-        cv2.imshow('test', frame[0][0, 0, :, :])
-        cv2.waitKey(1)
-        print(frame[0].shape, frame[1][0])
+    for frame in AdsGenerator(1, 10, ffmpeg_log="info"):
+        i, l = frame
+        for x in range(i.shape[0]):
+            cv2.imshow('test', frame[0][x, 0, :, :])
+            cv2.waitKey(1)

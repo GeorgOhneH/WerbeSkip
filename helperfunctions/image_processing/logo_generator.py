@@ -15,6 +15,7 @@ from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMa
 from deepnet.optimizers import Adam, SGD
 from deepnet.functions.costs import QuadraticCost, CrossEntropyCost
 import time
+import cupy
 import deepdish as dd
 
 
@@ -22,11 +23,13 @@ class LogoGenerator(Generator):
     """
     makes images with and without logo and labels them
     """
-    def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1, channel="zattoo", colour=True, buffer_multiplier=2):
+    def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1,
+                 channel="zattoo", colour=True, buffer_multiplier=2, test_white_square=False):
         CHANNELS = {
             "zattoo": "prosieben/images/zattoo/important_images/logo32x32.png",
             "teleboy": "prosieben/images/teleboy/important_images/logo17x11.png",
         }
+        self.test_white_square = test_white_square
         self.logo = None
         self.part_w = None
         self.part_h = None
@@ -45,6 +48,10 @@ class LogoGenerator(Generator):
             logo = cv2.imread(self.PATH_TO_LOGO)
         else:
             logo = np.expand_dims(cv2.imread(self.PATH_TO_LOGO, 0), axis=2)
+
+        if self.test_white_square:
+            logo = np.zeros_like(logo)
+            logo[:, :11, :] += 255
 
         # normalize image
         self.logo = logo.astype("float32") / 255
@@ -100,15 +107,16 @@ class LogoGenerator(Generator):
             for image_part in image_parts:
                 use_logo = np.random.randint(0, 2)
                 if use_logo:
-                    # sets logo in a random place of the image
-                    pad_h = np.random.randint(0, self.padding_h)
-                    pad_w = np.random.randint(0, self.padding_w)
-                    logo_padding = np.pad(self.logo, [(pad_h, self.padding_h - pad_h),
-                                                      (pad_w, self.padding_w - pad_w),
-                                                      (0, 0)],
-                                          "constant")
-                    # applies screen blend effect
-                    image_part = 1 - (1 - logo_padding) * (1 - image_part)
+                    for _ in range(10):
+                        # sets logo in a random place of the image
+                        pad_h = np.random.randint(0, self.padding_h)
+                        pad_w = np.random.randint(0, self.padding_w)
+                        logo_padding = np.pad(self.logo, [(pad_h, self.padding_h - pad_h),
+                                                          (pad_w, self.padding_w - pad_w),
+                                                          (0, 0)],
+                                              "constant")
+                        # applies screen blend effect
+                        image_part = 1 - (1 - logo_padding) * (1 - image_part)
                 images = np.expand_dims(np.transpose(image_part, (2, 0, 1)), axis=0)
                 labels = np.array(self.dict_labels[use_logo]).reshape((1, -1))
                 mini_batches.append((images, labels))
@@ -154,9 +162,18 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("C:\Jetbrains\PyCharm\WerbeSkip\helperfunctions\prosieben\\networks\\teleboy\\teleboy.h5")
-    generator = LogoGenerator(epochs=1, mini_batch_size=1, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy")
+    generator = LogoGenerator(epochs=1, mini_batch_size=100, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy", test_white_square=False)
+    tp = 0
+    tn = 0
+    fp = 0
+    fn = 0
+    losses = []
     for mini_batch in generator:
-        cv2.imshow("test", mini_batch[0][0][0])
-        print(net.feedforward(mini_batch[0])[0][1], mini_batch[1][0][1])
-        cv2.waitKey(1)
-        time.sleep(1)
+        x, y = cupy.asnumpy(net.feedforward(mini_batch[0])), cupy.asnumpy(mini_batch[1])
+        losses.append(float(net._cost.function(cupy.asarray(x), cupy.asarray(y))))
+        a = x.argmax(axis=1) + y.argmax(axis=1) * 2
+        tp += int(np.count_nonzero(a == 3))  # True Positive
+        tn += int(np.count_nonzero(a == 0))  # True Negative
+        fp += int(np.count_nonzero(a == 1))  # False Positive
+        fn += int(np.count_nonzero(a == 2))  # False Negative
+        print(tp, tn, fp, fn, np.mean(losses))

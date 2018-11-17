@@ -10,6 +10,12 @@ helperfunctions/prosieben/networks/example2/*
 helperfunctions/prosieben/networks/no_logo/*
 helperfunctions/prosieben/networks/no_logo2/*
 helperfunctions/prosieben/networks/prediction1/*
+helperfunctions/prosieben/networks/teleboy/test/*
+helperfunctions/prosieben/networks/teleboy/test2/*
+helperfunctions/prosieben/networks/teleboy/worst/*
+helperfunctions/prosieben/networks/teleboy/wrong/*
+helperfunctions/prosieben/networks/teleboy/mean_points.h5
+helperfunctions/prosieben/networks/teleboy/mean_points_srf.h5
 
 db.sqlite3
 dump.rdb

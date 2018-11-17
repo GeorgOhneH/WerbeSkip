@@ -99,7 +99,7 @@ Zum Beispiel könnte man Schauen ob der Bereich, wo das Logo sein sollte, heller
 \end{figure}
 
 Ein Problem des Logo's ist, dass es nicht einfach über das normale Bild eingespielt wird, sondern man kann leicht hindurch sehen (siehe Abbildung~\ref{fig:logo2}a),
-dadurch kann man das Logo nicht an gleichen Pixel erkennen.
+dadurch kann das Logo nicht an gleichen Pixel erkannt werden.
 Die grösste Schwierigkeit ist aber, dass bei manchen Hintergründen, vor allem bei Weissen, das Logo abgeschnitten oder kaum bis gar nicht sichtbar ist.
 Bei Abbildung~\ref{fig:logo2} (b) ist das Logo abgeschnitten, bei (c) ist es kaum sichtbar und bei (d) ist komplett verschwunden.
 
@@ -120,7 +120,7 @@ Ein neuronales Netzwerk hingegen löst das Probleme ziemlich elegant.
 
 Eine weiter interessante Frage auf die eingegangen wird ist, ob ein neuronales Netzwerk auch ohne ein Logo Werbung erkennen kann.
 
-\section{Neuronales Netzwerk}
+\section{Einschränkung}
 Neuronale Netzwerke sind ein sehr umfangreiches Thema und deswegen begrenze ich mich auf Netzwerke die für die Bilderkennung entscheidend sind.
 Darunter sind klassische feedforward und convolution Netzwerke.
 Auf recurrent neuronale Netzwerke\footnote{Ein neuronales Netzwerk, das geeignet für Sequenzen ist} wird nicht näher eingegangen.
@@ -483,7 +483,7 @@ Um die Übersicht zu behalten wird eine Zwischenmenge $\delta^l_j$ eingeführt, 
 Der Fehler sagt aus wie gut oder schlecht ein Neuron ist und ist definiert als:
 \[\delta^l_j = \frac{\partial C}{\partial z^l_j}\]
 wobei $z^l_j$ die Ausgabe von einem Neuron ohne die Aktivierungsfunktion ist, also $a^l_j = f(z^l_j)$.
-Mit dieser Definition kann man den Fehler in der letzten Schicht $L$ bestimmen:
+Mit dieser Definition kann den Fehler in der letzten Schicht $L$ bestimmen werden:
 \[\delta^L_j = \frac{\partial C}{\partial a^L_j}f^\prime(z^L_j)\]
 %Der linke Teil $\frac{\partial C}{\partial a^L_j}$ gibt an wie schnell sich die Kosten in Abhängigkeit des $j^{ten}$ ausgang Neuron ändern.
 %Der rechte Teil $f^\prime(z^L_j)$ zeigt wie schnell sich die Aktivierungsfunktion $f$ ändert bei $z^L_j$
@@ -493,7 +493,7 @@ der die Ableitung $\frac{\partial C}{\partial a^L_j} = 2(a^L_j - y_j)$ ist und k
 Bei der Berechnung des Fehlers $\delta^l_j$ Abhängig von $\delta^{l+1}_j$ bekommt man:
 \[\delta^l_j = \sum_k w^{l+1}_{j,k}\delta^{l+1}_k f^\prime(z^l_j)\]
 Beachte, dass bei $w^{l+1}_{j,k}$ das $j$ und $k$ vertauscht sind, so dass man durch alle Neuronen der $(l+1)^{ten}$ Schicht durch iteriert.
-Mit dieser Gleichung kann man jeden Fehler von jeder Schicht berechnen, indem man von hinten durch das Netzwerk durchläuft.
+Mit dieser Gleichung kann jeden Fehler von jeder Schicht berechnet werden, indem man von hinten durch das Netzwerk durchläuft.
 Ähnlich wie wenn man sich beim Netzwerk nach vorne bewegt.
 
 Die Gleichung für die Änderungsrate der Kosten in Bezug auf ein Bias im Netzwerk ist genau der Fehler:
@@ -833,9 +833,6 @@ Der Grund warum die Filter nicht alle das gleiche Merkmal erkennen, liegt an der
     \label{fig:conv4}
 \end{figure}
 
-Die feature map kann noch grösser gemacht werden, indem ein Rand von Neuronen, mit dem Wert 0, hinzugefügt wird.\cite{conv}
-Das führt dazu, dass sich der Filter über die normale feature map hinweg bewegt, was in machen Fällen erwünscht ist.
-
 \subsection{Max Pooling}
 Neben den Convolution Schichten gibt es auch die maxpool Schicht\footnote{Es gibt noch andere pooling Schichten, die aber in dieser Arbeit nicht verwendet wurden},
 die Idee vom Pooling ist, dass es die Informationen zusammenfasst.
@@ -1009,7 +1006,7 @@ Die Eingaben für ein Netzwerk werden normalisiert,
 damit die Wahl der learning rate nicht auch noch von den Eingaben abhängig ist.
 Batch Normalization führt diese Idee weiter und normalisiert nicht die Eingabe,
 sondern die Ausgabe der versteckten Schichten
-so dass in den versteckten Schichten extrem hohen Werte vermieden werden.\cite{batchnorm}
+so dass in den versteckten Schichten extreme Werte vermieden werden.\cite{batchnorm}
 Ähnlich wie bei Dropout bringt Batch Normalization eine leichte Störung in das Netzwerk,
 welches gegen overfitting hilft\cite{batchnorm}
 
@@ -1022,9 +1019,9 @@ die Ausgabe eines Neurones mit dem Mittelwert der Eingaben subtrahieren und mit 
 \end{gather*}
 wobei $x_i$ die $i^{te}$ Eingabe ist.
 
-Ausserdem wird danach noch mit einem bestimmten Wert $\gamma_i$ multipliziert und einem bestimmten Wert $beta_i$ addiert.
-\[y_i = \gamma * \hat{x_i} + \beta \]
-wobei $\gamma$ und $\beta$ Parameter sind die beim Netzwerk trainiert werden, wie ein normales Gewicht.\cite{batchnorm}
+Ausserdem wird danach noch mit einem bestimmten Wert $\gamma_i$ multipliziert und einem bestimmten Wert $\beta_i$ addiert.
+\[y_i = \gamma_i * \hat{x_i} + \beta_i \]
+wobei $\gamma_i$ und $\beta_i$ Parameter sind die beim Netzwerk trainiert werden, wie ein normales Gewicht.\cite{batchnorm}
 Die Parameter werden benutzt um dem Netzwerk die Option zu geben die normalisierung zu verändern oder sogar rückgängig zu machen, wenn es meint,
 dass es ohne besser funktioniert.\cite{batchnorm_paper}
 
@@ -1062,7 +1059,7 @@ Das ist auch einfach zu erklären.
 Wenn man für $a = 1$ (Weiss) in die Formel oben einsetzt erhält man: $f(1, b) = 1$, was bedeutet, dass das ganze Bild nun Weiss ist und das Logo nicht mehr erkennbar ist.
 Analog dazu, wenn man für $a = 0$ (Schwarz) einsetzt erhält man: $f(0, b) = b$, was bedeutet, dass das Logo, bei einem schwarzem Hintergrund,
 sich im ursprünglichen Zustand befindet.
-Aus dem Grund kann man das Logo komplett herausfiltern und wieder verwenden wenn man das Logo mit einem schwarzen Hintergrund findet (siehe Abbildung~\ref{fig:logo5}f).
+Aus dem Grund kann das Logo komplett herausfiltert werden und wieder verwenden wenn man das Logo mit einem schwarzen Hintergrund findet (siehe Abbildung~\ref{fig:logo5}f).
 
 \section{Werbung erkennen mit Logo}
 Um ein Netzwerk zu trainieren braucht man sehr viele Daten, die schon kategorisiert sind.
@@ -1095,7 +1092,7 @@ Ein kleineres Bild, würde das Logo noch kleiner machen und kaum noch erkennbar 
     \label{fig:logo6}%
 \end{figure}
 
-Mit diesen selber generierten Bildern kann man ohne Probleme ein neuronales Netzwerk trainieren, welches das Logo erkennen kann.
+Mit diesen selber generierten Bildern kann ein neuronales Netzwerk trainiert werden, welches das Logo erkennen kann.
 \section{Werbung erkennen ohne Logo}
 Um Werbung zu erkennen ohne ein Logo braucht es die richtige Senderbilder, da Werbebilder nicht generiert werden können.
 Da ich die Senderbilder nicht selber kategorisieren will benutze ich das neuronale Netzwerk das mithilfe des Logo die Werbung erkennt, um die Senderbilder zu kategorisieren.
@@ -1188,19 +1185,20 @@ so dass die Verbindung mit dem Server offen bleibt und die Seite immer auf dem a
 
 Für das Frontend wird VueJs und VuetifyJS verwendet und es ist als eine Single Page Application implementiert.
 
-\chapter{Ergebnisse}
+\chapter{Ergebnisse und Auswertung}
+Alle berechnungen wurden auf einem PC mit einer Intel i5-4690 CPU (3.50GHz) und einer NVIDIA GeForce RTX 2070 GPU (8 GB) durchgeführt.
 \section{Auswertung}
-\subsection{Datensatz}
+\subsection{Datensatz}\label{subsec:datensatz}
 Um die Leistung der Netzwerke richtig zu Bewerten, wird ein selbst erstellter Datensatz verwendet,
 welches aus insgesamt 7830 Prosieben Bildern besteht.
 Aus den 7830 Bildern sind 4495 Bilder mit Logo und ohne Rand, 813 mit Logo und einem oberen und untern schwarzen Rand,
 813 mit Logo und einem schwarzen Rand auf beiden Seiten und 2095 Bilder ohne Logo und ohne Rand.
-Ausserdem enthält der Datensatz noch 400 Bilder, die nicht das klassische Prosieben Logo enthält (siehe Abbildung~\ref{fig:logo_spec}),
-welche exkludiert sind vom Datensatz.
+Ausserdem enthält der Datensatz noch 400 Bilder, die ein spezielles Prosieben Logo auf dem Bild haben (siehe Abbildung~\ref{fig:logo_spec})
+und normalerweise exkludiert sind, ausser sie werden explizit erwähnt.
 \begin{figure}[h]%
     \centering
     \includegraphics[width=7cm]{assets/images/logo_special.png}%
-    \caption{Kein klassisches Prosieben Logo}%
+    \caption{Speziellen Prosieben Logo}%
     \label{fig:logo_spec}%
 \end{figure}
 \subsection{Methoden}
@@ -1242,37 +1240,133 @@ FP die Anzahl der falsch positiven ist und FN die Anzahl der falsch negativen is
 
 \section{Neuronales Netzwerk mithilfe des Logo's}
 \subsection{Netzwerk Architektur}
-Wenn man die genaue Architektur von einem Netzwerk bestimmen will, ist dass grösste Problem,
-dass es keine guten Regeln gibt an die man sich halten könnte.
+Wenn man die genaue Architektur von einem Netzwerk bestimmen will, ist das oft nicht ganz einfach,
+da es keine Regeln gibt an die man sich halten könnte.
 
-Die benutze Architektur orientiert sich am AlexNet\cite{alex}, welches auch nacheinader convolution Schichten
+Die benutze Architektur orientiert sich am AlexNet\cite{alex}.
+Es benutzt wie das AlexNet 5 convolution Schichten und benutzt nach jeder convolution und völlig verbundene
+Schicht wird RelU angewendet.
+Maxpooling wird weniger häufig angewendet, da es Heute nicht mehr so üblich ist.\cite{conv}
+Es werden relativ kleine Werte für Dropout genommen, da genug Daten vorhanden sind und dadurch overfitting kein so grosses Problem darstellt.
+Ausserdem wird in jeder Schicht Batch Normalization verwedent, nach dem Beispiel von ResNet.\cite{conv}
+
+Die letzte Schicht beinhaltet 2 Neuronen und die softmax Aktivierungsfunktion.
+Der erste steht für kein Logo, wobei 0 für Falsch steht und 1 für Wahr.
+Analog dazu steht der zweite Neuron für das Logo.
+Durch diese zwei Neuronen und der softmax Aktivierungsfunktion, kann die Ausgabe als Wahrscheinlichkeitsverteilung verstanden werden
+
+Das neuronale Netzwerk wurde mithilfe des \textit{Adam} Optimierer\cite{adam} und einer learning rate von 0.001 trainiert.
+Der Adam Optimierer wird benutzt, da es die learning rate adaptiv anpasst und er als einer der besseren Optimierer gilt\cite{adam}.
+Die learning rate sollte am Anfang vom training relativ gross sein und am Schluss eher klein, da man am Anfang schnell in die Nähe eines Minimums kommen will
+und am Schluss muss man langsam in das Minimum hineinkommt.
+Theoretisch könnte, während dem training, die learning rate auch Manuel anpassen werden, aber der Optimierer macht dies oft einfacher und besser.
+
+Für die Kostenfunktion wird nicht wie im Kapitel~\ref{ch:neuronalesNetzwerk} die Quadratische genommen,
+sondern die \textit{cross-entropy}\cite{softmax}, welche mit dem gleichen Prinzip funktioniert wie die Quadratische, mit dem Unterschied,
+dass mit der softmax Aktivierungsfunktion sich viel mathematisch kürzt und die implementierung vereinfacht\cite{softmax}.
+
+\subsubsection{Genau Architektur}
+
 \begin{itemize}
     \setlength\itemsep{0cm}
     \setlength{\parskip}{0pt}
     \setlength{\parsep}{0pt}
-    \item  Convolution, Filter: 16, Filterbreite: 12, Filterhöhe: 8, Schrittweite 4
+    \item Convolution, Anzahl Filter: 16, Filterbreite: 12, Filterhöhe: 8, Schrittweite: 4
     \item BatchNorm
     \item ReLU
-    \item Convolution, Filter: 64, Filterbreite: 6, Filterhöhe: 4, Schrittweite 1, Neuronenrand 2
+    \item Convolution, Anzahl Filter: 64, Filterbreite: 6, Filterhöhe: 4, Schrittweite: 1
     \item BatchNorm
     \item ReLU
-    \item Maxpool, Filterbreite: 3 Filterhöhe: 3, Schrittweite 1
-    \item Convolution, Filter: 128, Filterbreite: 4, Filterhöhe: 4, Schrittweite 1
+    \item Maxpool, Filterbreite: 3 Filterhöhe: 3, Schrittweite 2
+    \item Convolution, Anzahl Filter: 128, Filterbreite: 4, Filterhöhe: 4, Schrittweite: 1
     \item BatchNorm
     \item ReLU
-    \item Convolution, Filter: 128, Filterbreite: 3, Filterhöhe: 3, Schrittweite 2
+    \item Convolution, Anzahl Filter: 256, Filterbreite: 3, Filterhöhe: 3, Schrittweite: 2
     \item BatchNorm
     \item ReLU
-    \item Convolution, Filter: 256, Filterbreite: 3, Filterhöhe: 3, Schrittweite 1
+    \item Convolution, Anzahl Filter: 512, Filterbreite: 3, Filterhöhe: 3, Schrittweite: 1
     \item BatchNorm
-    \item Dropout 25\%
-    \item Völlig verbundene Schicht, Neuronen: 512
+    \item Dropout 20\%
+    \item Völlig verbundene Schicht, Neuronen: 2048
     \item BatchNorm
     \item ReLU
-    \item Dropout 50\%
+    \item Dropout 20\%
     \item Völlig verbundene Schicht, Neuronen: 2
     \item Softmax
 \end{itemize}
+
+\subsection{Training}
+Das training des Netzwerks wurde nach ungefähr 17 Stunden abgebrochen, da es sich kaum noch verbessert hat.
+Insgesamt wurden 2'540'000 verschiedene Bilder verwendet.
+Auf Abbildung~\ref{fig:loss1}a,b wird der loss und der MCC,
+des Netzwerk im Verlaufe des Trainings, dabei ist zu beachten,
+dass der Mittelwert genommen wurde, so dass auf der Abbildung noch etwas zu erkennen ist, da die Werte sonst zu extrem wären.
+\begin{figure}[h]%
+    \centering
+    \subfloat[][loss]{{\includegraphics[width=7.5cm]{assets/images/logo_loss.pdf} }}%
+    \qquad
+    \subfloat[][MCC]{{\includegraphics[width=7.5cm]{assets/images/logo_mcc.pdf} }}%
+    \caption{loss und MCC im Verlaufe des Trainings}%
+    \label{fig:loss1}%
+\end{figure}
+\subsection{Auswertung}
+Wenn man 71'800 selbst generierte Bilder mithilfe des neuronalen Netzwerkes kategorisiert erhält man durchschnittich einen loss von 0.139,
+eine Genauigkeit von 93.9\% und ein MCC von 88.1\%.
+Mit dem selbst erstellten Datensatz, der in Abschnitt~\ref{subsec:datensatz} erwähnt wurde,
+erhält man einen loss von 0.22, eine Genauigkeit von 91.6\% einen MCC von 80.2\%.
+Der loss und die Genauigkeit, des Datensatzes und der selbst generierten Bilder sind nicht miteinander vergleichbar,
+da die Verteilung der Bilder anders sind.
+Die selbst generierte Bilder haben zu 50\% kein Logo und zu 50\% ein Logo.
+Der Datensatz hingegen hat zu 27\% kein Logo und zu 73\% ein Logo.
+
+Der Datensatz schneidet beim MCC um 8\% schlechter ab, als der selbst generierten Bilder.
+Das könnte daran liegen, dass im Fernsehen oft noch neben Logo auch andere Einblendungen haben (siehe Abbildung~\ref{fig:einblenden}).
+\begin{figure}[h]%
+    \centering
+    \includegraphics[width=7cm]{assets/images/tv_einblenden.png}%
+    \caption{Einblendungen im Fernsehen}%
+    \label{fig:einblenden}%
+\end{figure}
+Aber es ist nicht klar, dass es an den Einblendungen liegt, es könnte genau so gut daran liegen,
+dass im Fernsehen öfter weisse Bilder vorkommen und das Netzwerk kann die weissen Bilder schwerer kategorisieren,
+da es manchmal unmöglich ist das Logo zu erkennen.
+Genau das ist ein grosses Problem bei einem neuronalen Netzwerk.
+Man hat keine Ahnung was das Netzwerk wirklich macht und wie es genau funktioniert.
+
+Wenn man vom Datensatz nur die Bilder ohne Logo und die Bilder mit dem speziellen Logo (siehe Abbildung~\ref{fig:white_square}a) auswertet,
+erhält man einen MCC von 78.2\%, welcher nur 2\% unter dem Wert von den normalen Bildern ist.
+Das ist ziemlich überraschend, da das Netzwerk diese Art von Logo noch nie gesehen hat und trotzdem so gut abschneidet.
+Das spezielle Logo ist komplett Weiss und ein bisschen kleiner als das Normale.
+Man könnte Meinen, dass das Netzwerk nicht unbedingt das Logo erkennt,
+sondern nur eine kleine weissen Stelle auf dem Bild (siehe Abbildung~\ref{fig:white_square}b).
+
+\begin{figure}[h]%
+    \centering
+    \subfloat[][speziellen Prosieben Logo]{{\includegraphics[width=7.5cm]{assets/images/logo_special.png} }}%
+    \qquad
+    \subfloat[][generiertes Bild mit weisser Stelle]{{\includegraphics[width=7.5cm]{assets/images/white_square.png} }}%
+    \caption{Vergleich von speziellen Logo und einer weissen Stelle}
+    \label{fig:white_square}%
+\end{figure}
+
+Wenn nun diese Bilder mit einer kleinen weissen Stelle (11x11 Pixel) generiert werden und durch das Netzwerk gelassen werden (auch mit Bildern ohne weisse Stelle),
+erhält man mit insgesamt 56600 Bildern einen MCC von 73.3\%.
+Dieser Wert ist 15\% schlechter als wenn das normale Logo mit generierten Bildern verwendet wird.
+Das zeigt sehr schön, dass nicht nur die Helligkeit der Pixel entscheidend ist sondern auch die Form.
+
+\section{Neuronales Netzwerk ohne das Logo}
+\subsection{Daten beschaffung}
+Um die Bilder von Prosieben zu kategorisieren wird das vorige neuronale Netzwerk,
+welches das Logo erkennen kann, verwendet.
+Wenn die Vorhersagen des Netzwerks in einem Zeitraum in einem Diagramm grafisch dargestellt wird (siehe Abbildung)
+
+\begin{figure}[h]%
+    \centering
+    \includegraphics[width=7cm]{assets/images/tv_einblenden.png}%
+    \caption{Einblendungen im Fernsehen}%
+    \label{fig:einblenden}%
+\end{figure}
+
 
 \chapter{Reflexion}
 \label{ch:reflexion}
@@ -1288,7 +1382,7 @@ Die benutze Architektur orientiert sich am AlexNet\cite{alex}, welches auch nach
 \phantomsection
 \addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
 \listoffigures
-Abbildung aus dem Kapitel~\ref{ch:neuronalesNetzwerk} sind von Michael A. Nielsen's Buch\cite{neuralbook} inspiriert.
+Abbildungen aus dem Kapitel~\ref{ch:neuronalesNetzwerk} sind von Michael A. Nielsen's Buch\cite{neuralbook} inspiriert.
 
 \appendix
 

@@ -1,8 +1,9 @@
 import requests
 import json
-import cv2
+import random
 import numpy as np
 import time
+import cv2
 import os
 import subprocess as sp
 import threading
@@ -25,12 +26,14 @@ class VideoCapture(object):
             self.proxies = {}
 
         self.pipe = None
+        self.hash = str(random.randint(1e10, 1e11))
         self.colour = colour
         self.ffmpeg_log = ffmpeg_log
         self.depth = 3 if colour else 1
         self.images = queue.Queue()
         self.m3u8_update_thread = None
         self.get_images_thread = None
+        self.pipe_restart = None
         self.last_m3u8 = None
         self.convert_network = convert_network
         self.rate_limit = rate_limit  # frames per second
@@ -40,7 +43,7 @@ class VideoCapture(object):
         self.last_read = time.time()
 
         self.PATH_TO_CACHE = os.path.join(os.path.dirname(__file__), "m3u8_cache")
-        self.M3U8_NAME = "index.m3u8"
+        self.M3U8_NAME = self.hash + "index.m3u8"
         self.ts_files = []
         self.init()
 
@@ -76,6 +79,16 @@ class VideoCapture(object):
             if ".ts" in file:
                 os.remove(os.path.join(self.PATH_TO_CACHE, file))
 
+        self.start_pipe()
+
+        self.m3u8_update_thread = M3U8Updater(self)
+        self.get_images_thread = GetImages(self)
+        self.pipe_restart = PipeRestart(self)
+        self.m3u8_update_thread.start()
+        self.get_images_thread.start()
+        self.pipe_restart.start()
+
+    def start_pipe(self):
         self.update_m3u8_file()
 
         if self.colour:
@@ -95,11 +108,7 @@ class VideoCapture(object):
                    '-r', str(self.rate_limit),
                    '-']
 
-        self.pipe = sp.Popen(cmd_out, bufsize=10 ** 8, stdout=sp.PIPE, cwd=self.PATH_TO_CACHE)
-        self.m3u8_update_thread = M3U8Updater(m3u8_function=self.update_m3u8_file)
-        self.get_images_thread = GetImages(self.images, self.rate_limit, self.pipe, self.depth)
-        self.m3u8_update_thread.start()
-        self.get_images_thread.start()
+        self.pipe = sp.Popen(cmd_out, bufsize=10 ** 8, stdout=sp.PIPE, stderr=sp.PIPE, cwd=self.PATH_TO_CACHE)
 
     def update_m3u8_file(self):
         text = requests.get(self.cap_url, proxies=self.proxies).text
@@ -111,7 +120,7 @@ class VideoCapture(object):
                     self.ts_files.remove(file_name)
             self.last_m3u8 = text
             for file_name in text.splitlines():
-                path_to_ts_file = os.path.join(self.PATH_TO_CACHE, file_name)
+                path_to_ts_file = os.path.join(self.PATH_TO_CACHE, self.hash + file_name)
                 if ".ts" in file_name and not os.path.exists(path_to_ts_file):
                     self.ts_files.append(path_to_ts_file)
                     file_url = self.cap_url[:-10] + file_name
@@ -121,8 +130,11 @@ class VideoCapture(object):
 
             new_text = ""
             for i, line in enumerate(text.splitlines()):
-                if ".ts" in line:
-                    line = os.path.join(self.PATH_TO_CACHE, line)
+                if "#EXT-X-MEDIA-SEQUENCE:" in line:
+                    key, value = line.split(":")
+                    line = key + ":" + self.hash + value
+                elif ".ts" in line:
+                    line = os.path.join(self.PATH_TO_CACHE, self.hash + line)
                 new_text += line + "\n"
             with open(os.path.join(self.PATH_TO_CACHE, self.M3U8_NAME), mode="w") as f:
                 f.write(new_text)
@@ -141,21 +153,10 @@ class VideoCapture(object):
         return frame
 
 
-class M3U8Updater(threading.Thread):
-    def __init__(self, m3u8_function):
+class StopThread(threading.Thread):
+    def __init__(self):
         super().__init__(daemon=True)
-        self.m3u8_function = m3u8_function
         self._stop_event = threading.Event()
-
-    def run(self):
-        while True:
-            try:
-                time.sleep(0.5)
-                self.m3u8_function()
-                if self.stopped():
-                    break
-            except Exception as e:
-                print("GOT EXCEPTION IN M3U8:", e)
 
     def stop(self):
         self._stop_event.set()
@@ -164,35 +165,64 @@ class M3U8Updater(threading.Thread):
         return self._stop_event.is_set()
 
 
-class GetImages(threading.Thread):
-    def __init__(self, images, rate_limit, pipe, depth):
-        super().__init__(daemon=True)
-        self.depth = depth
-        self.pipe = pipe
-        self.rate_limit = rate_limit
-        self.images = images
-        self._stop_event = threading.Event()
+class PipeRestart(StopThread):
+    def __init__(self, cap):
+        super().__init__()
+        self.cap = cap
 
     def run(self):
         while True:
-            try:
-                qsize = self.images.qsize()
-                if qsize > 5 * self.rate_limit:
-                    for _ in range(qsize - 3*self.rate_limit):
-                        self.images.get()
+            err = self.cap.pipe.stderr.read(1).decode("UTF-8")
+            while err[-1] != "\n":
+                err += self.cap.pipe.stderr.read(1).decode("UTF-8")
+            if err:
+                print("GOT ERROR: {}".format(err))
+                self.restart_pipe()
+            time.sleep(300)
+            if self.stopped():
+                break
 
-                raw_image = self.pipe.stdout.read(180 * 320 * self.depth)
-                if raw_image:
-                    self.images.put(raw_image)
+    def restart_pipe(self):
+        print("pipe killed")
+        self.cap.pipe.kill()
+        print("starting pipe")
+        self.cap.start_pipe()
+        print("startet")
 
-                if self.stopped():
-                    break
-            except Exception as e:
-                print("GOT EXCEPTION IN PIPE:", e)
 
-    def stop(self):
-        self._stop_event.set()
+class M3U8Updater(StopThread):
+    def __init__(self, cap):
+        super().__init__()
+        self.cap = cap
 
-    def stopped(self):
-        return self._stop_event.is_set()
+    def run(self):
+        while True:
+            time.sleep(0.5)
+            self.cap.update_m3u8_file()
+            if self.stopped():
+                break
+
+
+class GetImages(StopThread):
+    def __init__(self, cap):
+        super().__init__()
+        self.cap = cap
+
+    def run(self):
+        while True:
+            qsize = self.cap.images.qsize()
+            if qsize > 5 * self.cap.rate_limit:
+                for _ in range(qsize - 3*self.cap.rate_limit):
+                    self.cap.images.get()
+
+            raw_image = self.cap.pipe.stdout.read(180 * 320 * self.cap.depth)
+            if raw_image:
+                self.cap.images.put(raw_image)
+
+            if self.stopped():
+                break
+
+
+
+
 

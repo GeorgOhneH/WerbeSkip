@@ -50,22 +50,23 @@ if __name__ == "__main__":
     net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("teleboy.h5")
     net.print_infos()
+
     # Number of inputs: 2540000, Training time: 69479
 
     # v_x, v_y, t_x, t_y = load_ads_cnn(split=0, full=True, shuffle_set=False, colour=False)
-    # net.save_wrong_predictions(t_x, t_y, "wrong", (1, 180, 320))
     # net.evaluate(t_x, t_y)
     # Evaluation of 7830 inputs:
     # loss: 0.22138 | accuracy: 0.91609 | MCC: 0.80169
+
     result = []
     x = 0
     for img in VideoCapture(channel=354, colour=False, rate_limit=1):
-        cv2.imshow("image", img)
+        # cv2.imshow("image", img)
         img = np.expand_dims(img.transpose(2, 0, 1), axis=0)
         value = net.feedforward(img)[0, 1]
         result.append(value)
         if x % 1000 == 0:
-            dd.io.save("mean_points.h5", result)
-        print("\r{}".format(value), end="")
-        cv2.waitKey(1)
+            dd.io.save("mean_points2.h5", result)
+        print("{}".format(value))
+        # cv2.waitKey(1)
         x += 1
