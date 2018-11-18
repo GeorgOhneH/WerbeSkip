@@ -14,6 +14,8 @@ helperfunctions/prosieben/networks/example2/wrong_predictions
 thoughts/arbeit/auxil/
 thoughts/arbeit/out/Maturaarbeit.synctex.gz
 settings_secret.py
+helperfunctions/prosieben/networks/teleboy/teleboy.h5
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

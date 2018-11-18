@@ -116,7 +116,10 @@ class VideoCapture(object):
             if len(self.ts_files) > 5:
                 for file_name in self.ts_files[:-4]:
                     if os.path.exists(file_name):
-                        os.remove(file_name)
+                        try:
+                            os.remove(file_name)
+                        except FileNotFoundError:
+                            pass
                     self.ts_files.remove(file_name)
             self.last_m3u8 = text
             for file_name in text.splitlines():

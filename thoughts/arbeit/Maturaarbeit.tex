@@ -912,9 +912,9 @@ allerdings müssen die Gleichungen der backpropagation für die Convolution und 
 Um ein Netzwerk zu trainieren hat man meisten nur eine endliche Anzahl an Daten an denen das Netzwerk lernen kann.
 Aus dem Grund werden die gleichen Daten mehrmals zum trainieren verwendet.
 Dadurch kann ein Problem entstehen.
-Mit der Zeit kennt das Netzwerk die trainings Daten so gut, dass es die trainings Daten einfach auswendig lernt
+Mit der Zeit kennt das Netzwerk die Trainingsdaten so gut, dass es die Trainingsdaten einfach auswendig lernt
 und die Daten nicht mehr an ihren gemeinsamen Merkmalen und zusammenhängen erkennt,
-sondern an ihren ganz spezifischen Merkmalen die nur für die trainings Daten zutreffen,
+sondern an ihren ganz spezifischen Merkmalen die nur für die Trainingsdaten zutreffen,
 so das unbekannte Daten nicht mehr richtig erkannt werden.
 Dieses Phänomen ist als \textit{overfitting} bekannt.
 \subsection{Dropout}
@@ -1029,9 +1029,9 @@ dass es ohne besser funktioniert.\cite{batchnorm_paper}
 \label{ch:lösungsansatz}
 \section{Logo}
 Um das Logo zu erkennen muss man zuerst verstehen wie es auf das Bild gelangt.
-Man könnte meinen das Logo wird einfach über das ander Bild gelegt wird,
+Man könnte meinen, dass das Logo einfach über das ander Bild gelegt wird,
 aber das Logo wird eingespielt indem es mit dem Bild negativ multipliziert wird,
-d.h die das Bild und das Logo werden invertiert, multipliziert und dann wieder invertiert.\cite{wiki:blend}
+d.h das Bild und das Logo werden invertiert, multipliziert und dann wieder invertiert.\cite{wiki:blend}
 \[f(a,b) = 1 - (1-a)(1-b)\]
 wobei $a$ ein Bild ist und $b$ das Logo und die Werte von jedem Pixel von 0 (Schwarz) bis 1 (Weiss) gehen.
 
@@ -1059,45 +1059,46 @@ Das ist auch einfach zu erklären.
 Wenn man für $a = 1$ (Weiss) in die Formel oben einsetzt erhält man: $f(1, b) = 1$, was bedeutet, dass das ganze Bild nun Weiss ist und das Logo nicht mehr erkennbar ist.
 Analog dazu, wenn man für $a = 0$ (Schwarz) einsetzt erhält man: $f(0, b) = b$, was bedeutet, dass das Logo, bei einem schwarzem Hintergrund,
 sich im ursprünglichen Zustand befindet.
-Aus dem Grund kann das Logo komplett herausfiltert werden und wieder verwenden wenn man das Logo mit einem schwarzen Hintergrund findet (siehe Abbildung~\ref{fig:logo5}f).
+Aus dem Grund kann das Logo komplett herausfiltert werden und wieder verwenden, wenn das Logo auf einem schwarzen Hintergrund ist (siehe Abbildung~\ref{fig:logo5}f).
 
 \section{Werbung erkennen mit Logo}
-Um ein Netzwerk zu trainieren braucht man sehr viele Daten, die schon kategorisiert sind.
-Eine Option, diese zu beschaffen, wäre die Bilder vom Sender selber zu kategorisiert, das Problem dabei, ist das es eine sehr lange und sehr langweilig arbeit wäre,
-da man um die millionen Bilder kategorisieren müsste.
+Um ein Netzwerk zu trainieren braucht es sehr viele Daten, die kategorisiert sind.
+Eine Möglichkeit, diese zu beschaffen, wäre die Bilder von Hand zu kategorisiert, das Problem dabei, ist das es eine sehr lange und sehr langweilig Arbeit wäre,
+da es um die millionen Bilder braucht.
 Die andere Möglichkeit ist die Bilder selber zu generieren,
-indem man das Logo, auf einen schwarzen Hintergrund, auf viele andere Bilder darauf multipliziert.
-Das Logo, auf einen schwarzen Hintergrund, findet man indem man lang genug im Sender darauf wartet.
-Die anderen Bilder bekommt man aus dem Open Images Dataset V3\cite{openimages}, welches um die 9 millionen Bilder enthält.
+indem das Logo, welches auf einen schwarzen Hintergrund ist, auf viele unterschiedlichen Bilder darauf multipliziert.
+Die unterschiedlichen Bilder erhält man aus dem Open Images Dataset V3\cite{openimages}, welches um die 9 millionen Bilder enthält.
 Da diese Bilder des Open Images Dataset nicht in der richtigen Grösse vorhanden sind, werden sie zerteilt in die richtige Grösse.
 Die Bilder könnten auch auf die richtige Grösse skaliert werden.
-Das Problem dabei ist, dass dadurch viel weniger Bilder pro Sekunden erzeugt werden und das den ganzen Process des Lernen deutlich verlangsamen würde.
+Das Problem dabei ist, dass dadurch viel weniger Bilder pro Sekunden erzeugt werden können und das den ganzen Process des Lernen deutlich verlangsamen würde.
 
 Das Logo kann nun mit dem Bild negativ multipliziert, so dass das Logo an einem zufälligen Ort auf dem Bild erscheint (siehe Abbildung~\ref{fig:logo8}).
-Man könnte sich auch überlegen, ob man das Logo nur an Position einspielt, wo es auch im Sender vorkommt.
-Aber für ein convolution Netzwerk spielt es keine grosse Rolle und der Algorithmus sollte so allgemein wie möglich sein.
+Man könnte sich auch überlegen, ob man das Logo nur an Position einspielt, wo es auch auf Bildern vom Sender vorkommt.
+Für ein convolution Netzwerk spielt es keine grosse Rolle und ausserdem hält es den Algorithmus allgemeiner.
 \begin{figure}[h]%
     \centering
     \includegraphics[width=6cm]{assets/images/logo_on_random_image.png}%
     \caption{Selbst generiertes Bild mit einem Prosieben Logo}%
     \label{fig:logo8}%
 \end{figure}
-Die grösse von einem Bild ist 320x180 Pixel, da ein grössers Bild unnötig viele Informationen enthält,
+Die Grösse von einem Bild ist 320x180 Pixel, da ein grössers Bild unnötig viele Informationen enthält,
 was dazu führt, dass das Netzwerk länger lernen müsste.
 Ein kleineres Bild, würde das Logo noch kleiner machen und kaum noch erkennbar (siehe Abbildung~\ref{fig:logo6}).
 \begin{figure}[h]%
     \centering
     \includegraphics[width=5cm]{assets/images/logo17x11.png}%
-    \caption{Prosieben Logo (17x11 Pixel) herausgenommen aus einem 320x180 Pixel Bild}%
+    \caption{Prosieben Logo (17x11 Pixel), extrahiert aus einem 320x180 Pixel Bild}%
     \label{fig:logo6}%
 \end{figure}
 
-Mit diesen selber generierten Bildern kann ein neuronales Netzwerk trainiert werden, welches das Logo erkennen kann.
+Mit diesen selber generierten Bildern kann nun ein neuronales Netzwerk trainiert werden, welches das Logo erkennen kann.
 \section{Werbung erkennen ohne Logo}
-Um Werbung zu erkennen ohne ein Logo braucht es die richtige Senderbilder, da Werbebilder nicht generiert werden können.
-Da ich die Senderbilder nicht selber kategorisieren will benutze ich das neuronale Netzwerk das mithilfe des Logo die Werbung erkennt, um die Senderbilder zu kategorisieren.
-Ein Problem dabei ist, dass das Netzwerk nicht perfekt ist, um das ein bisschen auszugleichen wird die durchschnittliche Vorhersage des Netzwerk genommen,
-da Werbung bzw. das normale Programm immer ein weile am Stück läuft, bevor es wechselt
+Um Werbung zu erkennen ohne ein Logo braucht es richtige Bilder, da Bilder von Werbung nicht einfach generiert werden können.
+Da das kategorisieren von Hand zu lange brauchen würde, wird das neuronale Netzwerk, das mithilfe des Logo die Werbung erkennt, benutzt,
+um die Bilder zu kategorisieren.
+Ein Problem dabei ist, dass das Netzwerk nicht perfekt ist,
+um das ein bisschen auszugleichen wird die durchschnittliche\footnote{Mit Durchschnitt ist nicht der Mittelwert gemeint} Vorhersage des Netzwerk genommen,
+da Werbung bzw. das normale Programm immer am Stück läuft.
 
 Damit sichergestellt ist, dass das neue Netzwerk nicht wieder das Logo erkennt, sondern die Werbung,
 wird das Bild so zugeschnitten, dass das Logo nicht mehr auf dem Bild vorhanden ist.
@@ -1108,115 +1109,117 @@ wird das Bild so zugeschnitten, dass das Logo nicht mehr auf dem Bild vorhanden 
 Der ganze Code kann auf Github unter https://github.com/GeorgOhneH/WerbeSkip gefunden werden.
 Die verwendete Programmiersprache ist Python 3.
 \section{Neuronales Netzwerk}
-Der Code für diesen Teil befindet sich im Ordner \textit{deepnet}.
-\medskip
-
-Die Grundidee der Implementation für das neuronales Netzwerk ist, dass es Objekt Orientiert ist und man leicht neue Schichten und Funktionen hinzufügen kann.
-Die Benutzerschnittstelle ist angelegt an Keras, eine Bibliothek für neuronale Netzwerke.
-Als Grundbaustein wird Numpy, ein Bibliothek für wissenschaftliche Datenverarbeitung, benutzt.
-Da die Geschwindigkeit ein entscheidender Punkt ist, ist alles was möglich ist als eine matrix multiplikation implementiert.
+Der Code für diesen Teil befindet sich im Ordner \textit{deepnet}.\bigskip\\
+Das neuronales Netzwerk ist Objekt Orientiert implementiert um leicht neue Schichten und Funktionen hinzuzufügen.
+Die Benutzerschnittstelle ist angelegt an Keras\footnote{eine Bibliothek für neuronale Netzwerke}.
+Als Grundbaustein wird Numpy\footnote{ein Bibliothek für wissenschaftliche Datenverarbeitung} benutzt.
+Da die Geschwindigkeit ein entscheidender Punkt ist, ist alles als Matrizenmultiplikation implementiert.
 
 \subsection{Aufbau}
 \paragraph{Schichten}
-Jede Type von Schicht ist als eine Klasse implementiert, welche von einer Basisklasse erbt, damit jede Schicht gleich behandelt werden kann.
+Jede Type von Schicht ist als eine Klasse implementiert, welche von einer Basisklasse erbt, somit kann jede Schicht gleich behandelt werden.
 Jede Schichten implementieren jeweils den vorwärts und den rückwärts (backpropagation) Gangs des Netzwerks
-Die Schichten sind unabhängig, bekommen aber immer die Ausgabe der vorigen Schicht, bzw. der hintern Schicht bei der backpropagation.
-Die Werte die sie brauchen für die backpropagation, werden intern in jeder Schicht gespeichert.
+Die Schichten sind unabhängig voneinander, bekommen aber immer die Ausgabe der vorigen Schicht, bzw. der hintern Schicht bei der backpropagation.
+Ausserdem sind die Aktivierungsfunktionen auch als eine Schicht implementiert
 \paragraph{Kostenfunktionen}
 Jede Kostenfunktion ist auch eine Klasse und erbt auch von einer Basisklasse.
 Jede Kostenfunktion benötigt die implementation von der Funktion und deren Ableitung.
 \paragraph{Optimierer}
 Ein Optimierer enthält die Funktionen für des gradient descent, bzw. eine Variante davon,
-da es gewisse Varianten des gradient descent gibt die den Process des lernen noch beschleunigen können,
-z.B wird noch eine simulierte Beschleunigung in den gradient descent mit einbezogen.\cite{optimization}
+da es gewisse Varianten des gradient descent gibt, die den Process des lernen noch beschleunigen können,
+z.B wird noch eine Beschleunigung in den gradient descent mit einbezogen.\cite{optimization}
 Auch die Optimierer Klasse erbt von einer Basisklasse.
-Der Optimierer wird an jede Schicht weiter geleitet um die Gewichte und Biases anzupassen.
+Der Optimierer wird an jede Schicht weiter geleitet um die Gewichte und Biases anzupassen in der Schicht anzupassen.
 \paragraph{Netzwerk}
-Dies ist die Haputklasse, die alle die Schichten, Kostenfunktionen und Optmierer zusammen setzt und sie sich so untereinander verständigen können
-und ist die Benutzerschnittstelle
+Dies ist die Haputklasse, es ist die Benutzerschnittstelle und
+steuert die Schichten, Kostenfunktionen und Optmierer.
 Ausserdem implementiert die Klasse noch diverse Funktionen, die zur Auswertung des neuronale Netzwerk hilfreich sind.
 
 \subsection{Benutzung}
-Beispiel Code kann unter \textit{deepnet/examples} gefunden werden.
-\medskip
-
-Um das Programm zu benutzen muss zuerst die eingabe Dimensionen von den Bildern bestimmen werden, welche der eingabe Schicht entspricht.
-Bei einer nur völlig verbundenen Netzwerk ist die Anzahl Neuronen, der eingabe Schicht.
+Beispiel Code kann unter \textit{deepnet/examples} gefunden werden.\bigskip\\
+Um das Programm zu benutzen muss zuerst die eingabe Dimensionen von den Bildern bestimmen werden,
+dies würde der eingabe Schicht von einem neuronalen Netzwerk entsprechen.
+Bei einem Netzwerk aus völlig verbundenen Schichten ist es die Anzahl der Neuronen.
 Wenn es ein convolution Netzwerk ist, dann besteht die eingabe Dimensionen aus 3 Zahlen.
 Die erste Zahl ist die Anzahl feature map, der eingabe Schicht, welche der Anzahl Farbkanäle im Bild entspricht,
 die Zweite die Höhe des Bildes und die Dritte die Breite des Bildes.
-Danach müssen die verschiedenen Schichten bestimmt werden, darunter sind auch die Aktivierungsfunktionen, da sie auch als eine Schicht implementiert sind.
+Danach müssen die verschiedenen Schichten bestimmt werden, darunter sind auch die Aktivierungsfunktionen.
 Als nächstes muss die Kostenfunktion und der Optimierer definiert werden.
-Am Schluss muss das neuronale Netzwerk noch trainiert werden, indem die trainings Daten dem Netzwerk gegeben werden.
-Die trainings Daten müssen ein numpy array sein mit der gleichen Form, wie die eingabe Dimensionen mit dem Unterschied,
-dass der numpy array noch an erster Stelle eine weiter Dimension hat, welcher die Anzahl der Bilder enthält.
-Die training Daten können auch als Generator übergeben werden.
+Am Schluss muss das neuronale Netzwerk noch trainiert werden, indem die Trainingsdaten dem Netzwerk gegeben werden.
+Die Trainingsdaten müssen ein numpy array sein mit der gleichen Form, wie die eingabe Dimensionen mit dem Unterschied,
+dass der numpy array an der erster Stelle eine weiter Dimension hat, welcher die Trainingsdaten enthält.
+Die Trainingsdaten können auch als Generator übergeben werden.
 
 \subsection{Grafikkarten unterstützung}
-Der Code kann unter \textit{numpywrapper} gefunden werden.
-\medskip
-
+Der Code kann unter \textit{numpywrapper} gefunden werden.\bigskip\\
 Die Geschwindigkeit des Programmes spielt eine entscheidende Rolle für ein
 neuronales Netzwerk und die Geschwindigkeit der CPU\footnote{Central processing unit} ist nicht ausreichend.
 Um die GPU\footnote{Grafikkarte} zu benutzen, wird Cupy verwendet.
 Da Cupy genau die gleichen Funktionen wie Numpy hat, kann es einfach mit Numpy ausgetauscht werden,
 Dazu wird ein selbst geschriebenes Module verwendet um einfach zwischen beide hin und her zuschalten.
-Die GPU ist schneller als die CPU, da alles mithilfe von matrix Multiplikationen implementiert ist und
-die GPU auf matrix Multiplikationen spezialisiert ist.
+Die GPU ist schneller als die CPU, da alles mithilfe von Matrizenmultiplikation implementiert ist und
+die GPU auf Matrizenmultiplikation optimiert ist.
 
 \subsection{Bild bearbeitung}
-Der Code kann unter \textit{helperfunctions/image\_processing} gefunden werden.
-\medskip
-
-Der Ordner enthält die Funktionen für die Beschaffung und Formatierung der Bilder, damit sie vom Netzwerk benutzt werden können.
+Der Code kann unter \textit{helperfunctions/image\_processing} gefunden werden.\bigskip\\
+Der Ordner enthält die Funktionen für die Beschaffung und Formatierung der Bilder.
 Um die Bilder zu bearbeiten wird OpenCV 2\footnote{Bibliothek von funktionen um Bilder zu bearbeiten} und Numpy verwendet.
 
 Die grösste Herausforderung war die Beschaffung der livestream Bilder von einem Sender.
-Um die sender Bilder zu erhalten, wird der Teleboy Stream angezapft, nach einem Beispiel von Github.\cite{gittele} und
+Um die Bilder des Senders zu erhalten, wird der Teleboy Stream angezapft, nach dem Beispiel von Github.\cite{gittele} und
 wird durch ffmpeg\footnote{Programm für das Aufnehmen, Konvertieren und Streamen von Audio und Video} dekodiert.
 
 \section{Webserver}
-Der Code kann unter \textit{src} gefunden werden.
-\medskip
+Der Code kann unter \textit{src} gefunden werden.\bigskip\\
+Um das fertige Programm zu benutzen wird eine Webseite verwendet, die unter der URL \textit{www.werbeskip.com} erreichbar ist.
+Für das Backend wird Django\footnote{Ein web framework} und Django Channels verwendet, wodurch ein Websocket benutzt werden kann,
+so dass die Verbindung mit dem Server offen bleibt und die Seite immer auf dem aktuellen Stand ist.
 
-Um das fertige Programm auch zu benutzen wird eine Webseite verwendet, die unter der URL \textit{werbeskip.com} erreichbar ist
-Für das Backend des Servers wird Django\footnote{Ein web framework} und Django Channels verwendet, wodurch ein Websocket benutzt werden kann,
-so dass die Verbindung mit dem Server offen bleibt und die Seite immer auf dem aktuellen Stand ist..
-
-Für das Frontend wird VueJs und VuetifyJS verwendet und es ist als eine Single Page Application implementiert.
+Für das Frontend wird VueJs und VuetifyJS verwendet und die Webseite ist eine Single Page Application.
 
 \chapter{Ergebnisse und Auswertung}
 Alle berechnungen wurden auf einem PC mit einer Intel i5-4690 CPU (3.50GHz) und einer NVIDIA GeForce RTX 2070 GPU (8 GB) durchgeführt.
 \section{Auswertung}
 \subsection{Datensatz}\label{subsec:datensatz}
-Um die Leistung der Netzwerke richtig zu Bewerten, wird ein selbst erstellter Datensatz verwendet,
+Um die Leistung der Netzwerke richtig auszuwerten, wird ein selbst erstellter Datensatz verwendet,
 welches aus insgesamt 7830 Prosieben Bildern besteht.
-Aus den 7830 Bildern sind 4495 Bilder mit Logo und ohne Rand, 813 mit Logo und einem oberen und untern schwarzen Rand,
-813 mit Logo und einem schwarzen Rand auf beiden Seiten und 2095 Bilder ohne Logo und ohne Rand.
-Ausserdem enthält der Datensatz noch 400 Bilder, die ein spezielles Prosieben Logo auf dem Bild haben (siehe Abbildung~\ref{fig:logo_spec})
+Aus den 7830 Bildern sind 4495 Bilder mit Logo und ohne Rand schwarzen Rand (siehe Abbildung~\ref{fig:all_logo}a),
+813 mit Logo und einem oberen und untern schwarzen Rand (siehe Abbildung~\ref{fig:all_logo}b),
+813 mit Logo und einem schwarzen Rand auf beiden Seiten (siehe Abbildung~\ref{fig:all_logo}c)
+und 2095 Bilder ohne Logo und ohne Rand (siehe Abbildung~\ref{fig:all_logo}d).
+Ausserdem enthält der Datensatz noch 400 Bilder, die ein spezielles Prosieben Logo auf dem Bild haben (siehe Abbildung~\ref{fig:all_logo}e)
 und normalerweise exkludiert sind, ausser sie werden explizit erwähnt.
 \begin{figure}[h]%
     \centering
-    \includegraphics[width=7cm]{assets/images/logo_special.png}%
-    \caption{Speziellen Prosieben Logo}%
-    \label{fig:logo_spec}%
+    \subfloat[Normales Logo]{{\includegraphics[width=4.5cm]{assets/images/logo_no_boarder.png} }}%
+    \qquad
+    \subfloat[Horizontaler Rand]{{\includegraphics[width=4.5cm]{assets/images/logo_boarder_above.png} }}%
+    \qquad
+    \subfloat[Vertikaler Rand]{{\includegraphics[width=4.5cm]{assets/images/logo_boarder_side.png} }}%
+    \qquad
+    \subfloat[Ohne Logo]{{\includegraphics[width=4.5cm]{assets/images/prosieben_kein_logo.png} }}%
+    \qquad
+    \subfloat[Spezielles Logo]{{\includegraphics[width=4.5cm]{assets/images/logo_special.png} }}%
+    \caption{Verschiedene Arten von Bildern im Datensatz}%
+    \label{fig:all_logo}%
 \end{figure}
 \subsection{Methoden}
-\paragraph{loss} Die einfachste Methode das Netzwerk auszuwerten ist der Wert der Kostenfunktion anzuschauen, welcher als \textit{loss} bezeichnet wird.
-So tiefer der loss ist umso besser besser ist das Netzwerk.
+\paragraph{loss:} Die einfachste Methode das Netzwerk auszuwerten ist der Wert der Kostenfunktion anzuschauen, welcher als \textit{loss} bezeichnet wird.
+So kleiner der loss ist umso besser besser ist das Netzwerk.
 
-\paragraph{Genauigkeit} Eine andere relativ einfache Methode ist die Genauigkeit des Netzwerks zu bestimmen,
-indem man die richtig erkannten Bilder durch die totale Anzahl Bilder teilt.
-Das Problem bei der Genauigkeit ist, dass sie nicht sehr Aussagekräftig ist,
-wenn das Datensatz nicht ausgeglichen ist.
+\paragraph{Genauigkeit:} Die Genauigkeit gibt Auskunft über den Anteil der richtig erkannten Bilder.
+Es wird berechnet, indem die Anzahl richtig erkannten Bilder durch die totale Anzahl Bilder geteilt wird.
+Das Problem bei der Genauigkeit und beim loss ist, dass sie nicht sehr Aussagekräftig sind,
+sobald der Datensatz nicht ausgeglichen ist.
 Zum Beispiel hat man ein Datensatz von 100 Bildern, 90 von den Bildern haben ein Logo und 10 haben keins.
 Wenn jetzt ein neuronales Netzwerk immer sagt, dass ein Logo auf dem Bild ist, ergebe das eine Genauigkeit von 90\%,
 was nach einem gutes Ergebnis ausschaut, aber das Netzwerk ist im Grunde nutzlos, da es das Logo nicht erkennt,
-sondern immer die gleiche Ausgabe ergibt.
+sondern immer nur die gleiche Ausgabe ausgibt.
 
-\paragraph{Matthews correlation coefficient} Der Matthews correlation coefficient\cite{wiki:mcc} behebt genau dieses Problem.
+\paragraph{Matthews correlation coefficient:} Der Matthews correlation coefficient\cite{wiki:mcc} behebt genau dieses Problem.
 MCC\footnote{Matthews correlation coefficient} unterscheidet nicht nur zwischen Falschen und Wahren Vorhersagen des Netzwerk,
-sondern unterscheidet auch zwischen wahr positiv, wahr negativ, falsch positiv und falsch negativ (Siehe Tabelle~\ref{table:mcc}).
+sondern unterscheidet auch zwischen wahr positiv, wahr negativ, falsch positiv und falsch negativ (Siehe Tabelle~\ref{table:mcc})\footnote{Tabelle von Wikipedia\cite{wiki:mcc}}.
+Dadurch können verschiedene Datensätze miteinander verglichen werden, selbst wenn die Kategorien eine andere Verteilung haben\cite{wiki:mcc}.
 \begin{table}[h]
     \centering
 \begin{tabular}{cc|c|c|}
@@ -1227,9 +1230,10 @@ sondern unterscheidet auch zwischen wahr positiv, wahr negativ, falsch positiv u
 \multicolumn{1}{|c|}{}                                                                                  & \begin{tabular}[c]{@{}c@{}}Vorhergesagter\\ Zustand negativ\end{tabular}  & falsch negativ    & wahr negativ   \\ \hline
 \end{tabular}
 
-\caption{My table}
+\caption{Verwirrungsmatrix}
 \label{table:mcc}
 \end{table}
+
 MCC gibt einen Wert von -1 bis +1 zurück.
 Der Wert +1 repräsentiert eine perfekte Vorhersage,
 0 nicht besser als eine zufällige und -1 eine komplette Unstimmigkeit zwischen Netzwerk und dem Datensatz.
@@ -1240,30 +1244,30 @@ FP die Anzahl der falsch positiven ist und FN die Anzahl der falsch negativen is
 
 \section{Neuronales Netzwerk mithilfe des Logo's}
 \subsection{Netzwerk Architektur}
-Wenn man die genaue Architektur von einem Netzwerk bestimmen will, ist das oft nicht ganz einfach,
+Wenn die genaue Architektur von einem Netzwerk erstellen wird, ist das oft nicht ganz einfach,
 da es keine Regeln gibt an die man sich halten könnte.
 
 Die benutze Architektur orientiert sich am AlexNet\cite{alex}.
 Es benutzt wie das AlexNet 5 convolution Schichten und benutzt nach jeder convolution und völlig verbundene
-Schicht wird RelU angewendet.
-Maxpooling wird weniger häufig angewendet, da es Heute nicht mehr so üblich ist.\cite{conv}
-Es werden relativ kleine Werte für Dropout genommen, da genug Daten vorhanden sind und dadurch overfitting kein so grosses Problem darstellt.
-Ausserdem wird in jeder Schicht Batch Normalization verwedent, nach dem Beispiel von ResNet.\cite{conv}
+Schicht die RelU Aktivierungsfunktion.
+Maxpooling wird weniger häufig angewendet als beim AlexNet, da es Heute nicht mehr so üblich ist\cite{conv} und
+es werden relativ kleine Werte für Dropout genommen, da genug Daten vorhanden sind und dadurch overfitting kein grosses Problem darstellt.
+Ausserdem wird in jeder Schicht Batch Normalization verwedent, nach dem Beispiel vom ResNet.\cite{conv}
 
 Die letzte Schicht beinhaltet 2 Neuronen und die softmax Aktivierungsfunktion.
-Der erste steht für kein Logo, wobei 0 für Falsch steht und 1 für Wahr.
+Der erste Neuron steht für kein Logo, wobei 0 für Falsch steht und 1 für Wahr.
 Analog dazu steht der zweite Neuron für das Logo.
-Durch diese zwei Neuronen und der softmax Aktivierungsfunktion, kann die Ausgabe als Wahrscheinlichkeitsverteilung verstanden werden
+Durch diese zwei Neuronen und der softmax Aktivierungsfunktion, kann die Ausgabe als Wahrscheinlichkeitsverteilung verstanden werden.
 
 Das neuronale Netzwerk wurde mithilfe des \textit{Adam} Optimierer\cite{adam} und einer learning rate von 0.001 trainiert.
 Der Adam Optimierer wird benutzt, da es die learning rate adaptiv anpasst und er als einer der besseren Optimierer gilt\cite{adam}.
 Die learning rate sollte am Anfang vom training relativ gross sein und am Schluss eher klein, da man am Anfang schnell in die Nähe eines Minimums kommen will
-und am Schluss muss man langsam in das Minimum hineinkommt.
+und am Schluss nicht über das Minimum springen will.
 Theoretisch könnte, während dem training, die learning rate auch Manuel anpassen werden, aber der Optimierer macht dies oft einfacher und besser.
 
 Für die Kostenfunktion wird nicht wie im Kapitel~\ref{ch:neuronalesNetzwerk} die Quadratische genommen,
-sondern die \textit{cross-entropy}\cite{softmax}, welche mit dem gleichen Prinzip funktioniert wie die Quadratische, mit dem Unterschied,
-dass mit der softmax Aktivierungsfunktion sich viel mathematisch kürzt und die implementierung vereinfacht\cite{softmax}.
+sondern die \textit{cross-entropy}\cite{softmax}, welche grundsätzlich gleich funktioniert wie die Quadratische, mit dem Unterschied,
+dass es die implementierung vereinfacht, da es einiges mathematisch vereinfacht\cite{softmax}.
 
 \subsubsection{Genau Architektur}
 
@@ -1298,9 +1302,8 @@ dass mit der softmax Aktivierungsfunktion sich viel mathematisch kürzt und die 
 \subsection{Training}
 Das training des Netzwerks wurde nach ungefähr 17 Stunden abgebrochen, da es sich kaum noch verbessert hat.
 Insgesamt wurden 2'540'000 verschiedene Bilder verwendet.
-Auf Abbildung~\ref{fig:loss1}a,b wird der loss und der MCC,
-des Netzwerk im Verlaufe des Trainings, dabei ist zu beachten,
-dass der Mittelwert genommen wurde, so dass auf der Abbildung noch etwas zu erkennen ist, da die Werte sonst zu extrem wären.
+Abbildung~\ref{fig:loss1}a,b zeigt den durchschnittlichen loss und MCC,
+des Netzwerk im Verlaufe des Trainings.
 \begin{figure}[h]%
     \centering
     \subfloat[][loss]{{\includegraphics[width=7.5cm]{assets/images/logo_loss.pdf} }}%
@@ -1310,34 +1313,37 @@ dass der Mittelwert genommen wurde, so dass auf der Abbildung noch etwas zu erke
     \label{fig:loss1}%
 \end{figure}
 \subsection{Auswertung}
-Wenn man 71'800 selbst generierte Bilder mithilfe des neuronalen Netzwerkes kategorisiert erhält man durchschnittich einen loss von 0.139,
+\subsubsection{Datensatz}
+Wenn man 71'800 selbst generierte Bilder mit dem trainierten Netzwerkes kategorisiert, erhält man durchschnittich einen loss von 0.139,
 eine Genauigkeit von 93.9\% und ein MCC von 88.1\%.
 Mit dem selbst erstellten Datensatz, der in Abschnitt~\ref{subsec:datensatz} erwähnt wurde,
 erhält man einen loss von 0.22, eine Genauigkeit von 91.6\% einen MCC von 80.2\%.
-Der loss und die Genauigkeit, des Datensatzes und der selbst generierten Bilder sind nicht miteinander vergleichbar,
+Der loss und die Genauigkeit des Datensatzes und der selbst generierten Bilder sind nicht miteinander vergleichbar,
 da die Verteilung der Bilder anders sind.
 Die selbst generierte Bilder haben zu 50\% kein Logo und zu 50\% ein Logo.
 Der Datensatz hingegen hat zu 27\% kein Logo und zu 73\% ein Logo.
 
-Der Datensatz schneidet beim MCC um 8\% schlechter ab, als der selbst generierten Bilder.
-Das könnte daran liegen, dass im Fernsehen oft noch neben Logo auch andere Einblendungen haben (siehe Abbildung~\ref{fig:einblenden}).
+Der Datensatz schneidet beim MCC um 8\% schlechter ab, als der MCC bei den selbst generierten Bilder.
+Das könnte daran liegen, dass im Fernsehen oft noch neben dem Logo auch andere Einblendungen sind (siehe Abbildung~\ref{fig:einblenden})
+und das Netzwerk diese Art von Bildern noch nie gesehen hat.
 \begin{figure}[h]%
     \centering
-    \includegraphics[width=7cm]{assets/images/tv_einblenden.png}%
+    \includegraphics[width=7cm]{assets/images/tv_einblenden.jpg}%
     \caption{Einblendungen im Fernsehen}%
     \label{fig:einblenden}%
 \end{figure}
 Aber es ist nicht klar, dass es an den Einblendungen liegt, es könnte genau so gut daran liegen,
 dass im Fernsehen öfter weisse Bilder vorkommen und das Netzwerk kann die weissen Bilder schwerer kategorisieren,
-da es manchmal unmöglich ist das Logo zu erkennen.
-Genau das ist ein grosses Problem bei einem neuronalen Netzwerk.
-Man hat keine Ahnung was das Netzwerk wirklich macht und wie es genau funktioniert.
-
-Wenn man vom Datensatz nur die Bilder ohne Logo und die Bilder mit dem speziellen Logo (siehe Abbildung~\ref{fig:white_square}a) auswertet,
+da das Logo auf einem weissen Hintergrund schwerer zu erkennen ist.
+Genau das ist auch ein grosses Problem bei einem neuronalen Netzwerk.
+Eigentlich hat man keine Ahnung wie das Netzwerk genau funktioniert und wie es zu seinen Resultaten kommt.
+\subsubsection{Spezielles Logo}
+Wenn man von dem Datensatz nur die Bilder ohne Logo und die Bilder mit dem speziellen Logo (siehe Abbildung~\ref{fig:white_square}a) auswertet,
 erhält man einen MCC von 78.2\%, welcher nur 2\% unter dem Wert von den normalen Bildern ist.
-Das ist ziemlich überraschend, da das Netzwerk diese Art von Logo noch nie gesehen hat und trotzdem so gut abschneidet.
+Das ist ziemlich überraschend, da das Netzwerk diese Art von Logo noch nie gesehen hat und trotzdem so ein gutes Resultat erzielt.
+
 Das spezielle Logo ist komplett Weiss und ein bisschen kleiner als das Normale.
-Man könnte Meinen, dass das Netzwerk nicht unbedingt das Logo erkennt,
+Man könnte nun Meinen, dass das Netzwerk nicht unbedingt das Logo erkennt,
 sondern nur eine kleine weissen Stelle auf dem Bild (siehe Abbildung~\ref{fig:white_square}b).
 
 \begin{figure}[h]%
@@ -1351,25 +1357,96 @@ sondern nur eine kleine weissen Stelle auf dem Bild (siehe Abbildung~\ref{fig:wh
 
 Wenn nun diese Bilder mit einer kleinen weissen Stelle (11x11 Pixel) generiert werden und durch das Netzwerk gelassen werden (auch mit Bildern ohne weisse Stelle),
 erhält man mit insgesamt 56600 Bildern einen MCC von 73.3\%.
-Dieser Wert ist 15\% schlechter als wenn das normale Logo mit generierten Bildern verwendet wird.
-Das zeigt sehr schön, dass nicht nur die Helligkeit der Pixel entscheidend ist sondern auch die Form.
+Dieser Wert ist 15\% schlechter als wenn das normale Logo auf den generierten Bildern verwendet wird.
+Das zeigt sehr schön, dass nicht nur die Helligkeit der Stelle entscheidend ist sondern auch ihre Form.
 
 \section{Neuronales Netzwerk ohne das Logo}
 \subsection{Daten beschaffung}
 Um die Bilder von Prosieben zu kategorisieren wird das vorige neuronale Netzwerk,
 welches das Logo erkennen kann, verwendet.
-Wenn die Vorhersagen des Netzwerks in einem Zeitraum in einem Diagramm grafisch dargestellt wird (siehe Abbildung)
-
+Die Abbildung~\ref{fig:points} zeigt die wahrscheinlichkeit Vorhersage, des Netzwerks von live prosieben Bilder, in einem gewissen Zeitraum.
+Die Vorhersage ist ein Wert zwischen 0 und 1, wobei 1 für ein vorhanden des Logos steht und 0 für kein vorhanden des Logos.
+Jeder Punkt repräsentiert eine Vorhersage.
+Die Zeit ist in Sekunden und pro Sekunde hat es eine Vorhersage.
 \begin{figure}[h]%
     \centering
-    \includegraphics[width=7cm]{assets/images/tv_einblenden.png}%
-    \caption{Einblendungen im Fernsehen}%
-    \label{fig:einblenden}%
+    \includegraphics[width=1.0\textwidth]{assets/python/points.pdf}%
+    \caption{Vorhersagen-Zeit Diagramm}%
+    \label{fig:points}%
 \end{figure}
+Auffällig dabei ist, dass das Netzwerk viel sicherer ist, wenn es ein Logo entdeckt, als wenn es keines findet.
+Das macht auch Sinn, da wenn es keines gefunden hat, könnte das daran liegen,
+dass es keines gibt oder dass das Logo nicht Sichtbar ist und es eigentlich eines hat.
+Dadurch kann man nie 100\% sicher sein, dass kein Logo auf dem Bild vorhanden ist.
+
+Auf dem Diagramm können die Stellen, wo Werbung lief, ziemlich einfach erkannt werden.
+Nämlich dort, wo der obere Stich für eine längere Zeit verschwindet.
+Der Algorithmus, um diese Sequenz von Bildern zu kategorisieren, macht sich zur Nutze,
+dass das Netzwerk so sicher ist, wenn es ein Logo erkennt.
+Es wird geschaut ob in den letzten 25 Sekunden ein Vorhersage über 0.9 gewesen ist,
+wenn dies 5 Mal hintereinander zutrifft wird das Bild als keine Werbung kategorisiert.
+Analog dazu müssen 5 Mal hintereinander die letzten 25 Sekunden die Vorhersage unter 0.9 sein,
+damit es als Werbung kategorisiert wird.
+Falls beides nicht zutreffen sollte, wird das Bild gleich wie das vorige Bild kategorisiert.
+Abbildung~\ref{fig:points_line} zeigt das Resultat des Algorithmus\footnote{Der Algorithmus wird auch von dem Webserver verwendet}.
+\begin{figure}[h]%
+    \centering
+    \includegraphics[width=1.0\textwidth]{assets/python/points_blue_line.pdf}%
+    \caption{Vorhersagen-Zeit Diagramm mit Kategorisierung}%
+    \label{fig:points_line}%
+\end{figure}
+Die Kategorisierung ist nicht perfekt, aber gut genug um das Netzwerk zu trainineren.
+Der kleine Teil, der Falsch kategorisiert ist wird keinen grossen Einfluss auf den Trainingsprozess haben.
+
+Ausserdem werden die Bilder noch zugeschnitten, so dass das Logo nicht mehr auf dem Bild vorkommt und schliesslich
+eine Grösse von 269x141 Pixel haben (siehe Abbildung~\ref{fig:cropped_img}).
+\begin{figure}[h]%
+    \centering
+    \includegraphics[width=7cm]{assets/images/cropped.png}%
+    \caption{Zugeschnittenes Bild (269x141)}%
+    \label{fig:cropped_img}%
+\end{figure}
+\subsection{Architektur}
+Es wird die gleiche Architektur genommen, wie für das vorige Netzwerk, mit dem Unterschied,
+dass mehr Dropout verwendet, da Bilder mehrmals verwendet werden.
+Ausserdem sind die Parameter des Filters angepasst, da die Bild eine andere Grösse haben und die gleichen Parameter nicht mehr funktionieren.
+\subsubsection{Genau Architektur}
+
+\begin{itemize}
+    \setlength\itemsep{0cm}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}
+    \item Convolution, Anzahl Filter: 16, Filterbreite: 9, Filterhöhe: 9, Schrittweite: 4
+    \item BatchNorm
+    \item ReLU
+    \item Convolution, Anzahl Filter: 64, Filterbreite: 6, Filterhöhe: 6, Schrittweite: 1
+    \item BatchNorm
+    \item ReLU
+    \item Maxpool, Filterbreite: 3 Filterhöhe: 3, Schrittweite 2
+    \item Convolution, Anzahl Filter: 128, Filterbreite: 4, Filterhöhe: 4, Schrittweite: 1
+    \item BatchNorm
+    \item ReLU
+    \item Convolution, Anzahl Filter: 256, Filterbreite: 3, Filterhöhe: 3, Schrittweite: 2
+    \item BatchNorm
+    \item ReLU
+    \item Convolution, Anzahl Filter: 512, Filterbreite: 3, Filterhöhe: 3, Schrittweite: 1
+    \item BatchNorm
+    \item Dropout 25\%
+    \item Völlig verbundene Schicht, Neuronen: 2048
+    \item BatchNorm
+    \item ReLU
+    \item Dropout 50\%
+    \item Völlig verbundene Schicht, Neuronen: 2
+    \item Softmax
+\end{itemize}
+
+
+
 
 
 \chapter{Reflexion}
 \label{ch:reflexion}
+
 
 \clearpage
 \phantomsection

@@ -16,11 +16,11 @@ class AdsGenerator(object):
     """
     Generator to crop and label prosieben images
     """
-    def __init__(self, epochs, mini_batch_size, ffmpeg_log="info"):
+    def __init__(self, epochs, mini_batch_size, ffmpeg_log="error"):
         self.PATH_TO_NET = os.path.join(os.path.split(os.path.dirname(__file__))[0],
                                         "prosieben/networks/teleboy/teleboy.h5")
 
-        self.cap = VideoCapture(channel=354, colour=False, convert_network=True, proxy=False, ffmpeg_log=ffmpeg_log, rate_limit=1)
+        self.cap = VideoCapture(channel=354, colour=False, convert_network=True, proxy=False, ffmpeg_log=ffmpeg_log, rate_limit=4)
         self.mini_batch_size = mini_batch_size
         self.epochs = epochs
         self.progress = 0
@@ -153,21 +153,21 @@ class AdsGenerator(object):
 
         result = (self.imgs[-self.filter_size][0, :, 38:-1, 0:269], self.dict_labels[self.result[-self.filter_size]])
         if self.result[-self.filter_size]:
-            if len(self.cache_logo) < 2000:
+            if len(self.cache_logo) < 4000:
                 self.cache_logo.append(result)
                 for _ in range(2):
-                    if len(self.cache_logo_future) < 2000:
+                    if len(self.cache_logo_future) < 4000:
                         self.cache_logo_future.append(result)
         else:
-            if len(self.cache_no_logo) < 2000:
+            if len(self.cache_no_logo) < 4000:
                 self.cache_no_logo.append(result)
                 for _ in range(5):
-                    if len(self.cache_no_logo_future) < 2000:
+                    if len(self.cache_no_logo_future) < 4000:
                         self.cache_no_logo_future.append(result)
 
 
 if __name__ == "__main__":
-    for frame in AdsGenerator(1, 10, ffmpeg_log="info"):
+    for frame in AdsGenerator(1, 10):
         i, l = frame
         for x in range(i.shape[0]):
             cv2.imshow('test', frame[0][x, 0, :, :])

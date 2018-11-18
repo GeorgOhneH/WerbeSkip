@@ -107,16 +107,19 @@ class LogoGenerator(Generator):
             for image_part in image_parts:
                 use_logo = np.random.randint(0, 2)
                 if use_logo:
-                    for _ in range(10):
-                        # sets logo in a random place of the image
-                        pad_h = np.random.randint(0, self.padding_h)
-                        pad_w = np.random.randint(0, self.padding_w)
-                        logo_padding = np.pad(self.logo, [(pad_h, self.padding_h - pad_h),
-                                                          (pad_w, self.padding_w - pad_w),
-                                                          (0, 0)],
-                                              "constant")
-                        # applies screen blend effect
-                        image_part = 1 - (1 - logo_padding) * (1 - image_part)
+                    # sets logo in a random place of the image
+                    pad_h = np.random.randint(0, self.padding_h)
+                    pad_w = np.random.randint(0, self.padding_w)
+                    logo_padding = np.pad(self.logo, [(pad_h, self.padding_h - pad_h),
+                                                      (pad_w, self.padding_w - pad_w),
+                                                      (0, 0)],
+                                          "constant")
+                    # applies screen blend effect
+                    image_part = 1 - (1 - logo_padding) * (1 - image_part)
+
+                    cv2.imshow("img", image_part)
+                    cv2.imwrite("img_part.png", image_part * 255)
+                    cv2.waitKey(0)
                 images = np.expand_dims(np.transpose(image_part, (2, 0, 1)), axis=0)
                 labels = np.array(self.dict_labels[use_logo]).reshape((1, -1))
                 mini_batches.append((images, labels))
@@ -162,18 +165,19 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("C:\Jetbrains\PyCharm\WerbeSkip\helperfunctions\prosieben\\networks\\teleboy\\teleboy.h5")
-    generator = LogoGenerator(epochs=1, mini_batch_size=100, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy", test_white_square=False)
+    generator = LogoGenerator(epochs=1, mini_batch_size=100, padding_w=151.5, padding_h=84.5, colour=True, channel="teleboy", test_white_square=False)
     tp = 0
     tn = 0
     fp = 0
     fn = 0
     losses = []
     for mini_batch in generator:
-        x, y = cupy.asnumpy(net.feedforward(mini_batch[0])), cupy.asnumpy(mini_batch[1])
-        losses.append(float(net._cost.function(cupy.asarray(x), cupy.asarray(y))))
-        a = x.argmax(axis=1) + y.argmax(axis=1) * 2
-        tp += int(np.count_nonzero(a == 3))  # True Positive
-        tn += int(np.count_nonzero(a == 0))  # True Negative
-        fp += int(np.count_nonzero(a == 1))  # False Positive
-        fn += int(np.count_nonzero(a == 2))  # False Negative
-        print(tp, tn, fp, fn, np.mean(losses))
+        pass
+        # x, y = cupy.asnumpy(net.feedforward(mini_batch[0])), cupy.asnumpy(mini_batch[1])
+        # losses.append(float(net._cost.function(cupy.asarray(x), cupy.asarray(y))))
+        # a = x.argmax(axis=1) + y.argmax(axis=1) * 2
+        # tp += int(np.count_nonzero(a == 3))  # True Positive
+        # tn += int(np.count_nonzero(a == 0))  # True Negative
+        # fp += int(np.count_nonzero(a == 1))  # False Positive
+        # fn += int(np.count_nonzero(a == 2))  # False Negative
+        # print(tp, tn, fp, fn, np.mean(losses))
