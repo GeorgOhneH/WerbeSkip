@@ -26,9 +26,9 @@ DICTIONARIES = [
     {"path": "prosieben/images/zattoo/classified/no_logo",
      "cords": None,
      "name": "no_logo", },
-    # {"path": "prosieben/images/zattoo/classified/special",
-    #  "cords": (0, 0),
-    #  "name": "special", },
+    {"path": "prosieben/images/zattoo/classified/special",
+     "cords": (0, 0),
+     "name": "special", },
 ]
 
 
