@@ -151,3 +151,4 @@ staticfiles/*
 /helperfunctions/image_processing/m3u8_cache/index.m3u8
 /helperfunctions/prosieben/networks/no_logo/random.h5
 /helperfunctions/prosieben/networks/no_logo/no_logo.h5
+/helperfunctions/prosieben/network.py

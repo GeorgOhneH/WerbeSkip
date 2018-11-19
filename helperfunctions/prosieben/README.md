@@ -8,5 +8,3 @@ To get the images just click
 and download the images directory
 and drag them in this directory with this README.md file
 
-## Work in Progress
-The files aren't complete
