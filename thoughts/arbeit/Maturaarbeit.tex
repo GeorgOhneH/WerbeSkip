@@ -123,12 +123,13 @@ Eine weiter interessante Frage auf die eingegangen wird ist, ob ein neuronales N
 \section{Einschränkung}
 Neuronale Netzwerke sind ein sehr umfangreiches Thema und deswegen begrenze ich mich auf Netzwerke die für die Bilderkennung entscheidend sind.
 Darunter sind klassische feedforward und convolution Netzwerke.
-Auf recurrent neuronale Netzwerke\footnote{Ein neuronales Netzwerk, das geeignet für Sequenzen ist} wird nicht näher eingegangen.
+Auf recurrent neuronale Netzwerke\footnote{Ein neuronales Netzwerk, das geeignet für Sequenzen ist} wird nicht näher eingegangen,
+obwohl sie nützlich wären.
 
 
 \chapter{Neuronales Netzwerk}
 \label{ch:neuronalesNetzwerk}
-Dieses ganze Kapitel bezieht sich auf das Buch von Michael A. Nielsen\cite{neuralbook}, ausser es ist anders angegeben.
+Dieses ganze Kapitel bezieht sich auf das Buch von Michael A. Nielsen\cite{neuralbook}, ausser es wird anders angegeben.
 \section{Konzept}\label{sec:konzept}
 Wenn man ein normales Programm schreiben will muss man das Problem in viele kleinere aufteilen, bis der Computer fähig ist,
 es zu lösen.
@@ -1061,7 +1062,7 @@ Analog dazu, wenn man für $a = 0$ (Schwarz) einsetzt erhält man: $f(0, b) = b$
 sich im ursprünglichen Zustand befindet.
 Aus dem Grund kann das Logo komplett herausfiltert werden und wieder verwenden, wenn das Logo auf einem schwarzen Hintergrund ist (siehe Abbildung~\ref{fig:logo5}f).
 
-\section{Werbung erkennen mit Logo}
+\section{Werbung erkennen mithilfe des Logo's}
 Um ein Netzwerk zu trainieren braucht es sehr viele Daten, die kategorisiert sind.
 Eine Möglichkeit, diese zu beschaffen, wäre die Bilder von Hand zu kategorisiert, das Problem dabei, ist das es eine sehr lange und sehr langweilig Arbeit wäre,
 da es um die millionen Bilder braucht.
@@ -1092,7 +1093,7 @@ Ein kleineres Bild, würde das Logo noch kleiner machen und kaum noch erkennbar 
 \end{figure}
 
 Mit diesen selber generierten Bildern kann nun ein neuronales Netzwerk trainiert werden, welches das Logo erkennen kann.
-\section{Werbung erkennen ohne Logo}
+\section{Werbung erkennen ohne hilfe des Logo's}
 Um Werbung zu erkennen ohne ein Logo braucht es richtige Bilder, da Bilder von Werbung nicht einfach generiert werden können.
 Da das kategorisieren von Hand zu lange brauchen würde, wird das neuronale Netzwerk, das mithilfe des Logo die Werbung erkennt, benutzt,
 um die Bilder zu kategorisieren.
@@ -1218,7 +1219,7 @@ sondern immer nur die gleiche Ausgabe ausgibt.
 
 \paragraph{Matthews correlation coefficient:} Der Matthews correlation coefficient\cite{wiki:mcc} behebt genau dieses Problem.
 MCC\footnote{Matthews correlation coefficient} unterscheidet nicht nur zwischen Falschen und Wahren Vorhersagen des Netzwerk,
-sondern unterscheidet auch zwischen wahr positiv, wahr negativ, falsch positiv und falsch negativ (Siehe Tabelle~\ref{table:mcc})\footnote{Tabelle von Wikipedia\cite{wiki:mcc}}.
+sondern unterscheidet auch zwischen wahr positiv, wahr negativ, falsch positiv und falsch negativ (Siehe Tabelle~\ref{table:mcc}).
 Dadurch können verschiedene Datensätze miteinander verglichen werden, selbst wenn die Kategorien eine andere Verteilung haben\cite{wiki:mcc}.
 \begin{table}[h]
     \centering
@@ -1230,7 +1231,7 @@ Dadurch können verschiedene Datensätze miteinander verglichen werden, selbst w
 \multicolumn{1}{|c|}{}                                                                                  & \begin{tabular}[c]{@{}c@{}}Vorhergesagter\\ Zustand negativ\end{tabular}  & falsch negativ    & wahr negativ   \\ \hline
 \end{tabular}
 
-\caption{Verwirrungsmatrix}
+\caption{Verwirrungsmatrix\footnote{Tabelle von Wikipedia\cite{wiki:mcc}}}
 \label{table:mcc}
 \end{table}
 
@@ -1243,7 +1244,7 @@ wobei WP die Anzahl der wahr positiven ist, WN die Anzahl der wahr negativen ist
 FP die Anzahl der falsch positiven ist und FN die Anzahl der falsch negativen ist.
 
 \section{Neuronales Netzwerk mithilfe des Logo's}
-\subsection{Netzwerk Architektur}
+\subsection{Architektur}
 Wenn die genaue Architektur von einem Netzwerk erstellen wird, ist das oft nicht ganz einfach,
 da es keine Regeln gibt an die man sich halten könnte.
 
@@ -1365,7 +1366,7 @@ Das zeigt sehr schön, dass nicht nur die Helligkeit der Stelle entscheidend ist
 Um die Bilder von Prosieben zu kategorisieren wird das vorige neuronale Netzwerk,
 welches das Logo erkennen kann, verwendet.
 Die Abbildung~\ref{fig:points} zeigt die wahrscheinlichkeit Vorhersage, des Netzwerks von live prosieben Bilder, in einem gewissen Zeitraum.
-Die Vorhersage ist ein Wert zwischen 0 und 1, wobei 1 für ein vorhanden des Logos steht und 0 für kein vorhanden des Logos.
+Die Vorhersage ist ein Wert zwischen 0 und 1, wobei 1 für ein vorhanden des Logo's steht und 0 für kein vorhanden des Logo's.
 Jeder Punkt repräsentiert eine Vorhersage.
 Die Zeit ist in Sekunden und pro Sekunde hat es eine Vorhersage.
 \begin{figure}[h]%
@@ -1409,7 +1410,7 @@ eine Grösse von 269x141 Pixel haben (siehe Abbildung~\ref{fig:cropped_img}).
 \subsection{Architektur}
 Es wird die gleiche Architektur genommen, wie für das vorige Netzwerk, mit dem Unterschied,
 dass mehr Dropout verwendet, da Bilder mehrmals verwendet werden.
-Ausserdem sind die Parameter des Filters angepasst, da die Bild eine andere Grösse haben und die gleichen Parameter nicht mehr funktionieren.
+Ausserdem sind die Parameter des Filters angepasst, da die Bild eine andere Grösse haben und die gleichen Parameter nicht mehr funktionieren würden.
 \subsubsection{Genau Architektur}
 
 \begin{itemize}
@@ -1439,13 +1440,43 @@ Ausserdem sind die Parameter des Filters angepasst, da die Bild eine andere Grö
     \item Völlig verbundene Schicht, Neuronen: 2
     \item Softmax
 \end{itemize}
+\subsection{Training}
+Das training des Netzwerks wurde nach ungefähr 43 Stunden abgebrochen, da es sich nicht verbessert hat.
+Insgesamt wurden 339'200 Bilder durch das Netzwerk gelassen, wobei auch gleiche Bilder mehrmals verwendet worden sind.
+Dieser Trainingsprozess dauerte länger und hat weniger Bilder verabreitet, als das Netzwerk, welches das Logo erkennen kann.
+Das liegt daran, dass nicht die GPU den Trainingsprozess begrenzt, sondern die Beschaffung der Daten,
+Aus einem Livestream können nur eine begrenze Anzahl Bilder pro Sekunde extrahiert werden, was den Prozess erheblich verlangsamt.
+
+Abbildung~\ref{fig:loss2}a,b zeigt den durchschnittlichen loss und MCC,
+des Netzwerk im Verlaufe des Trainings.
+\begin{figure}[h]%
+    \centering
+    \subfloat[][loss]{{\includegraphics[width=7.5cm]{assets/images/no_logo_loss.pdf} }}%
+    \qquad
+    \subfloat[][MCC]{{\includegraphics[width=7.5cm]{assets/images/no_logo_mcc.pdf} }}%
+    \caption{loss und MCC im Verlaufe des Trainings}%
+    \label{fig:loss2}%
+\end{figure}
+\subsection{Auswertung}
+An Abbildung~\ref{fig:loss2}a,b erkennt man,
+dass der loss und der MCC, während dem Training, sich nicht positiv verändert hat und das Netzwerk nichts viel gelernt hat.
+Auch die Auswertung des Datensatzes (mit den speziellen Logo's) bestätigt, dass das Netzwerk nicht viel gelernt hat.
+Man erhält einen loss von 1.354, eine Genauigkeit von 37.2\% und einen MCC von 16.4\%, welches alle sehr schlechte Werte sind.
+Ein zufällige initialisiertes Netzwerk erzielt einen loss von 1.287, eine Genauigkeit von 41.3\% und einen MCC von 15.8\% und
+ist somit gleich schlecht wie das trainierte Netzwerk und es zeigt,
+dass das ein Netzwerk nicht fähig ist, Werbung ohne ein Logo zu erkennen.
+
+Es könnte natürlich sein, dass das Netzwerk einfacher eine grössere Architektur haben muss und mehr Daten braucht und bessere Resultate zu erbringen.
+Da aber für diese Arbeit nur sehr begrenzt Ressourcen zur Verfügung stehen, kann dies nicht weiter getestet werden.
 
 
+\chapter{Ausblick}
+In dieser Arbeit wurde nur ein winziger Bruchteil von Methoden von einem neuronalen Netzwerken präsentiert und es werden dauernd
+neue Methoden gefunden, um ein neuronale Netzwerk zu verbessern.
+Die Resultate die in der Arbeit vorgestellt worden sind, sind sicher nicht die besten die Erreicht werden könnten.
+Die Netzwerke könnten sicher mit neueren Methoden und besserer Hardware um ein vielfaches verbessert werden und
+es wäre noch interessant auf welche Resultate eine grössere Firma kommen würde.
 
-
-
-\chapter{Reflexion}
-\label{ch:reflexion}
 
 
 \clearpage

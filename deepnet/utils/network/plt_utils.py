@@ -24,10 +24,12 @@ class Plotter(object):
 
         plt.plot(train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train loss")
         if smooth_validation_y_axis:
-            plt.plot(validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
+            pass
+            # plt.plot(validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
 
         plt.ylabel("loss")
         # plt.title("model loss")
+        # plt.ylim(0, 1)
         plt.xlabel("Trainingsschritte")
         plt.legend()
 
@@ -45,11 +47,13 @@ class Plotter(object):
 
         plt.plot(train_x_axis, smooth_train_y_axis, color="blue", linewidth=1, label="train mcc")
         if smooth_validation_y_axis:
-            plt.plot(validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
+            pass
+            # plt.plot(validation_x_axis, smooth_validation_y_axis, color="red", linewidth=1, label="validation")
 
         plt.ylabel("MCC")
         # plt.title("model accuracy")
         plt.xlabel("Trainingsschritte")
+        # plt.ylim(0, 1)
         plt.legend()
 
         plt.ioff()
@@ -66,7 +70,7 @@ class Plotter(object):
         if not data:
             return data, np.array([])
 
-        batch_size = len(data) // 100
+        batch_size = len(data) // 50
 
         smooth_axis = [np.mean(batch) for batch in make_batches(data, batch_size)]
         x_axis = np.arange(len(smooth_axis)) * len(data) / len(smooth_axis)

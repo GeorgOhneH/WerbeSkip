@@ -15,7 +15,8 @@ thoughts/arbeit/auxil/
 thoughts/arbeit/out/Maturaarbeit.synctex.gz
 settings_secret.py
 helperfunctions/prosieben/networks/teleboy/teleboy.h5
-
+helperfunctions/prosieben/networks/teleboy/teleboy_old.h5
+helperfunctions/prosieben/networks/no_logo/network.h5
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -148,3 +149,4 @@ staticfiles/*
 /thoughts/arbeit/auxil/Maturaarbeit.toc
 /thoughts/arbeit/auxil/Maturaarbeit.out
 /helperfunctions/image_processing/m3u8_cache/index.m3u8
+/helperfunctions/prosieben/networks/no_logo/random.h5

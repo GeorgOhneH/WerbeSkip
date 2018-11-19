@@ -16,7 +16,7 @@ import os
 class WerbeSkip(object):
     def __init__(self):
         self.PATH_TO_NET = os.path.join(os.path.dirname(__file__),
-                                        "helperfunctions/prosieben/networks/teleboy/teleboy.h5")
+                                        "helperfunctions/prosieben/networks/teleboy/teleboy_old.h5")
         self.ws = None
         self.loop = None
         self.network = self.init_network()
@@ -27,7 +27,7 @@ class WerbeSkip(object):
             self.ip = "127.0.0.1:8000"
         # Prosieben: 354
         # SRF: 303
-        self.cap = VideoCapture(channel=354, colour=False, rate_limit=1, convert_network=True, proxy=True)
+        self.cap = VideoCapture(channel=354, colour=False, rate_limit=1, convert_network=True, proxy=True, use_hash=False)
 
         self.filters = []
         self.result = []
@@ -41,28 +41,31 @@ class WerbeSkip(object):
 
         net.input((1, 180, 320))
 
-        net.add(ConvolutionLayer(n_filter=16, width_filter=12, height_filter=8, stride=4))
+        net.add(
+            ConvolutionLayer(n_filter=16, width_filter=12, height_filter=8, stride=4, zero_padding=0, padding_value=1))
         net.add(BatchNorm())
         net.add(ReLU())
-        net.add(ConvolutionLayer(n_filter=64, width_filter=6, height_filter=4, stride=1))
+        net.add(
+            ConvolutionLayer(n_filter=64, width_filter=6, height_filter=4, stride=1, zero_padding=2, padding_value=1))
         net.add(BatchNorm())
         net.add(ReLU())
         net.add(MaxPoolLayer(width_filter=3, height_filter=3, stride=2))
         net.add(ConvolutionLayer(n_filter=128, width_filter=4, height_filter=4, stride=1))
         net.add(BatchNorm())
         net.add(ReLU())
-        net.add(ConvolutionLayer(n_filter=256, width_filter=3, height_filter=3, stride=2))
+        net.add(ConvolutionLayer(n_filter=128, width_filter=3, height_filter=3, stride=2))
         net.add(BatchNorm())
         net.add(ReLU())
-        net.add(ConvolutionLayer(n_filter=512, width_filter=3, height_filter=3, stride=1))
+        net.add(ConvolutionLayer(n_filter=256, width_filter=3, height_filter=3, stride=1))
         net.add(BatchNorm())
-        net.add(Dropout(0.8))
+        net.add(Dropout(0.75))
         net.add(Flatten())
-        net.add(FullyConnectedLayer(2048))
+        net.add(FullyConnectedLayer(512))
         net.add(BatchNorm())
         net.add(ReLU())
-        net.add(Dropout(0.8))
+        net.add(Dropout(0.5))
         net.add(FullyConnectedLayer(2))
+
         net.add(SoftMax())
 
         optimizer = Adam(learning_rate=0.001)
@@ -78,7 +81,6 @@ class WerbeSkip(object):
         while True:
             message = self.producer()
             await websocket.send(json.dumps(message))
-            asyncio.sleep(0)
 
     def producer(self):
         channel = self.get_prediction()
@@ -86,7 +88,9 @@ class WerbeSkip(object):
         return message
 
     def get_prediction(self):
+        print("get image")
         img = next(self.cap)
+        print("got image")
 
         prediction = self.network.feedforward(img)
 
@@ -119,8 +123,10 @@ class WerbeSkip(object):
             self.predictions.pop(0)
 
     async def consumer_handler(self, websocket):
-        async for message in websocket:
-            await self.consumer(message)
+        while True:
+            async for message in websocket:
+                await self.consumer(message)
+            asyncio.sleep(0)
 
     def consumer(self, message):
         print("message:", message)
@@ -135,6 +141,7 @@ class WerbeSkip(object):
             [consumer_task, producer_task],
             return_when=asyncio.FIRST_COMPLETED,
         )
+        print("handler done")
         for task in pending:
             task.cancel()
 
@@ -157,3 +164,4 @@ if __name__ == "__main__":
             x.cap.pipe.kill()  # not sure if pipe still runs after it shuts down or the programm exits
             x.cap.m3u8_update_thread.stop()  # stopping gracefully
             x.cap.get_images_thread.stop()  # stopping gracefully
+            print("exit")

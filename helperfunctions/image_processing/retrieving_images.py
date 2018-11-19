@@ -3,7 +3,6 @@ import json
 import random
 import numpy as np
 import time
-import cv2
 import os
 import subprocess as sp
 import threading
@@ -17,7 +16,7 @@ class VideoCapture(object):
     after https://github.com/reduzent/watchteleboy
     gets live images from teleboy
     """
-    def __init__(self, channel: int, rate_limit=30, convert_network=False, colour=True, proxy=False, ffmpeg_log="error"):
+    def __init__(self, channel: int, rate_limit=30, convert_network=False, colour=True, proxy=False, ffmpeg_log="error", use_hash=True):
         if proxy:
             parse_username = quote(proxy_username)
             parse_password = quote(proxy_password)
@@ -26,7 +25,7 @@ class VideoCapture(object):
             self.proxies = {}
 
         self.pipe = None
-        self.hash = str(random.randint(1e10, 1e11))
+        self.hash = "" if not use_hash else str(random.randint(1e10, 1e11))
         self.colour = colour
         self.ffmpeg_log = ffmpeg_log
         self.depth = 3 if colour else 1
@@ -152,7 +151,6 @@ class VideoCapture(object):
 
         if self.convert_network:
             frame = np.expand_dims(frame.transpose((2, 0, 1)), axis=0)
-
         return frame
 
 
@@ -217,7 +215,6 @@ class GetImages(StopThread):
             if qsize > 5 * self.cap.rate_limit:
                 for _ in range(qsize - 3*self.cap.rate_limit):
                     self.cap.images.get()
-
             raw_image = self.cap.pipe.stdout.read(180 * 320 * self.cap.depth)
             if raw_image:
                 self.cap.images.put(raw_image)

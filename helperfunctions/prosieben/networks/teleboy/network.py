@@ -50,6 +50,8 @@ if __name__ == "__main__":
     net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("teleboy.h5")
     net.print_infos()
+    net.plot()
+    exit()
 
     # Number of inputs: 2540000, Training time: 69479
 
