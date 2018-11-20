@@ -88,9 +88,7 @@ class WerbeSkip(object):
         return message
 
     def get_prediction(self):
-        print("get image")
         img = next(self.cap)
-        print("got image")
 
         prediction = self.network.feedforward(img)
 
@@ -129,7 +127,6 @@ class WerbeSkip(object):
             asyncio.sleep(0)
 
     def consumer(self, message):
-        print("message:", message)
         error = json.loads(message).get('error', None)
         if error:
             print('GOT ERROR FROM SOCKET:', error)
@@ -141,7 +138,6 @@ class WerbeSkip(object):
             [consumer_task, producer_task],
             return_when=asyncio.FIRST_COMPLETED,
         )
-        print("handler done")
         for task in pending:
             task.cancel()
 

@@ -44,7 +44,7 @@
 	Korreferent\par
 	{\itshape Test2}
 	\vfill
-	{\large \today\par}
+	{\large Basel, \today\par}
 \end{titlepage}
 
 \tableofcontents
@@ -63,12 +63,27 @@ Daraufhin hat er probiert ein Algorithmus zu schreiben, der das Logo von einem S
 Er versuchte das Logo mithilfe von Bedingungen und Schleifen auszudrücken, aber vergebens.
 
 Als ich auf der Suche nach einer Idee für eine Maturaarbeit war erinnerte ich mich wieder an das Problem und an einen neuen Lösungsansatz,
-nämlich Neuronale Netzwerke, welche Heute überall verwendet werden und extrem Mächtig sind.
+nämlich neuronale Netzwerke, welche Heute überall verwendet werden und extrem Mächtig sind.
 Die Idee war aber nicht nur ein Logo zu erkennen sondern auch genau verstehen wie ein neuronales Netzwerk funktioniert und warum es so Mächtig ist.
 \section{Aufbau der Arbeit}
 \label{sec:aufbauDerArbeit}
+Im Kapitel~\ref{ch:problemstellung} wird die genaue Problemstellung erklärt.
+Im Kapitel~\ref{ch:neuronalesNetzwerk} wird das neuronale Netzwerke beschrieben.
+Im Kapitel~\ref{ch:lösungsansatz} wird die Lösungsidee präsentiert.
+Im Kapitel~\ref{ch:umsetzung} wird grob die Implementierung des neuronalen Netzwerkes beschrieben.
+Im Kapitel~\ref{ch:ergebnisseUndAuswertung} werden die Ergebnisse der Netzwerke präsentiert und ausgewertet
+Im Kapitel~\ref{ch:fazitUndWeiterführung} ist das Fazit und mögliche Weiterführungen, die die Resultate noch verbessern könnten.
 
-\chapter{Problemstellung}
+
+
+\section{Einschränkung}
+neuronale Netzwerke sind ein sehr umfangreiches Thema und deswegen begrenze ich mich auf Netzwerke die für die Bilderkennung entscheidend sind.
+Darunter sind klassische feedforward und convolution Netzwerke.
+Auf recurrent neuronale Netzwerke\footnote{Ein neuronales Netzwerk, das geeignet für Sequenzen ist\cite{wiki:rnn}} wird nicht näher eingegangen,
+obwohl sie nützlich wären.
+
+
+\chapter{Problemstellung}\label{ch:problemstellung}
 Das Ziel dieser Arbeit ist einen Algorithmus zu programmieren der Bilder als Werbung erkennen kann.
 Dafür wird ein neuronales Netzwerk benutzt, das sich auf die Bilderkennung beschränkt.
 \section{Logo}
@@ -120,12 +135,6 @@ Ein neuronales Netzwerk hingegen löst das Probleme ziemlich elegant.
 
 Eine weiter interessante Frage auf die eingegangen wird ist, ob ein neuronales Netzwerk auch ohne ein Logo Werbung erkennen kann.
 
-\section{Einschränkung}
-Neuronale Netzwerke sind ein sehr umfangreiches Thema und deswegen begrenze ich mich auf Netzwerke die für die Bilderkennung entscheidend sind.
-Darunter sind klassische feedforward und convolution Netzwerke.
-Auf recurrent neuronale Netzwerke\footnote{Ein neuronales Netzwerk, das geeignet für Sequenzen ist} wird nicht näher eingegangen,
-obwohl sie nützlich wären.
-
 
 \chapter{Neuronales Netzwerk}
 \label{ch:neuronalesNetzwerk}
@@ -133,7 +142,7 @@ Dieses ganze Kapitel bezieht sich auf das Buch von Michael A. Nielsen\cite{neura
 \section{Konzept}\label{sec:konzept}
 Wenn man ein normales Programm schreiben will muss man das Problem in viele kleinere aufteilen, bis der Computer fähig ist,
 es zu lösen.
-In einem Neuronale Netzwerk wird dem Computer nicht gesagt wie es das Problem lösen kann, sondern ein neuronales Netzwerk
+In einem neuronale Netzwerk wird dem Computer nicht gesagt wie es das Problem lösen kann, sondern ein neuronales Netzwerk
 versteht das Problem, indem es beispiel Daten bekommt und an ihnen lernen kann, bis es seine eigene Lösung gefunden hat.
 Zum Beispiel, wir wollen einem Netzwerk beibringen ob in einem Bild ein Auto vorkommt,
 dazu geben wir dem neuronalem Netzwerk viele Bilder, mit und ohne Auto.
@@ -181,7 +190,7 @@ start chain=2,node distance=13mm
   {$w_2$};
 \node[on chain=2,init] (sigma)
   {$\displaystyle\Sigma$};
-\node[on chain=2,squa,label=above:{\parbox{2cm}{\centering Aktivierungsfunktion}},join=by -latex, minimum size=0.9cm]
+\node[on chain=2,squa,label=above:{\parbox{4cm}{\centering Aktivierungs-\\funktion}},join=by -latex, minimum size=0.9cm]
   {$f$};
 \node[on chain=2,label=above:Ausgabe,join=by -latex]
   {$y$};
@@ -476,7 +485,7 @@ Minimum handelt und kein globales.
 \subsection{Backpropagation}
 Der Algorithmus um $\frac{\partial C}{\partial w^l_{k,j}}$ und $\frac{\partial C}{\partial b^l_j}$ zu berechnen wird als
 Backpropagation bezeichnet und ist der mathematisch schwerste Teil dieser Arbeit.
-Es ist aber nicht unbedingt nötig für das Verständnis eines Neuronale Netzwerkes.
+Es ist aber nicht unbedingt nötig für das Verständnis eines neuronale Netzwerkes.
 Es wird auch nicht näher auf die Beweise der Gleichungen eingegangen,
 da es sonst komplizierter wird und im Grunde ist es nur die Anwendung der Kettenregel.
 
@@ -1178,7 +1187,7 @@ so dass die Verbindung mit dem Server offen bleibt und die Seite immer auf dem a
 
 Für das Frontend wird VueJs und VuetifyJS verwendet und die Webseite ist eine Single Page Application.
 
-\chapter{Ergebnisse und Auswertung}
+\chapter{Ergebnisse und Auswertung}\label{ch:ergebnisseUndAuswertung}
 Alle berechnungen wurden auf einem PC mit einer Intel i5-4690 CPU (3.50GHz) und einer NVIDIA GeForce RTX 2070 GPU (8 GB) durchgeführt.
 \section{Auswertung}
 \subsection{Datensatz}\label{subsec:datensatz}
@@ -1462,21 +1471,39 @@ An Abbildung~\ref{fig:loss2}a,b erkennt man,
 dass der loss und der MCC, während dem Training, sich nicht positiv verändert hat und das Netzwerk nichts viel gelernt hat.
 Auch die Auswertung des Datensatzes (mit den speziellen Logo's) bestätigt, dass das Netzwerk nicht viel gelernt hat.
 Man erhält einen loss von 1.354, eine Genauigkeit von 37.2\% und einen MCC von 16.4\%, welches alle sehr schlechte Werte sind.
-Ein zufällige initialisiertes Netzwerk erzielt einen loss von 1.287, eine Genauigkeit von 41.3\% und einen MCC von 15.8\% und
-ist somit gleich schlecht wie das trainierte Netzwerk und es zeigt,
-dass das ein Netzwerk nicht fähig ist, Werbung ohne ein Logo zu erkennen.
+Ein zufällige initialisiertes Netzwerk erzielt einen loss von 1.287, eine Genauigkeit von 41.3\% und einen MCC von 15.8\%.
+Das zeigt, dass das trainierte Netzwerk genau so schlecht ist, wie ein zufällige initialisiertes Netzwerk.
+Man kommt zum Schluss, dass das Netzwerk in keiner weise fähig ist, die Werbung zu erkennen.
 
-Es könnte natürlich sein, dass das Netzwerk einfacher eine grössere Architektur haben muss und mehr Daten braucht und bessere Resultate zu erbringen.
+Es könnte natürlich sein, dass das Netzwerk einfacher eine grössere Architektur haben muss und mehr Daten braucht und ein bessere Resultate zu erbringen.
 Da aber für diese Arbeit nur sehr begrenzt Ressourcen zur Verfügung stehen, kann dies nicht weiter getestet werden.
 
 
-\chapter{Ausblick}
-In dieser Arbeit wurde nur ein winziger Bruchteil von Methoden von einem neuronalen Netzwerken präsentiert und es werden dauernd
-neue Methoden gefunden, um ein neuronale Netzwerk zu verbessern.
-Die Resultate die in der Arbeit vorgestellt worden sind, sind sicher nicht die besten die Erreicht werden könnten.
-Die Netzwerke könnten sicher mit neueren Methoden und besserer Hardware um ein vielfaches verbessert werden und
-es wäre noch interessant auf welche Resultate eine grössere Firma kommen würde.
+\chapter{Fazit und Weiterführung}\label{ch:fazitUndWeiterführung}
+\section{Fazit}
+Das Ziel in dieser Arbeit, war die Erkennung von Werbung mithilfe eines neuronalen Netzwerk.
+Das Ziel wurden nur indirekt erreicht.
 
+Es war nicht möglich einem convolution neuronalen Netzwerk beizubringen, wie Werbung ausschaut und an was man sie erkennen könnte.
+Das Misslingen könnte daran liegen, dass es einfach nicht möglich ist oder das Netzwerk braucht viel mehr Ressourcen und Daten,
+als für dieser Arbeit zur Verfügung standen.
+
+Hingegen war die Erkennung von dem Prosieben Logo ein Erfolg.
+Es war möglich mit einem convolution neuronalen Netzwerk das Prosieben Logo, in jeder beliebigen Position, auf einen schwarz-weiss Bild zu erkennen.
+Da das Prosieben Logo nur eingespielt wird, wenn keine Werbung läuft,
+kann, mithilfe der durchschnittlichen Ausgaben des Netzwerkes, ziemlich exakt bestimmt werden, ob Werbung läuft oder nicht.
+
+\section{Weiterführung}
+In dieser Arbeit wurde nur ein winziger Bruchteil von Methoden für ein neuronalen Netzwerken präsentiert.
+Die Resultate die in der Arbeit vorgestellt worden sind, können sicher noch verbessert werden.
+Die Netzwerke könnten sicher mit neueren Methoden und besserer Hardware um ein vielfaches verbessert werden.
+
+Eine denkbare Weiterführung für das Netzwerk wäre, dass es nicht nur ein art von Logo erkennen kann, sondern auch noch andere Logos,
+z.B. könnte dann ein Netzwerk nicht nur das Prosieben Logo erkennen, sondern das Prosieben Logo und das SRF Logo.
+
+Ob Werbung in diesem Moment läuft oder nicht wird bestimmt, indem die durchschnittliche Ausgabe von dem Netzwerk berechnet wird.
+Ein recurrent neuronale Netzwerke\cite{wiki:rnn} wäre genau für solche Sequenzen von Daten gemacht und man könnte anstatt den Durchschnitt berechnen,
+ein recurrent neuronale Netzwerke trainieren, welches die Aufgabe sicher besser lösen würde.
 
 
 \clearpage
@@ -1502,5 +1529,5 @@ Ich habe für sie keine anderen Quellen benutzt als die in den Verzeichnissen au
 Sämtliche wörtlich übernommenen Texte (Sätze) sind als Zitate gekennzeichnet.
 
 \vspace{2cm}
-\today
+Basel, \today
 \end{document}
