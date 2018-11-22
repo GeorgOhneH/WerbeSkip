@@ -51,7 +51,7 @@ class LogoGenerator(Generator):
 
         if self.test_white_square:
             logo = np.zeros_like(logo)
-            logo[:, :11, :] += 255
+            logo[:8, :8, :] += 255
 
         # normalize image
         self.logo = logo.astype("float32") / 255
@@ -117,9 +117,9 @@ class LogoGenerator(Generator):
                     # applies screen blend effect
                     image_part = 1 - (1 - logo_padding) * (1 - image_part)
 
-                    cv2.imshow("img", image_part)
-                    cv2.imwrite("img_part.png", image_part * 255)
-                    cv2.waitKey(0)
+                    # cv2.imshow("img", image_part)
+                    # cv2.imwrite("img_part.png", image_part * 255)
+                    # cv2.waitKey(0)
                 images = np.expand_dims(np.transpose(image_part, (2, 0, 1)), axis=0)
                 labels = np.array(self.dict_labels[use_logo]).reshape((1, -1))
                 mini_batches.append((images, labels))
@@ -165,19 +165,18 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("C:\Jetbrains\PyCharm\WerbeSkip\helperfunctions\prosieben\\networks\\teleboy\\teleboy.h5")
-    generator = LogoGenerator(epochs=1, mini_batch_size=100, padding_w=151.5, padding_h=84.5, colour=True, channel="teleboy", test_white_square=False)
+    generator = LogoGenerator(epochs=1, mini_batch_size=100, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy", test_white_square=True)
     tp = 0
     tn = 0
     fp = 0
     fn = 0
     losses = []
     for mini_batch in generator:
-        pass
-        # x, y = cupy.asnumpy(net.feedforward(mini_batch[0])), cupy.asnumpy(mini_batch[1])
-        # losses.append(float(net._cost.function(cupy.asarray(x), cupy.asarray(y))))
-        # a = x.argmax(axis=1) + y.argmax(axis=1) * 2
-        # tp += int(np.count_nonzero(a == 3))  # True Positive
-        # tn += int(np.count_nonzero(a == 0))  # True Negative
-        # fp += int(np.count_nonzero(a == 1))  # False Positive
-        # fn += int(np.count_nonzero(a == 2))  # False Negative
-        # print(tp, tn, fp, fn, np.mean(losses))
+        x, y = cupy.asnumpy(net.feedforward(mini_batch[0])), cupy.asnumpy(mini_batch[1])
+        losses.append(float(net._cost.function(cupy.asarray(x), cupy.asarray(y))))
+        a = x.argmax(axis=1) + y.argmax(axis=1) * 2
+        tp += int(np.count_nonzero(a == 3))  # True Positive
+        tn += int(np.count_nonzero(a == 0))  # True Negative
+        fp += int(np.count_nonzero(a == 1))  # False Positive
+        fn += int(np.count_nonzero(a == 2))  # False Negative
+        print(tp, tn, fp, fn, np.mean(losses))

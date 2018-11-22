@@ -8,6 +8,7 @@ import subprocess as sp
 import threading
 import queue
 from urllib.parse import quote
+import sys
 from settings_secret import proxy_username, proxy_password
 
 
@@ -155,9 +156,26 @@ class VideoCapture(object):
 
 
 class StopThread(threading.Thread):
-    def __init__(self):
+    def __init__(self, cap):
         super().__init__(daemon=True)
+        self.cap = cap
         self._stop_event = threading.Event()
+
+    def run(self):
+        try:
+            self.real_run()
+        except Exception as e:
+            print("GOT ERROR IN THREAD", str(e))
+            try:
+                self.cap.pipe.kill()  # not sure if pipe still runs after it shuts down or the programm exits
+                self.cap.m3u8_update_thread.stop()  # stopping gracefully
+                self.cap.get_images_thread.stop()  # stopping gracefully
+            except Exception:
+                pass
+            os._exit(1)  # exit programm so it can restart
+
+    def real_run(self):
+        raise NotImplemented
 
     def stop(self):
         self._stop_event.set()
@@ -168,10 +186,9 @@ class StopThread(threading.Thread):
 
 class PipeRestart(StopThread):
     def __init__(self, cap):
-        super().__init__()
-        self.cap = cap
+        super().__init__(cap)
 
-    def run(self):
+    def real_run(self):
         while True:
             err = self.cap.pipe.stderr.read(1).decode("UTF-8")
             while err[-1] != "\n":
@@ -193,10 +210,9 @@ class PipeRestart(StopThread):
 
 class M3U8Updater(StopThread):
     def __init__(self, cap):
-        super().__init__()
-        self.cap = cap
+        super().__init__(cap)
 
-    def run(self):
+    def real_run(self):
         while True:
             time.sleep(0.5)
             self.cap.update_m3u8_file()
@@ -206,10 +222,9 @@ class M3U8Updater(StopThread):
 
 class GetImages(StopThread):
     def __init__(self, cap):
-        super().__init__()
-        self.cap = cap
+        super().__init__(cap)
 
-    def run(self):
+    def real_run(self):
         while True:
             qsize = self.cap.images.qsize()
             if qsize > 5 * self.cap.rate_limit:

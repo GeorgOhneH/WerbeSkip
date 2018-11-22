@@ -9,7 +9,6 @@ import json
 import websockets
 import asyncio
 from settings_secret import websocket_token
-import warnings
 import os
 
 
@@ -21,6 +20,7 @@ class WerbeSkip(object):
         self.loop = None
         self.network = self.init_network()
         self.docker = bool(os.environ.get("DJANGO_DEBUG", False))
+        self.docker = True
         if self.docker:
             self.ip = "104.248.102.130:80"
         else:
