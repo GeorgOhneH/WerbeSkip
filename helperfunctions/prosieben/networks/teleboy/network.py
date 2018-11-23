@@ -14,7 +14,7 @@ import deepdish as dd
 if __name__ == "__main__":
     # np.seterr(invalid='raise')
 
-    gen = LogoGenerator(epochs=1, mini_batch_size=80, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy", buffer_multiplier=10)
+    gen = LogoGenerator(epochs=1, mini_batch_size=80, padding_w=303, padding_h=169, colour=False, channel="teleboy", buffer_multiplier=10)
 
     net = Network()
 

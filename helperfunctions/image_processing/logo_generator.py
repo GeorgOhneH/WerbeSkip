@@ -24,10 +24,11 @@ class LogoGenerator(Generator):
     makes images with and without logo and labels them
     """
     def __init__(self, epochs, mini_batch_size, padding_w, padding_h, n_workers=1,
-                 channel="zattoo", colour=True, buffer_multiplier=2, test_white_square=False):
+                 channel="zattoo", colour=True, buffer_multiplier=2, test_white_square=False, shuffle=True):
         CHANNELS = {
             "zattoo": "prosieben/images/zattoo/important_images/logo32x32.png",
             "teleboy": "prosieben/images/teleboy/important_images/logo17x11.png",
+            "special": "prosieben/images/teleboy/important_images/special_logo9x9.png",
         }
         self.test_white_square = test_white_square
         self.logo = None
@@ -37,9 +38,10 @@ class LogoGenerator(Generator):
         self.PATH_TO_URLS = os.path.join(os.path.dirname(__file__), "urls.zip")
         self.urls = []
         self.dict_labels = {0: [[1], [0]], 1: [[0], [1]]}
-        self.padding_w = int(padding_w * 2)
-        self.padding_h = int(padding_h * 2)
+        self.padding_w = int(padding_w)
+        self.padding_h = int(padding_h)
         self.colour = colour
+        self.shuffle = shuffle
         self.init()
         super().__init__(epochs, mini_batch_size, n_workers, buffer_multiplier)
 
@@ -63,7 +65,8 @@ class LogoGenerator(Generator):
             data = archive.read("urls.txt")
         self.urls = data.decode('UTF-8').split("\n")
 
-        random.shuffle(self.urls)
+        if self.shuffle:
+            random.shuffle(self.urls)
 
     def __len__(self):
         return len(self.urls)
@@ -165,7 +168,8 @@ if __name__ == "__main__":
     optimizer = Adam(learning_rate=0.01)
     net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("C:\Jetbrains\PyCharm\WerbeSkip\helperfunctions\prosieben\\networks\\teleboy\\teleboy.h5")
-    generator = LogoGenerator(epochs=1, mini_batch_size=100, padding_w=151.5, padding_h=84.5, colour=False, channel="teleboy", test_white_square=True)
+    generator = LogoGenerator(epochs=1, mini_batch_size=100, padding_w=303, padding_h=169, colour=False, channel="teleboy", test_white_square=True, shuffle=False)
+    # generator = LogoGenerator(epochs=1, mini_batch_size=100, padding_w=311, padding_h=171, colour=False, channel="special", shuffle=False)
     tp = 0
     tn = 0
     fp = 0

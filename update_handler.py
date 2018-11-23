@@ -18,6 +18,7 @@ class WerbeSkip(object):
                                         "helperfunctions/prosieben/networks/teleboy/teleboy_old.h5")
         self.ws = None
         self.loop = None
+        self.ready = False
         self.network = self.init_network()
         self.docker = bool(os.environ.get("DJANGO_DEBUG", False))
         self.docker = True
@@ -80,7 +81,9 @@ class WerbeSkip(object):
     async def producer_handler(self, websocket):
         while True:
             message = self.producer()
-            await websocket.send(json.dumps(message))
+            if self.ready:
+                await websocket.send(json.dumps(message))
+            await asyncio.sleep(0)
 
     def producer(self):
         channel = self.get_prediction()
@@ -119,12 +122,13 @@ class WerbeSkip(object):
             self.filters.pop(0)
             self.result.pop(0)
             self.predictions.pop(0)
+            self.ready = True
 
     async def consumer_handler(self, websocket):
         while True:
             async for message in websocket:
-                await self.consumer(message)
-            asyncio.sleep(0)
+                self.consumer(message)
+            await asyncio.sleep(0)
 
     def consumer(self, message):
         error = json.loads(message).get('error', None)
