@@ -40,9 +40,9 @@
 	{\Large\itshape Georg Schwan\par}
 	\vfill
 	Betreuungsperson\par
-	{\itshape Dr. Boller Christian\par}
+	{\itshape Dr. Christian Boller\par}
 	Korreferent\par
-	{\itshape Test2}
+	{\itshape Dr. Helmut Locher}
 	\vfill
 	{\large Basel, \today\par}
 \end{titlepage}
@@ -166,7 +166,7 @@ indem sie Eingangswerte empfangen und ein bestimmtes Ergebnisse jeweils weiterle
 Die mathematische Definition eines Neurons in einem neuronale Netzwerk wird in Abbildung~\ref{fig:neuron1} dargestellt
 und zeigt wie verschiedene Eingangswerte (in diesem Beispiel $x_1$, $x_2$, $x_3$) zu einem bestimmten Ergebnis $y$ führen.
 
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
 \begin{tikzpicture}[
 init/.style={
@@ -240,7 +240,7 @@ Im Abschnitt~\ref{sec:aktivierungsfunktionen} wird noch näher auf die Aktivieru
 \section{Architektur}
 Wie auch im biologischen Gehirn ist ein Neuron allein nutzlos.
 Erst wenn man die Neuronen miteinander verbindet, kann es komplexe Zusammenhänge modellieren.
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
 \begin{tikzpicture}[
 plain/.style={
@@ -296,7 +296,7 @@ Die mittleren Schichten, die von der Anzahl her variieren können, werden verste
 Die Anzahl der Neuronen in jeder Schicht kann variieren.
 Abbildung~\ref{fig:network2} zeigt eine andere mögliche Architektur für ein Netzwerk, welche zwei versteckte
 Schichten hat.
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
 \begin{tikzpicture}[
 plain/.style={
@@ -362,7 +362,7 @@ Wir bezeichnen das Gewicht\footnote{Das $l$ dient nur zur Indexierung und nicht 
 zu dem $j^{ten}$ Neuron der $l^{ten}$ Schicht.
 Ähnlich dazu bezeichnen wir die Ausgabe des Neurons als $a^l_j$ und den Bias des Neurons als $b^l_j$ (siehe Abbildung~\ref{fig:network3}).
 
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
 \begin{tikzpicture}[
 plain/.style={
@@ -382,6 +382,7 @@ net/.style={
   },
 >=latex
 ]
+    \clip (-7,-4.75) rectangle (7, 3.5);
 \matrix[net] (mat)
 {
 |[plain]| \parbox{2cm}{\centering Schicht 1} & |[plain]| \parbox{2cm}{\centering Schicht 2} & |[plain]| \parbox{2cm}{\centering Schicht 3} \\
@@ -450,7 +451,7 @@ Um diese Kostenfunktion zu minimieren wird ein Algorithmus namens \textit{gradie
 Das Konzept basiert darauf, dass man eine Funktion, in Abhängigkeit einer Variablen ableiten kann und so die Steigung (eng. gradient)
 an diesem Punkt berechnen kann und die Variable Richtung Minimum anpasst.
 
-\begin{figure}[h]%
+\begin{figure}[!h]%
     \centering
     \includegraphics[width=10cm]{C:/Jetbrains/PyCharm/WerbeSkip/thoughts/arbeit/assets/python/gradient_empty.pdf} %
     \caption{Kostenfunktion in Abhängigkeit von $x$}%
@@ -471,7 +472,7 @@ wobei $\eta$ eine kleine positive Zahl (learning rate genannt) ist, die die Gesc
 Ausserdem ist zu beachten, dass der Ball keine Beschleunigung hat.
 Wenn man diese Gleichung iterativ anwendend, gelangt man früher oder später zum lokalen Minimum der Kostenfunktion (siehe Abbildung~\ref{fig:grad2}).
 
-\begin{figure}[h]%
+\begin{figure}[!h]%
     \centering
     \includegraphics[width=10cm]{C:/Jetbrains/PyCharm/WerbeSkip/thoughts/arbeit/assets/python/gradient_full.pdf} %
     \caption{2-dimensionaler Verlauf des gradient descent}%
@@ -518,7 +519,7 @@ Die Gleichung für die Änderungsrate der Kosten in Bezug auf ein Gewicht im Net
 Wie schon beschrieben darf eine Aktivierungsfunktion nicht linear sein, da sie sonst nichts Neues zum Netzwerk beiträgt.
 \subsection{Sigmoid}
 Ein Beispiel für eine Aktivierungsfunktion ist die Sigmoid Funktion $f(x) = \frac{1}{1 + e^{-x}}$ (siehe Abbildung~\ref{fig:activation1}).
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -554,7 +555,7 @@ was den Fehler $\delta^l_j$ sehr klein hält und so das Netzwerk nur noch langsa
 Dieses Problem ist als \textit{vanishing gradient problem} bekannt.
 \subsection{Rectified Linear Units}
 Eine andere populäre Aktivierungsfunktion ist die \textit{rectified linear units} Funktion oder kurz ReLu.
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -586,7 +587,7 @@ Die Funktion $f(x) = \max(0, x)$ (siehe Abbildung~\ref{fig:activation2}) löst d
 Praktisch alle Neuronalen Netzwerke benutzen Relu als ihre Aktivierungsfunktion,
 da es die besten Ergebnisse erbringt\cite{activations}.
 Ein Nachteil ist, dass sie nur in den Versteckten Schichten gut funktioniert,
-da der Ausgabewert der Funktion unendlich gross sein kann.
+da der Ausgabewert der Funktion unendlich gross sein kann und dadurch die Ausgabe vom Netzwerk nur schwer mit der gewünschten Ausgabe vergleichbar ist.
 \subsection{Softmax}
 Die softmax Funktion wird verwendet, um eindeutige Klassifikationen zu erreichen und ist definiert als:
 \[f(x_j) = \frac{e^{x_j}}{\sum_k{e^{x_k}}}\]
@@ -603,7 +604,7 @@ wie zum Beispiel die Beziehung von nebeneinander liegenden Pixel.
 Ausserdem kann das gesuchte Objekt in einem Bild an verschiedenen Orten vorkommen.
 \subsection{Architektur}
 Die Eingabe für eine Convolution-Schicht ist nicht 1-dimensional, sondern 2-dimensional (siehe Abbildung~\ref{fig:conv1}).
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
 \begin{tikzpicture}[
 plain/.style={
@@ -648,7 +649,7 @@ sondern dass nur ein bestimmter Bereich zum nächsten Neuron verbunden ist.
 Dieser Bereich wird als \textit{Filter} bezeichnet.
 
 In dem Beispiel auf Abbildung~\ref{fig:conv2} wird ein 3x3 Filter benutzt.
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
 \begin{tikzpicture}[
 plain/.style={
@@ -697,7 +698,7 @@ net/.style={
   \draw[->] (mat-\ai-\aii) -- (mat-6-15);
 }
 \end{tikzpicture}
-    \caption{Verbindung eines versteckten Neurons in einem Convolution-Schicht}
+    \caption{Verbindung eines versteckten Neurons in einer Convolution-Schicht}
     \label{fig:conv2}
 \end{figure}
 Der Filter wird dann auf den Eingabeneuronen um ein Neuron verschoben, um den nächsten Neuron zu verbinden.
@@ -708,7 +709,7 @@ Abbildung~\ref{fig:conv3} verdeutlicht das Prinzip noch einmal.
 
 Der Filter kann auch um mehr als nur einen Neuronen verschoben werden und man kann in den beiden Richtungen verschiedene Schrittweiten nehmen,
 zum Beispiel bewegt sich der Neuron nach links um zwei Neuronen und nach unten um drei.
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
     \begin{tikzpicture}[
 plain/.style={
@@ -820,7 +821,7 @@ Als Gleichung bei einem 3x3 Filter:
 
 wobei $a_{x, y}$ der Neuron an der Position $x, y$ ist und $f$ eine Aktivierungsfunktion.
 
-\begin{figure}[h]%
+\begin{figure}[!h]%
     \centering
 \begin{tikzpicture}
 \draw [draw=black] (5,5.5) rectangle (0,0.5);
@@ -849,7 +850,7 @@ wodurch mehrere feature maps entstehen (siehe Abbildung~\ref{fig:conv4}).
 Der Grund warum die Filter nicht alle das gleiche Merkmal erkennen, liegt an der zufälligen Initialisierung der Gewichte und Biases.
 
 Falls nach einer Convolution-Schicht eine weitere Convolution-Schicht folgt, muss der Bereich des Filters zu allen feature maps erweitert werden\cite{conv} (siehe Abbildung~\ref{fig:conv5}).
-\begin{figure}[h]%
+\begin{figure}[!h]%
     \centering
 \begin{tikzpicture}[every edge quotes/.append style={auto}, scale=0.5]
   \pgfmathsetmacro{\cubex}{3}
@@ -872,7 +873,7 @@ Falls nach einer Convolution-Schicht eine weitere Convolution-Schicht folgt, mus
   \pgfmathsetmacro{\cubey}{3}
   \pgfmathsetmacro{\cubez}{3}
   \draw [draw, every edge/.append style={draw, opacity=.5}]
-    (0,-3,-3) coordinate (o) -- ++(-\cubex,0,0) coordinate (a) -- ++(0,-\cubey,0) coordinate (b) edge coordinate [pos=1] (g) ++(0,0,-\cubez)  -- ++(\cubex,0,0) coordinate (c) -- cycle
+    (0,-2,-1) coordinate (o) -- ++(-\cubex,0,0) coordinate (a) -- ++(0,-\cubey,0) coordinate (b) edge coordinate [pos=1] (g) ++(0,0,-\cubez)  -- ++(\cubex,0,0) coordinate (c) -- cycle
     (o) -- ++(0,0,-\cubez) coordinate (d) -- ++(0,-\cubey,0) coordinate (e) edge (g) -- (c) -- cycle
     (o) -- (a) -- ++(0,0,-\cubez) coordinate (f) edge (g) -- (d) -- cycle;
 
@@ -894,7 +895,28 @@ Falls nach einer Convolution-Schicht eine weitere Convolution-Schicht folgt, mus
   \pgfmathsetmacro{\cubey}{1}
   \pgfmathsetmacro{\cubez}{1}
   \draw [draw, every edge/.append style={draw, opacity=.5}]
-    (9,-4,-4) coordinate (o1) -- ++(-\cubex,0,0) coordinate (a1) -- ++(0,-\cubey,0) coordinate (b1) edge coordinate [pos=1] (g1) ++(0,0,-\cubez)  -- ++(\cubex,0,0) coordinate (c1) -- cycle
+    (9,-3,-2) coordinate (o1) -- ++(-\cubex,0,0) coordinate (a1) -- ++(0,-\cubey,0) coordinate (b1) edge coordinate [pos=1] (g1) ++(0,0,-\cubez)  -- ++(\cubex,0,0) coordinate (c1) -- cycle
+    (o1) -- ++(0,0,-\cubez) coordinate (d1) -- ++(0,-\cubey,0) coordinate (e1) edge (g1) -- (c1) -- cycle
+    (o1) -- (a1) -- ++(0,0,-\cubez) coordinate (f1) edge (g1) -- (d1) -- cycle;
+
+    \draw [-] (o) edge (a1) (c) edge (b1) (d) edge (f1) (e) edge (g1);
+
+
+
+  \pgfmathsetmacro{\cubex}{3}
+  \pgfmathsetmacro{\cubey}{3}
+  \pgfmathsetmacro{\cubez}{3}
+  \draw [draw, every edge/.append style={draw, opacity=.5}]
+    (0,-6,-6) coordinate (o) -- ++(-\cubex,0,0) coordinate (a) -- ++(0,-\cubey,0) coordinate (b) edge coordinate [pos=1] (g) ++(0,0,-\cubez)  -- ++(\cubex,0,0) coordinate (c) -- cycle
+    (o) -- ++(0,0,-\cubez) coordinate (d) -- ++(0,-\cubey,0) coordinate (e) edge (g) -- (c) -- cycle
+    (o) -- (a) -- ++(0,0,-\cubez) coordinate (f) edge (g) -- (d) -- cycle;
+
+
+  \pgfmathsetmacro{\cubex}{1}
+  \pgfmathsetmacro{\cubey}{1}
+  \pgfmathsetmacro{\cubez}{1}
+  \draw [draw, every edge/.append style={draw, opacity=.5}]
+    (10,-7,-7) coordinate (o1) -- ++(-\cubex,0,0) coordinate (a1) -- ++(0,-\cubey,0) coordinate (b1) edge coordinate [pos=1] (g1) ++(0,0,-\cubez)  -- ++(\cubex,0,0) coordinate (c1) -- cycle
     (o1) -- ++(0,0,-\cubez) coordinate (d1) -- ++(0,-\cubey,0) coordinate (e1) edge (g1) -- (c1) -- cycle
     (o1) -- (a1) -- ++(0,0,-\cubez) coordinate (f1) edge (g1) -- (d1) -- cycle;
 
@@ -906,7 +928,7 @@ Falls nach einer Convolution-Schicht eine weitere Convolution-Schicht folgt, mus
 Man kann es sich so vorstellen, als ob der Filter in der Z-Achse erweitert wird.
 Mit dieser Erweiterung kann auch die Eingabeschicht aus mehreren feature maps bestehen.
 Dadurch können auch relativ einfach farbige Bilder als Eingabe verwendet werden.
-Die Eingabeschicht würde aus drei feature maps bestehen, eine feature map pro Farbkanal des Bildes.
+Die Eingabeschicht würde aus drei feature maps bestehen, eine feature map für jeden Farbkanal des Bildes.
 
 \subsection{Max Pooling}
 Neben den Convolution-Schichten gibt es auch die Maxpool-Schicht\footnote{Es gibt noch andere Pooling-Schichten, die aber in dieser Arbeit nicht verwendet wurden}.
@@ -917,7 +939,7 @@ Der Filter bewegt sich genau gleich wie ein normaler Filter bei der Convolution-
 er die Ausgabe nicht wie ein Neuron berechnet, sonderen die Ausgabe ist der grösste Wert von den Eingaben (siehe Abbildung~\ref{fig:pool1}).
 Ausserdem kann max pooling nur auf eine feature map angewendet werden,
 d.h der max pool Filter hat keine Z-Achse und muss auf jede feature maps einzeln angewendet werden\cite{conv}.
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
     \begin{tikzpicture}[
 plain/.style={
@@ -999,7 +1021,7 @@ Beim Trainieren eines Netzwerkes werden Neuronen mit einer bestimmten Wahrschein
 Bei jeder neuen Eingabe zum Trainieren werden neue zufällige Neuronen ausgewählt,
 dabei sind die Eingabeneuronen und Ausgabeneuronen davon ausgenommen.
 
-\begin{figure}[h]
+\begin{figure}[!h]
     \centering
 \begin{tikzpicture}[
 plain/.style={
@@ -1582,12 +1604,12 @@ Eine denkbare Weiterführung für das Netzwerk wäre, dass es nicht nur eine Art
 Zum Beispiel könnte dann ein Netzwerk neben dem Prosieben Logo auch das SRF Logo erkennen.
 
 Ob Werbung in diesem Moment läuft wird bestimmt,
-indem das Netzwerk jede Sekunde das aktuellen live Prosieben Bild auswertet und dann von dieser Sequenz von Daten der Durchschnitt genommen wird.
+indem das Netzwerk jede Sekunde das aktuellen live Prosieben Bild auswertet und dann von diesen Daten der Durchschnitt genommen wird.
 Man könnte nun anstatt selber den Durchschnitt zu berechnen, die Daten einem Recurrent Netzwerk geben, das dann den Durchschnitt berechnet.
 Ein Recurrent Netzwerk hat einen feedback loop, welches ihm erlaubt einen Speicher zu haben\cite{wiki:rnn}.
 Dadurch können auch wenn die Daten immer nur einzeln gegeben werden, die vorigen Daten miteinbezogen werden.
 Wenn man ein Recurrent Netzwerk benutzen würde, müsste man nicht mehr selber den Durchschnitt berechnen,
-sondern man könnte die Aufgabe einem Recurrent Netzwerk übergeben.
+sondern die Aufgabe würde eine Recurrent Netzwerk übernehmen, welches dann auch eine bessere Lösung finden würde.
 
 
 \clearpage
