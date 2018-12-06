@@ -6,7 +6,10 @@ import numpywrapper as np
 
 class ConvolutionLayer(Layer):
     """
+    after http://cs231n.github.io/convolutional-networks/
+    weight init after https://arxiv.org/abs/1502.01852
     """
+
     def __init__(self, n_filter, width_filter, height_filter, stride, zero_padding=0, padding_value=0):
         """
         """
@@ -30,9 +33,9 @@ class ConvolutionLayer(Layer):
         self.nabla_w = None
 
     def __str__(self):
-        return "{}: n_filter: {} width_filter: {} height_filter: {} stride: {} zero_padding: {}"\
-                .format(super(ConvolutionLayer, self).__str__(), self.n_filter, self.width_filter,
-                        self.height_filter, self.stride, self.zero_padding)
+        return "{}: n_filter: {} width_filter: {} height_filter: {} stride: {} zero_padding: {}" \
+            .format(super(ConvolutionLayer, self).__str__(), self.n_filter, self.width_filter,
+                    self.height_filter, self.stride, self.zero_padding)
 
     def init(self, neurons_before, optimizer):
         """
@@ -53,7 +56,9 @@ class ConvolutionLayer(Layer):
         self.height_out, self.width_out = int(self.height_out), int(self.width_out)
 
         self.biases = np.random.randn(self.n_filter, 1).astype(dtype="float32")
-        self.weights = np.random.randn(self.n_filter, self.depth, self.height_filter, self.width_filter).astype(dtype="float32") / np.sqrt(self.n_filter).astype("float32")
+        self.weights = np.random.randn(self.n_filter, self.depth, self.height_filter, self.width_filter).astype(
+            dtype="float32") / np.sqrt(self.depth * self.height * self.width).astype("float32") * 2
+
         self.optimizer = optimizer
 
         return self.n_filter, self.height_out, self.width_out
@@ -62,7 +67,8 @@ class ConvolutionLayer(Layer):
         self.mini_batch_size = a.shape[0]
 
         self.a_col = im2col_indices(a, self.height_filter, self.width_filter, stride=self.stride,
-                                    padding_w=self.zero_padding, padding_h=self.zero_padding, padding_value=self.padding_value)
+                                    padding_w=self.zero_padding, padding_h=self.zero_padding,
+                                    padding_value=self.padding_value)
 
         out = self.weights.reshape(self.n_filter, -1) @ self.a_col + self.biases
         out = out.reshape(self.n_filter, self.height_out, self.width_out, self.mini_batch_size)
@@ -93,8 +99,8 @@ class ConvolutionLayer(Layer):
     def adjust_parameters(self, mini_batch_size):
         """Changes the weights and biases after the optimizer calculates the change"""
         change_w, change_b = self.optimizer.calculate_change(self.nabla_w, self.nabla_b)
-        self.weights -= change_w/mini_batch_size
-        self.biases -= change_b/mini_batch_size
+        self.weights -= change_w / mini_batch_size
+        self.biases -= change_b / mini_batch_size
 
     def save(self):
         return [self.weights, self.biases]

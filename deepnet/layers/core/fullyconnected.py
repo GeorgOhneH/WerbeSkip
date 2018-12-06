@@ -7,6 +7,8 @@ class FullyConnectedLayer(Layer):
     """
     after https://sudeepraja.github.io/Neural/
 
+    weight initializer after http://neuralnetworksanddeeplearning.com/chap3.html
+
     The FullyConnectedLayer saves the weights and biases of the layer
     As the name says it is fully connected, this means that every neuron
     from the previous layer is connect with every neuron of this layer

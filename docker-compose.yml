@@ -16,6 +16,7 @@ services:
   update_handler:
     image: zungenkatze/werbeskip
     command: python update_handler.py
+    restart: always
     depends_on:
       - redis
       - db

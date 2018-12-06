@@ -13,10 +13,7 @@ import time
 # For more, see http://channels.readthedocs.io/en/latest/topics/databases.html
 @database_sync_to_async
 def get_room_or_error(room_name):
-    """
-    Tries to fetch a room for the user, checking permissions along the way.
-    """
-    # Find the room they requested (by ID)
+    # Find the room they requested (by name)
     try:
         room = Room.objects.get(title=room_name)
     except Room.DoesNotExist:

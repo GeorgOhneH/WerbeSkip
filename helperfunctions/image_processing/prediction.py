@@ -5,6 +5,8 @@ import cupy
 import cv2
 from tqdm import tqdm
 
+# Just some experimental stuff, but it wasn't in any way useful. Can be ignored
+
 
 def visualize_prediction(network, images, logo_w, logo_h, stride=1):
     """

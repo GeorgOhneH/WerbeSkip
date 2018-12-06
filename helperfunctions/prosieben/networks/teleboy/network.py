@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from helperfunctions.image_processing.image_loader import load_ads_cnn
 from helperfunctions.image_processing.logo_generator import LogoGenerator
-from helperfunctions.image_processing.retrieving_images import VideoCapture
+from helperfunctions.image_processing.video_capture import VideoCapture
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, \
     Flatten
 from deepnet.optimizers import Adam, SGD
@@ -12,8 +12,6 @@ import time
 import deepdish as dd
 
 if __name__ == "__main__":
-    # np.seterr(invalid='raise')
-
     gen = LogoGenerator(epochs=1, mini_batch_size=80, padding_w=303, padding_h=169, colour=False, channel="teleboy", buffer_multiplier=10)
 
     net = Network()
@@ -50,13 +48,10 @@ if __name__ == "__main__":
     net.regression(optimizer=optimizer, cost=CrossEntropyCost())
     net.load("teleboy.h5")
     net.print_infos()
-    net.plot()
-    exit()
-
     # Number of inputs: 2540000, Training time: 69479
 
-    # v_x, v_y, t_x, t_y = load_ads_cnn(split=0, full=True, shuffle_set=False, colour=False)
-    # net.evaluate(t_x, t_y)
+    v_x, v_y, t_x, t_y = load_ads_cnn(split=0, full=True, shuffle_set=False, colour=False)
+    net.evaluate(t_x, t_y)
     # Evaluation of 7830 inputs:
     # loss: 0.22138 | accuracy: 0.91609 | MCC: 0.80169
 

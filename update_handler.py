@@ -1,7 +1,7 @@
 from deepnet import Network
 import numpy as np
 from deepnet.functions.costs import CrossEntropyCost
-from helperfunctions.image_processing.retrieving_images import VideoCapture
+from helperfunctions.image_processing.video_capture import VideoCapture
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, \
     Flatten
 from deepnet.optimizers import Adam
@@ -10,18 +10,22 @@ import websockets
 import asyncio
 from settings_secret import websocket_token
 import os
+import sys
+import time
+import traceback
 
 
 class WerbeSkip(object):
     def __init__(self):
         self.PATH_TO_NET = os.path.join(os.path.dirname(__file__),
                                         "helperfunctions/prosieben/networks/teleboy/teleboy_old.h5")
+        # using old network, because the new one is to large for the memory on the server.
+        # Also the old one is only slightly worse.
         self.ws = None
         self.loop = None
         self.ready = False
         self.network = self.init_network()
         self.docker = bool(os.environ.get("DJANGO_DEBUG", False))
-        self.docker = True
         if self.docker:
             self.ip = "104.248.102.130:80"
         else:
@@ -133,7 +137,7 @@ class WerbeSkip(object):
     def consumer(self, message):
         error = json.loads(message).get('error', None)
         if error:
-            print('GOT ERROR FROM SOCKET:', error)
+            print('Got error from socket:', error, file=sys.stderr)
 
     async def handler(self, websocket):
         consumer_task = asyncio.ensure_future(self.consumer_handler(websocket))
@@ -157,11 +161,10 @@ class WerbeSkip(object):
 
 
 if __name__ == "__main__":
-        try:
-            x = WerbeSkip()
-            x.run()
-        finally:
-            x.cap.pipe.kill()  # not sure if pipe still runs after it shuts down or the programm exits
-            x.cap.m3u8_update_thread.stop()  # stopping gracefully
-            x.cap.get_images_thread.stop()  # stopping gracefully
-            print("exit")
+    try:
+        WerbeSkip().run()
+    except Exception:
+        print("Closed in main file", file=sys.stderr)
+        traceback.print_exc()
+        time.sleep(300)
+        os._exit(1)  # closes interpreter without clean up

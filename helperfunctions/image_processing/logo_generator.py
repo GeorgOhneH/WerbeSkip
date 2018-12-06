@@ -9,7 +9,7 @@ from deepnet.utils import Generator
 from deepnet import Network
 import cv2
 from helperfunctions.image_processing.image_loader import load_ads_cnn
-from helperfunctions.image_processing.retrieving_images import VideoCapture
+from helperfunctions.image_processing.video_capture import VideoCapture
 from deepnet.layers import FullyConnectedLayer, BatchNorm, Dropout, ReLU, SoftMax, ConvolutionLayer, MaxPoolLayer, \
     Flatten
 from deepnet.optimizers import Adam, SGD

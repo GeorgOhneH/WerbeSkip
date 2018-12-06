@@ -1,4 +1,4 @@
-# code from https://github.com/yunjey/cs231n/blob/master/assignment2/cs231n/im2col.py but modified
+# code from https://github.com/yunjey/cs231n/blob/master/assignment2/cs231n/im2col.py, a bit modified
 import numpywrapper as np
 
 

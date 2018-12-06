@@ -6,51 +6,45 @@ Build with Neural Networks, Django and Vue
 ## Installation
 Note: Cloning this repository may take a while, because it's very large
 
-[Redis](https://redis.io/download) and ffmpeg (with the environment variable) must be installed on your system
-``` bash
-# install dependencies
-npm install
+It's only testet with python 3.6, other versions may not work properly
+All dependencys for python are in `requirements.txt` listed.
 
-# serve with hot reload at localhost:8080
-# note that the websocket server won't function
-npm run dev
+If you want to use the webserver, [Redis](https://redis.io/download)
+must also be installed.
 
-# build for production with minification
-npm run build
+### External Files
+So that evrything works correctly the dateset and the saved network,
+must be downloaded. For the dateset go [here](helperfunctions/prosieben)
+and for the network go [here](helperfunctions/prosieben/networks/teleboy)
 
-# build for production and view the bundle analyzer report
-npm run build --report
+# Usage
+## Neuron Network
+Go to the directory [deepnet/examples](deepnet/examples) for examples.
+## Webserver
+To start the server run `sh deploy.sh`.
 
-# deploy
-# Note to stop the bash just kill it, else the processes it starts won't going to close
-.deploy.sh
-```
+If you prefer docker run `docker-compose up`
 
-## File Structure
+# File Structure
 There are 2 parts to the app. The first part is the neural network and
 the algorithmen. The second part is the webserver.
-### Neural Network
+## Neural Network
 The main part is the deepnet directory. It holds a self written deep
 neural network library.
-
-In the helperfunction directory are the main function, which are used
-to determine if an image is an ad and other helpful functions.
-Note: some function need images to function, which aren't on github
-[more info](helperfunctions/prosieben)
 
 The numpywrapper module is just so the neural network library can
 switch between numpy and cupy
 
-### Webserver
+## Webserver
 The main parts are: app, src, vuedj
-#### vuedj
-The Django settings
-#### app
-Backend and Websocket
-#### src
-Frontend implemented with VueJS
 
-### Others
-thoughts is the directory with the Protokoll
+vuedj: The Django settings
+
+app: Backend with Websocket
+
+src: Frontend implemented with VueJS
+
+## Others
+thoughts is the directory with the Protocoll and the maturaarbeit
 
 update_handler.py is the intersection between the server and the algorithmen
