@@ -4,6 +4,16 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex)
 
+function init_audio() {
+  if (window.webpackHotUpdate) {
+    return new Audio('/static/sounds/notification.mp3');
+  } else {
+    return new Audio('/staticfiles/sounds/notification.mp3');
+  }
+
+}
+
+
 export default new Vuex.Store({
   state: {
     darkMode: true,
@@ -11,6 +21,7 @@ export default new Vuex.Store({
     useNotificationSound: true,
     listChannels: [],
     dictChannels: {},
+    audio: init_audio(),
   },
   getters: {
     darkMode: state => {
@@ -27,6 +38,9 @@ export default new Vuex.Store({
     },
     dictChannels: state => {
       return state.dictChannels
+    },
+    audio: state => {
+      return state.audio
     },
     channel: state => name => {
       for (const channel of state.listChannels) {
@@ -45,11 +59,13 @@ export default new Vuex.Store({
     useNotification: (state, val) => {
       if (typeof(val) === "boolean") {
         state.useNotification = val
+        state.audio = init_audio()
       }
     },
     useNotificationSound: (state, val) => {
       if (typeof(val) === "boolean") {
         state.useNotificationSound = val
+        state.audio = init_audio()
       }
     },
     initChannels: (state, dictChannels) => {

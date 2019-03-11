@@ -11,6 +11,7 @@
       ...mapGetters([
         'useNotification',
         'useNotificationSound',
+        'audio',
       ]),
       useNotification() {
         return this.$store.getters.useNotification
@@ -22,13 +23,7 @@
     methods: {
       notification() {
         if (this.$store.getters.useNotificationSound) {
-          if (window.webpackHotUpdate) {
-            let audio = new Audio('/static/sounds/notification.mp3');
-            audio.play();
-          } else {
-            let audio = new Audio('/staticfiles/sounds/notification.mp3');
-            audio.play();
-          }
+          this.$store.audio.play();
         }
         if (Notification.permission !== "granted") {
           Notification.requestPermission();

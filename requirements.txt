@@ -9,7 +9,7 @@ opencv-python==3.4.3.18
 requests==2.20.0
 coverage==4.5.1
 coveralls==1.5.1
-Django==2.1.2
+Django==2.1.7
 django-nose==1.4.6
 channels==2.1.4
 channels_redis==2.3.1

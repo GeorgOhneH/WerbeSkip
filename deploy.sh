@@ -25,7 +25,7 @@ echo 'Done...'
 echo 'Start Django'
 export PORT=8000
 echo 'Server runnning on port ' $PORT
-python manage.py runserver 0.0.0.0:8000 &
+daphne -b 0.0.0.0 -p 8000 vuedj.asgi:application &
 
 echo 'Start update_handler.py'
 python update_handler.py &
