@@ -1,10 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import NoSleep from 'nosleep.js';
-
+import NoSleep from '../plugins/NoSleep.js';
 
 Vue.use(Vuex)
-
 
 export default new Vuex.Store({
   state: {
