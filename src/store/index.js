@@ -1,17 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import NoSleep from 'nosleep.js';
 
 
 Vue.use(Vuex)
-
-function init_audio() {
-  if (window.webpackHotUpdate) {
-    return new Audio('/static/sounds/notification.mp3');
-  } else {
-    return new Audio('/staticfiles/sounds/notification.mp3');
-  }
-
-}
 
 
 export default new Vuex.Store({
@@ -21,7 +13,9 @@ export default new Vuex.Store({
     useNotificationSound: true,
     listChannels: [],
     dictChannels: {},
-    audio: init_audio(),
+    audio: new Audio('/staticfiles/sounds/notification.mp3'),
+    noSleep: new NoSleep(),
+    noSleepActive: false,
   },
   getters: {
     darkMode: state => {
@@ -57,7 +51,11 @@ export default new Vuex.Store({
       }
     },
     audio: (state) => {
-        state.audio = init_audio()
+      state.audio = new Audio('/staticfiles/sounds/notification.mp3')
+      if (!state.noSleepActive) {
+        state.noSleep.enable();
+        state.noSleepActive = true
+      }
     },
     useNotification: (state, val) => {
       if (typeof(val) === "boolean") {
@@ -71,7 +69,6 @@ export default new Vuex.Store({
     },
     initChannels: (state, dictChannels) => {
       if (state.listChannels.length === 0) {
-          console.log(dictChannels)
         for (const [name, data] of Object.entries(dictChannels)) {
           let ads = []
           for (const data_point of data.ads) {

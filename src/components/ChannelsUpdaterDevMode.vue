@@ -18,7 +18,7 @@
       use: function () {
         if (this.use) {
           this.$store.commit('initChannels', this.getRawChannelsInit())
-          this.interval = setInterval(this.updateChannels, 3000)
+          this.interval = setInterval(this.updateChannels, 10000)
         }
       }
     },
@@ -56,7 +56,7 @@
       getRawChannels() {
         return {
           'Prosieben': {
-            'ad':  Math.random() >= 0.8,
+            'ad':  Math.random() >= 0.5,
             'id': 354}
         }
 
