@@ -166,5 +166,5 @@ if __name__ == "__main__":
     except Exception:
         print("Closed in main file", file=sys.stderr)
         traceback.print_exc()
-        time.sleep(300)
+        time.sleep(10)
         os._exit(1)  # closes interpreter without clean up

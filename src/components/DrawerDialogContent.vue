@@ -63,25 +63,27 @@
         <v-list-tile-content>
           <v-list-tile-title>Notification</v-list-tile-title>
         </v-list-tile-content>
-
-        <v-list-tile-action>
-          <v-switch
-            v-model="useNotification"
-          ></v-switch>
-        </v-list-tile-action>
+          <div @click="activateAudio()">
+            <v-list-tile-action>
+              <v-switch
+                v-model="useNotification"
+              ></v-switch>
+            </v-list-tile-action>
+        </div>
       </v-list-tile>
 
       <v-list-tile>
         <v-list-tile-content>
           <v-list-tile-title>Notification Sound</v-list-tile-title>
         </v-list-tile-content>
-
-        <v-list-tile-action :class="{'switch-disable': !useNotification}">
-          <v-switch
-            v-model="useNotificationSound"
-            :disabled="!useNotification"
-          ></v-switch>
-        </v-list-tile-action>
+          <div @click="activateAudio()">
+            <v-list-tile-action :class="{'switch-disable': !useNotification}">
+              <v-switch
+                v-model="useNotificationSound"
+                :disabled="!useNotification"
+              ></v-switch>
+            </v-list-tile-action>
+          </div>
       </v-list-tile>
 
     </v-list-group>
@@ -140,8 +142,12 @@
         'darkMode',
         'useNotification',
         'useNotificationSound',
-        'listChannels'
+        'listChannels',
+        'audio',
       ]),
+      activateAudio() {
+        this.$store.commit('audio')
+      }
     },
     watch: {
       $route(to, from) {

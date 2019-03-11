@@ -56,20 +56,22 @@ export default new Vuex.Store({
         state.darkMode = val
       }
     },
+    audio: (state) => {
+        state.audio = init_audio()
+    },
     useNotification: (state, val) => {
       if (typeof(val) === "boolean") {
         state.useNotification = val
-        state.audio = init_audio()
       }
     },
     useNotificationSound: (state, val) => {
       if (typeof(val) === "boolean") {
         state.useNotificationSound = val
-        state.audio = init_audio()
       }
     },
     initChannels: (state, dictChannels) => {
       if (state.listChannels.length === 0) {
+          console.log(dictChannels)
         for (const [name, data] of Object.entries(dictChannels)) {
           let ads = []
           for (const data_point of data.ads) {

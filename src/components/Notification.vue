@@ -23,7 +23,7 @@
     methods: {
       notification() {
         if (this.$store.getters.useNotificationSound) {
-          this.$store.audio.play();
+          this.$store.getters.audio.play();
         }
         if (Notification.permission !== "granted") {
           Notification.requestPermission();

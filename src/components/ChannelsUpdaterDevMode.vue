@@ -18,7 +18,7 @@
       use: function () {
         if (this.use) {
           this.$store.commit('initChannels', this.getRawChannelsInit())
-          this.interval = setInterval(this.updateChannels, 1000)
+          this.interval = setInterval(this.updateChannels, 3000)
         }
       }
     },
@@ -38,30 +38,28 @@
       },
       getRawChannelsInit() {
         return {
-          'Prosieben':
+          'Prosieben': {
+            'ads':
             [{
               'ad': Math.random() >= 0.5,
               'x': -100,
-              'id': 354
             },{
               'ad': Math.random() >= 0.5,
               'x': -50,
-              'id': 354
             },{
               'ad': Math.random() >= 0.5,
               'x': -10,
-              'id': 354
             }],
+            'id': 354}
         }
       },
       getRawChannels() {
         return {
-          'Prosieben':
-            {
-              'ad': Math.random() >= 0.5,
-              'id': 354
-            },
+          'Prosieben': {
+            'ad':  Math.random() >= 0.8,
+            'id': 354}
         }
+
       },
     }
   }
