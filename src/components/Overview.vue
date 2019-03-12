@@ -32,7 +32,9 @@
         md4
         lg3
       >
-        <overview-channel :channel="props.item"></overview-channel>
+        <div @click="activateAudio()" >
+          <overview-channel :channel="props.item"></overview-channel>
+        </div>
       </v-flex>
     </v-data-iterator>
   </v-container>
@@ -41,7 +43,7 @@
 <script>
   import OverviewChannel from './OverviewChannel'
 
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapMutations } from 'vuex'
 
   export default {
 
@@ -60,13 +62,18 @@
       ...mapGetters([
         'listChannels'
       ]),
-      listChannels() {
-        return this.$store.getters.listChannels
-      },
       hide() {
         return this.listChannels.length === 0;
       }
     },
+    methods: {
+      ...mapMutations([
+          'audio'
+      ]),
+      activateAudio() {
+        this.$store.commit('audio')
+      }
+    }
   }
 </script>
 

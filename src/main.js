@@ -2,6 +2,7 @@ import Vue from 'vue'
 import './plugins/vuetify'
 import './plugins/costume'
 import './plugins/websocket'
+import './plugins/vue-cookie'
 
 import store from './store'
 import router from './router'

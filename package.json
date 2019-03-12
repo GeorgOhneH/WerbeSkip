@@ -13,6 +13,7 @@
     "mime": "^1.4.1",
     "vue": "^2.5.2",
     "vue-chartjs": "^3.4.0",
+    "vue-cookie": "^1.1.4",
     "vue-native-websocket": "^2.0.8",
     "vue-router": "^3.0.1",
     "vuetify": "^1.1.10",

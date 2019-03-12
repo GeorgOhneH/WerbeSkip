@@ -13,7 +13,7 @@ export default new Vuex.Store({
     dictChannels: {},
     audio: new Audio('/staticfiles/sounds/notification.mp3'),
     noSleep: new NoSleep(),
-    noSleepActive: false,
+    iosLoaded: false,
   },
   getters: {
     darkMode: state => {
@@ -34,6 +34,9 @@ export default new Vuex.Store({
     audio: state => {
       return state.audio
     },
+    iosLoaded: state => {
+      return state.iosLoaded
+    },
     channel: state => name => {
       for (const channel of state.listChannels) {
         if (name.toLowerCase() === channel.name.toLowerCase()) {
@@ -49,10 +52,10 @@ export default new Vuex.Store({
       }
     },
     audio: (state) => {
-      state.audio = new Audio('/staticfiles/sounds/notification.mp3')
-      if (!state.noSleepActive) {
+      if (!state.iosLoaded) {
         state.noSleep.enable();
-        state.noSleepActive = true
+        state.audio = new Audio('/staticfiles/sounds/notification.mp3')
+        state.iosLoaded = true
       }
     },
     useNotification: (state, val) => {

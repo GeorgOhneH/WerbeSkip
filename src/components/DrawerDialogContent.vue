@@ -152,7 +152,7 @@
     watch: {
       $route(to, from) {
         this.$emit('close')
-      }
+      },
     },
   }
 </script>

@@ -1,5 +1,6 @@
 <template>
   <v-app :dark="darkMode">
+    <Cookie></Cookie>
     <drawer-dialog v-model="drawerDialog"></drawer-dialog>
     <v-toolbar
       app
@@ -27,12 +28,14 @@
   import Overview from './components/Overview'
   import DrawerDialog from './components/DrawerDialog'
   import ChannelsUpdater from './components/ChannelsUpdater'
+  import Cookie from './components/Cookie'
 
   export default {
     name: 'App',
     components: {
       Overview,
       DrawerDialog,
+      Cookie,
       ChannelsUpdater
     },
     data() {
