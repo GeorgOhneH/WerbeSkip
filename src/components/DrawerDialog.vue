@@ -1,32 +1,12 @@
 <template>
   <v-navigation-drawer
-    v-if="$vuetify.breakpoint.mdAndUp"
     app
-    :value="open"
-    clipped
-  >
-    <drawer-dialog-content @close="open = false"></drawer-dialog-content>
-  </v-navigation-drawer>
-
-  <v-dialog
-    app
-    v-else
     v-model="open"
-    fullscreen
-    hide-overlay
-    transition="dialog-bottom-transition"
+    clipped
+    disable-resize-watcher
   >
-    <v-card>
-      <v-toolbar dark color="primary">
-        <v-toolbar-title class="ml-3">WerbeSkip</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn icon dark @click.native="open = false">
-          <v-icon>close</v-icon>
-        </v-btn>
-      </v-toolbar>
-      <drawer-dialog-content @close="open = false"></drawer-dialog-content>
-    </v-card>
-  </v-dialog>
+    <drawer-dialog-content></drawer-dialog-content>
+  </v-navigation-drawer>
 </template>
 
 <script>

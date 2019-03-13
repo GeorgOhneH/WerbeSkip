@@ -1,10 +1,15 @@
 <template>
-    <div class="alert" v-if="show" @click="activateAudio()">
+    <transition name="fade">
+    <div class="alert"
+         v-if="show"
+         @click="activateAudio()"
+         :style="{ 'background-color': backgroundColor }">
         <h1 class="font">
             Tap for<br>Sound<br>
             <i class="material-icons icon">volume_up</i>
         </h1>
     </div>
+    </transition>
 </template>
 
 <script>
@@ -28,6 +33,9 @@
                   this.$store.getters.useNotification &&
                   this.$store.getters.useNotificationSound &&
                   this.$route.path !== '/'
+      },
+      backgroundColor() {
+          return this.$store.getters.darkMode ? '#414141' : '#f8f8f8'
       }
     },
     methods: {
@@ -79,7 +87,6 @@
     border-radius: 5px;
     justify-content: center;
     align-items: center;
-    background-color: #3a3a3a;
     transform: translate(-50%, -50%);
     z-index: 999999;
 }
@@ -91,5 +98,11 @@
 }
 .icon {
     font-size: 50px;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.8s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
