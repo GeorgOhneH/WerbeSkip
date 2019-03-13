@@ -57,6 +57,9 @@
         this.$store.commit('useNotification', cookie.useNotification)
         this.$store.commit('useNotificationSound', cookie.useNotificationSound)
       }
+      if (!this.iOS) {
+        this.activateAudio()
+      }
     },
     watch: {
       settings() {
